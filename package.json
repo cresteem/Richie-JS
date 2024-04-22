@@ -1,0 +1,58 @@
+{
+	"name": "@cresteem/richie-js",
+	"displayName": "Richie JS",
+	"exports": {
+		".": "./dist/richie.js"
+	},
+	"description": "Rich Result Generator",
+	"version": "0.1a",
+	"main": "./dist/richie.js",
+	"types": "./dist/types/",
+	"files": [
+		"dist"
+	],
+	"directories": {
+		"lib": "./dist/lib"
+	},
+	"dist": {
+		"shasum": "not added"
+	},
+	"icon": "not added",
+	"engines": {"node": ">=21.7.3","npm":">=10.50.0"},
+	"engineStrict": false,
+	"preferGlobal": true,
+	"scripts": {
+		"build": "rimraf dist && npx tsc -b",
+		"watch": "npx tsc --watch"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/cresteem/Richie-JS.git"
+	},
+	"keywords": [
+		"Rich",
+		"Result",
+		"Generator"
+	],
+	"author": "@cresteem",
+	"license": "UNLICENCED",
+	"maintainers": ["@cresteem","@iamspdarsan"],
+	"bugs": {
+		"url": "https://github.com/cresteem/Richie-JS/issues"
+	},
+	"homepage": "https://github.com/cresteem/Richie-JS#readme",
+	"dependencies": {
+		"@prettier/sync": "^0.5.1",
+		"axios": "^1.6.7",
+		"cheerio": "^1.0.0-rc.12",
+		"country-list": "^2.3.0",
+		"luxon": "^3.4.4",
+		"puppeteer": "^22.3.0",
+		"typescript": "^5.4.5"
+	},
+	"devDependencies": {
+		"@types/country-list": "^2.1.4",
+		"@types/luxon": "^3.4.2",
+		"@typescript-eslint/eslint-plugin": "^7.7.0"
+	}
+}

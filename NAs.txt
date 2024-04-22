@@ -1,0 +1,24 @@
+!# marked item are under development
+
+Book Action !#
+DataSet
+Discussion and Forum
+Education Q&A !#
+Employer Aggregate Rating !#
+Image MetaData !#
+Job Posting !#
+Math Solver
+Practice Problem
+Q&A not FAQ
+Special Announcement
+Subscription & Pay walled content !#
+Vocational renting !#
+Vehicle Listing !#
+
+
+##########################################################################
+# Omitted Structured Data as either Not Helpful or inefficient are below #
+##########################################################################
+!warning "This is only our team opinion"
+1.Speakable 
+2.Fact Check

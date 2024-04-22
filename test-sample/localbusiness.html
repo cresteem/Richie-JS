@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Business</title>
+</head>
+
+<body>
+    <main>
+        <div id="lc1">
+            <!-- name -->
+            <p class="rlb-1-name">Business X</p>
+
+            <!-- image=[] -->
+            <div>
+                <img class="rlb-1-img"
+                    src="https://t3.ftcdn.net/jpg/06/31/36/22/360_F_631362231_5VR8Eo0R8VEflgSIfl0RgQvzyW194T5c.jpg"
+                    alt="picture of reception">
+
+                <img class="rlb-1-img"
+                    src="https://t3.ftcdn.net/jpg/06/31/36/22/360_F_631362231_5VR8Eo0R8VEflgSIfl0RgQvzyW194T5c.jpg"
+                    alt="another 1">
+                <img class="rlb-1-img"
+                    src="https://t3.ftcdn.net/jpg/06/31/36/22/360_F_631362231_5VR8Eo0R8VEflgSIfl0RgQvzyW194T5c.jpg"
+                    alt="another 1">
+            </div>
+
+            <!-- address -->
+            <!-- geo will be generated from address -->
+            <div class="rlb-1-loc">
+                <!-- loc-st for street -->
+                <!-- any number of loc-st can be created but 2 is good -->
+                <p class="loc-st">90, MGR Nagar Street</p>
+                <p class="loc-st">Public Office Road</p>
+
+                <!-- city -->
+                <p class="loc-ct">Nagapattinam</p>
+
+                <!-- state -->
+                <p class="loc-reg">TamilNadu</p>
+
+                <!-- pincode -->
+                <p class="loc-pc">611-001</p>
+
+                <!-- country -->
+                <p class="loc-ctry">India</p>
+            </div>
+
+            <!-- review -->
+            <section class="rlb-1-review">
+                <div class="urating">
+                    <!-- rating value -->
+                    <p class="review-rv">4.5</p>
+
+                    <!-- max rate -->
+                    <p class="review-mr">5</p>
+
+                    <!-- authorO is Organisation class - pub class prop not req-->
+                    <!-- authorP is Person class - pub class prop req-->
+                    <!-- <p class="review-authorO">Foogle</p> -->
+                    <p class="review-authorP">John</p>
+
+                    <p class="review-pub">Foogle</p>
+                </div>
+
+                <div class="urating">
+                    <!-- rating value -->
+                    <p class="review-rv">4.5</p>
+
+                    <!-- max rate -->
+                    <p class="review-mr">5</p>
+
+                    <!-- authorO is Organisation class - pub class prop not req-->
+                    <!-- authorP is Person class - pub class prop req-->
+                    <!-- <p class="review-authorO">Foogle</p> -->
+                    <p class="review-authorP">John</p>
+
+                    <p class="review-pub">Foogle</p>
+                </div>
+            </section>
+
+            <!-- telephone -->
+            <!-- data-reservation="true" for reservation accepted (Boolean)-->
+            <p class="rlb-1-tel" data-reservation="true">+91-8425937253</p>
+
+            <!-- price range -->
+            <p class="rlb-1-pr">$100 - $500</p>
+
+            <!-- opening hour specification -->
+            <section class="rlb-1-workhrs">
+                <!-- wdr for working day range -->
+                <!-- wdr-HR  capital HR means 24 hour format specification -->
+                <!-- wdr-hr capital hr means 12 hour format specification -->
+                <!-- sepeartor should be - -->
+                <p class="wdr">Sunday - Thursday <span class="HR">(10:00 - 21:00)</span></p>
+                <!-- <p class="wdr">Sunday - Thursday <span class="wdr-hr">(10:00AM - 09:00PM)</span></p> -->
+
+                <!-- wd for single working day-->
+                <!-- wd-HR  capital HR means 24 hour format specification -->
+                <!-- wd-hr capital hr means 12 hour format specification -->
+                <p class="wd">Saturday <span class="HR">(13:00 - 18:00)</span></p>
+                <!-- <p class="wd">Saturday <span class="wd-hr">(01:00PM - 06:00PM)</span></p> -->
+
+                <p class="wd">Friday <span class="hr">(10:00AM - 06:00PM)</span></p>
+
+            </section>
+
+            <!-- menu optional menu url-->
+            <a class="rlb-1-menu" href="https://www.yourbusiness.com/menu">
+                <p>Menu</p>
+            </a>
+
+
+            <!-- aggregate review -->
+            <div>
+                <!-- aggregate rate that got -->
+                <p class="rlb-1-arv">100</p>
+
+                <!-- max possibly rate -->
+                <p class="rlb-1-arl">100</p>
+
+                <!-- total user rate count -->
+                <p class="rlb-1-arc">1000</p>
+            </div>
+
+            <p class="rlb-1-keywords">
+                <span>#Tag1</span>
+                <span>#Tag2</span>
+                <span>#Tag3</span>
+                <span>#Tag4</span>
+            </p>
+<!-- 
+            <p class="rlb-1-availablearea">
+                <span>Nagapattinam</span>
+                <span>Karaikal</span>
+                <span>Thiruvarur</span>
+            </p> -->
+
+            <p class="rlb-1-availablearea">
+                Nagapattinam
+            </p>
+
+        </div>
+    </main>
+</body>
+
+</html>
