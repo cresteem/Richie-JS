@@ -1,4 +1,23 @@
 {
+	"reservedNames": {
+		"article": {
+			"articleType": "articletype",
+			"publishedDate": "pdt",
+			"modifiedDate": "mdt",
+			"thumbnails": "img",
+			"authorNameStartwith": "a",
+			"authorName": "aname",
+			"authorTypeSuffix": {
+				"person": "P",
+				"organisation": "O"
+			},
+			"authorUrl": "aurl",
+			"authorJobTitle": "ajob",
+			"publisherNameStartwith": "p",
+			"publisherName": "pname",
+			"publisherUrl": "purl"
+		}
+	},
 	"aggregatorVariables": {
 		"articleBasename": "rjs-article",
 		"timeFormat": "yyyy-MM-dd hh:mm a",

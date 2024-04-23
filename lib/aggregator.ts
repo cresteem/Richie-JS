@@ -13,7 +13,7 @@ import {
 import { relative, dirname, basename, join, resolve } from "node:path";
 import { cwd } from "node:process";
 
-import { aggregatorVariables } from "../richie.config.json";
+import { aggregatorVariables, reservedNames } from "../richie.config.json";
 const {
 	articleBasename,
 	movieBasename,
@@ -40,8 +40,9 @@ export function article(htmlString: string): articleOptions {
 	const $ = load(htmlString);
 
 	//default is Article
-	const articleType: articleTypeChoices = ($("body").data("articletype") ??
-		"Article") as articleTypeChoices;
+	const articleType: articleTypeChoices = ($("body").data(
+		reservedNames.article.articleType,
+	) ?? "Article") as articleTypeChoices;
 
 	const headline: string = $("title").html() as string;
 
@@ -50,7 +51,9 @@ export function article(htmlString: string): articleOptions {
 	}
 
 	/* published date */
-	const pdt: string = $(`.${articleBasename}-pdt`).html() as string;
+	const pdt: string = $(
+		`.${articleBasename}-${reservedNames.article.publishedDate}`,
+	).html() as string;
 	let publishedDate: string;
 	if (pdt) {
 		publishedDate = parseDateString(pdt);
@@ -59,7 +62,9 @@ export function article(htmlString: string): articleOptions {
 	}
 
 	/* modified date */
-	const mdt: string = $(`.${articleBasename}-mdt`).html() as string;
+	const mdt: string = $(
+		`.${articleBasename}-${reservedNames.article.modifiedDate}`,
+	).html() as string;
 	let modifiedDate: string;
 	if (mdt) {
 		modifiedDate = parseDateString(mdt);
@@ -69,20 +74,24 @@ export function article(htmlString: string): articleOptions {
 
 	/* thumbnail images */
 	const images: string[] = new Array();
-	$(`.${articleBasename}-img`).each((_index, img) => {
-		const imgurl: string = $(img).attr("src") as string;
-		if (imgurl) {
-			images.push(imgurl);
-		} else {
-			throw new Error("Img tag did not have src value");
-		}
-	});
+	$(`.${articleBasename}-${reservedNames.article.thumbnails}`).each(
+		(_index, img) => {
+			const imgurl: string = $(img).attr("src") as string;
+			if (imgurl) {
+				images.push(imgurl);
+			} else {
+				throw new Error("Img tag did not have src value");
+			}
+		},
+	);
 
 	/* author meta extraction */
 	const authorMetaData: Record<string, any> = {};
 
 	/* author meta constant part all start with "a", so */
-	$(`[class^="${articleBasename}-a"]`).each((index, elem) => {
+	$(
+		`[class^="${articleBasename}-${reservedNames.article.authorNameStartwith}"]`,
+	).each((index, elem) => {
 		const className = $(elem).attr("class")?.toLowerCase();
 
 		/* EX: rjs-article-anamep-1 */
@@ -103,19 +112,26 @@ export function article(htmlString: string): articleOptions {
 			authorMetaData[id] = {};
 		}
 
-		const value = type === "aurl" ? $(elem).attr("href") : $(elem).html();
+		const value =
+			type === reservedNames.article.authorUrl ?
+				$(elem).attr("href")
+			:	$(elem).html();
 
-		if (type.startsWith("aname")) {
+		if (type.startsWith(reservedNames.article.authorName)) {
 			authorMetaData[id].name = value;
 
-			if (type.endsWith("p")) {
+			if (
+				type.endsWith(
+					reservedNames.article.authorTypeSuffix.person.toLowerCase(),
+				)
+			) {
 				authorMetaData[id].type = "Person";
 			} else {
 				authorMetaData[id].type = "Organization";
 			}
-		} else if (type.startsWith("aurl")) {
+		} else if (type === reservedNames.article.authorUrl) {
 			authorMetaData[id].url = value;
-		} else if (type.startsWith("ajob")) {
+		} else if (type === reservedNames.article.authorJobTitle) {
 			authorMetaData[id].jobTitle = value;
 		}
 	});
@@ -123,34 +139,36 @@ export function article(htmlString: string): articleOptions {
 	/* publisher meta extraction */
 	const publisherMetaData: Record<string, any> = {};
 
-	const pdtselctor = `[class="${articleBasename}-pdt"]`;
-	$(`[class^="${articleBasename}-p"]:not(${pdtselctor})`).each(
-		(_index, elem) => {
-			const className = $(elem).attr("class")?.toLowerCase();
+	const pdtselctor = `[class="${articleBasename}-${reservedNames.article.publishedDate}"]`;
+	$(
+		`[class^="${articleBasename}-${reservedNames.article.publisherNameStartwith}"]:not(${pdtselctor})`,
+	).each((_index, elem) => {
+		const className = $(elem).attr("class")?.toLowerCase();
 
-			const classNameSplits = className?.split("-") ?? [];
-			if (classNameSplits.length <= 2) {
-				throw new Error(
-					"Error while extracting publisher meta - check class names",
-				);
-			}
+		const classNameSplits = className?.split("-") ?? [];
+		if (classNameSplits.length <= 2) {
+			throw new Error(
+				"Error while extracting publisher meta - check class names",
+			);
+		}
 
-			const [type, id] = classNameSplits.slice(-2) ?? [];
+		const [type, id] = classNameSplits.slice(-2) ?? [];
 
-			//check if id already exist
-			if (!Object.keys(publisherMetaData).includes(id)) {
-				//create object for it
-				publisherMetaData[id] = {};
-			}
-			const value =
-				type === "purl" ? $(elem).attr("href") : $(elem).html();
-			if (type.startsWith("pname")) {
-				publisherMetaData[id].name = value;
-			} else if (type.startsWith("purl")) {
-				publisherMetaData[id].url = value;
-			}
-		},
-	);
+		//check if id already exist
+		if (!Object.keys(publisherMetaData).includes(id)) {
+			//create object for it
+			publisherMetaData[id] = {};
+		}
+		const value =
+			type === reservedNames.article.publisherUrl ?
+				$(elem).attr("href")
+			:	$(elem).html();
+		if (type === reservedNames.article.publisherName) {
+			publisherMetaData[id].name = value;
+		} else if (type === reservedNames.article.publisherUrl) {
+			publisherMetaData[id].url = value;
+		}
+	});
 
 	const result: articleOptions = {
 		headline: headline,
