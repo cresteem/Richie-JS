@@ -1,24 +1,23 @@
 {
-      "aggregator": {
-        "timeFormat": "yyyy-MM-dd hh:mm a",
-        "authorBasename": "rauthor",
-        "pubBasename": "rpub",
-        "movieBasename": "rmovie",
-        "domainAddress": "cresteem.com",
-        "recipeBaseID": "rrecipe",
-        "courseBaseID": "rcourse",
-        "restaurantBaseID": "rrest",
-        "faqBaseID": "rfaq",
-        "siteSearchBoxFieldName": "query_str",
-        "softwareAppBaseID": "rsapp",
-        "videoBaseID": "rvid",
-        "localBusinessBaseID": "rlb",
-        "organisationBaseID": "rorg",
-        "profileBaseID": "rpp",
-        "eventBaseID": "revent",
-        "productBaseID": "rprod",
-        "productPriceValidUntilNext": "30", 
-        "productGroupIDHashLength": "128", 
-        "producrVariableDelimiter": "|"
-      }
+	"aggregatorVariables": {
+		"articleBasename": "rjs-article",
+		"timeFormat": "yyyy-MM-dd hh:mm a",
+		"movieBasename": "rmovie",
+		"domainAddress": "cresteem.com",
+		"recipeBaseID": "rrecipe",
+		"courseBaseID": "rcourse",
+		"restaurantBaseID": "rrest",
+		"faqBaseID": "rfaq",
+		"siteSearchBoxFieldName": "query_str",
+		"softwareAppBaseID": "rsapp",
+		"videoBaseID": "rvid",
+		"localBusinessBaseID": "rlb",
+		"organisationBaseID": "rorg",
+		"profileBaseID": "rpp",
+		"eventBaseID": "revent",
+		"productBaseID": "rprod",
+		"productPriceValidUntilNext": "30",
+		"productGroupIDHashLength": "128",
+		"producrVariableDelimiter": "|"
+	}
 }

@@ -18,12 +18,16 @@
 		"shasum": "not added"
 	},
 	"icon": "not added",
-	"engines": {"node": ">=21.7.3","npm":">=10.50.0"},
+	"engines": {
+		"node": ">=21.7.3",
+		"npm": ">=10.50.0"
+	},
 	"engineStrict": false,
 	"preferGlobal": true,
 	"scripts": {
 		"build": "rimraf dist && npx tsc -b",
-		"watch": "npx tsc --watch"
+		"watch": "npx tsc --watch",
+		"br": "rimraf dist && npx tsc -b && node ./dist/richie.js"
 	},
 	"repository": {
 		"type": "git",
@@ -36,7 +40,10 @@
 	],
 	"author": "@cresteem",
 	"license": "UNLICENCED",
-	"maintainers": ["@cresteem","@iamspdarsan"],
+	"maintainers": [
+		"@cresteem",
+		"@iamspdarsan"
+	],
 	"bugs": {
 		"url": "https://github.com/cresteem/Richie-JS/issues"
 	},
@@ -47,7 +54,9 @@
 		"cheerio": "^1.0.0-rc.12",
 		"country-list": "^2.3.0",
 		"luxon": "^3.4.4",
+		"prettier": "^3.2.5",
 		"puppeteer": "^22.3.0",
+		"rimraf": "^5.0.5",
 		"typescript": "^5.4.5"
 	},
 	"devDependencies": {
