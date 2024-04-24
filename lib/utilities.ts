@@ -227,7 +227,7 @@ export function combineAggregateRatings(
 	// Return combined aggregate rating
 	return {
 		ratingValue: combinedRatingValue,
-		possibleMaxRate: aggregateRatings[0].possibleMaxRate,
+		maxRateRange: aggregateRatings[0].maxRateRange,
 		numberOfRatings: totalReviewCount,
 	};
 }

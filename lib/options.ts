@@ -46,9 +46,9 @@ type CountryCode2D =
 
 /* article option */
 export type articleTypeChoices = "Article" | "NewsArticle" | "BlogPosting";
-
+export type authorTypeChoices = "Person" | "Organization";
 interface authorMeta {
-	type: "Person" | "Organization";
+	type: authorTypeChoices;
 	name: string; //name of author or organisation
 	url?: string; // website / socialmedia link of author"
 	jobTitle?: string; //"Software Engineer"
@@ -82,12 +82,14 @@ export interface breadCrumbListOptions {
 }
 /* breadcrumbList option */
 
+//movie things beginning
+
 /* reviewOptions */
-interface reviewOptions {
-	authorName: string;
+export interface reviewOptions {
+	raterName: string;
+	raterType: authorTypeChoices;
 	ratingValue: number;
-	possibleMaxRate: number;
-	authorIsOrg: boolean;
+	maxRateRange: number;
 	publisherName?: string;
 }
 /* reviewOptions ended*/
@@ -95,7 +97,7 @@ interface reviewOptions {
 /* aggregateRatingOptions */
 export interface aggregateRatingOptions {
 	ratingValue: number;
-	possibleMaxRate: number;
+	maxRateRange: number;
 	numberOfRatings: number;
 }
 /* aggregateRatingOptions ended*/
@@ -104,10 +106,10 @@ export interface aggregateRatingOptions {
 export interface movieOptions {
 	name: string;
 	url: string;
-	image: string | string[];
+	images: string[];
 	dateCreated: string;
-	director: string;
-	review: reviewOptions | reviewOptions[];
+	director: string[]; //number of directors possible
+	review: reviewOptions[];
 	aggregateRating: aggregateRatingOptions;
 }
 /* movieOptions ended*/

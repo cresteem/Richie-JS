@@ -1,10 +1,14 @@
 import { readFileSync, existsSync, writeFileSync } from "node:fs";
 import { load } from "cheerio";
 import {
+	aggregateRatingOptions,
 	articleOptions,
 	articleTypeChoices,
+	authorTypeChoices,
 	breadCrumbListOptions,
 	breadCrumbMeta,
+	movieOptions,
+	reviewOptions,
 } from "./options";
 
 import {
@@ -263,4 +267,186 @@ export function breadCrumb(htmlPath: string): breadCrumbListOptions {
 	}
 
 	return { breadCrumbMetas: breadCrumbMetaList.reverse() };
+}
+
+export function movie(
+	htmlString: string,
+	htmlPath: string,
+): movieOptions[] {
+	const $ = load(htmlString);
+
+	const movieMetas: Record<string, movieOptions> = {};
+
+	$(`[class^="${movieBasename}-"]`).each((_index, elem) => {
+		/* make class name as case insensitive */
+		const className: string = $(elem)
+			.attr("class")
+			?.toLowerCase() as string;
+
+		const classNameSplits: string[] = className.split("-");
+
+		/* class must have id-type along with moviebase so 3 or more is expected */
+		if (classNameSplits.length < 3) {
+			throw new Error(
+				`Error in ${className} : class name must be like [${movieBasename}-id-type]`,
+			);
+		}
+
+		const [id, type] = classNameSplits.slice(-2);
+
+		//one time intiation block for each id
+		if (!Object.keys(movieMetas).includes(id)) {
+			//create object for it
+			movieMetas[id] = {} as movieOptions;
+
+			//adding url deeplink
+			movieMetas[id].url = new URL(
+				relative(cwd(), htmlPath).replace(".html", "") +
+					`#${movieBasename}-${id}`,
+				httpsDomainBase,
+			).href;
+
+			movieMetas[id].aggregateRating = {} as aggregateRatingOptions;
+			movieMetas[id].images = [] as string[];
+			movieMetas[id].director = [] as string[];
+		}
+
+		if (type === reservedNames.movie.name) {
+			/* movie name */
+			movieMetas[id].name = $(elem).html() as string;
+		} else if (type === reservedNames.movie.thumbnails) {
+			/* images */
+			const imgUrl: string = $(elem).attr("src") as string;
+
+			if (!imgUrl) {
+				throw new Error("Image tag has no src value");
+			}
+
+			movieMetas[id].images.push(imgUrl);
+		} else if (type === reservedNames.movie.dateCreated) {
+			/* date created */
+			movieMetas[id].dateCreated = $(elem).html() as string;
+		} else if (type === reservedNames.movie.director) {
+			/* director */
+			movieMetas[id].director.push($(elem).html() as string);
+		} else if (type === reservedNames.reviews.parentWrapper) {
+			/* extracting reviews */
+			movieMetas[id].review = [] as reviewOptions[];
+			/* extract and group childwrppers alone and 
+			iterate over all / child warpper */
+			$(elem)
+				.find(`.${reservedNames.reviews.childWrapper}`)
+				.each((_index, childWrapper) => {
+					/* query on childwrapper to extract meta*/
+					try {
+						let raterName: string = $(childWrapper)
+							.find(
+								`.${reservedNames.reviews.raterName}${reservedNames.reviews.authorTypeSuffix.person}`,
+							)
+							.html() as string;
+						let raterType: authorTypeChoices;
+
+						if (!raterName) {
+							raterName = $(childWrapper)
+								.find(
+									`.${reservedNames.reviews.raterName}${reservedNames.reviews.authorTypeSuffix.organisation}`,
+								)
+								.html() as string;
+							raterType = "Organization";
+						} else {
+							raterType = "Person";
+						}
+
+						const ratedValue: number = parseFloat(
+							$(childWrapper)
+								.find(`.${reservedNames.reviews.ratedValue}`)
+								.html() as string,
+						);
+
+						const maxRateRange: number = parseFloat(
+							$(childWrapper)
+								.find(`.${reservedNames.reviews.maxRateRange}`)
+								.html() as string,
+						);
+
+						const pubName: string = $(childWrapper)
+							.find(`.${reservedNames.reviews.reviewPublishedOn}`)
+							.html() as string;
+
+						/* if anything null throw error */
+						if (
+							!raterName ||
+							!raterType ||
+							!ratedValue ||
+							!maxRateRange ||
+							!pubName
+						) {
+							const trace = `RateName: ${!!raterName},\n
+							RateType: ${!!raterType},\n 
+							RateValue: ${!!ratedValue},\n 
+							MaxRateRange: ${!!maxRateRange},\n 
+							Publisher: ${!!pubName}\n`;
+
+							throw new Error(
+								trace + "Something is missed in reviews child wrapper",
+							);
+						}
+
+						//push to reviews
+						movieMetas[id].review.push({
+							raterName: raterName,
+							raterType: raterType,
+							ratingValue: ratedValue,
+							maxRateRange: maxRateRange,
+							publisherName: pubName,
+						});
+					} catch (err) {
+						console.log(err);
+						process.exit();
+					}
+				});
+		} else if (type === reservedNames.aggregateRating.wrapper) {
+			/* query on wrapper to extract */
+			try {
+				movieMetas[id].aggregateRating.ratingValue = parseFloat(
+					$(elem)
+						.find(
+							`.${reservedNames.aggregateRating.aggregatedRatingValue}`,
+						)
+						.html() as string,
+				);
+
+				movieMetas[id].aggregateRating.maxRateRange = parseFloat(
+					$(elem)
+						.find(`.${reservedNames.aggregateRating.maxRangeOfRating}`)
+						.html() as string,
+				);
+
+				movieMetas[id].aggregateRating.numberOfRatings = parseInt(
+					$(elem)
+						.find(`.${reservedNames.aggregateRating.numberOfRatings}`)
+						.html() as string,
+				);
+
+				if (
+					!movieMetas[id].aggregateRating.ratingValue ||
+					!movieMetas[id].aggregateRating.maxRateRange ||
+					!movieMetas[id].aggregateRating.numberOfRatings
+				) {
+					const trace = `RateValue: ${!!movieMetas[id].aggregateRating.ratingValue},\n 
+						MaxRateRange: ${!!movieMetas[id].aggregateRating.maxRateRange},\n
+						RatingsCounts: ${!!movieMetas[id].aggregateRating.numberOfRatings}`;
+
+					throw new Error(
+						trace + "\nSomething is missing to generate aggregate rating",
+					);
+				}
+			} catch (err) {
+				console.log(err);
+				process.exit();
+			}
+		}
+	});
+
+	return Object.values(movieMetas);
 }

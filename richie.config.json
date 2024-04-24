@@ -16,12 +16,36 @@
 			"publisherNameStartwith": "p",
 			"publisherName": "pname",
 			"publisherUrl": "purl"
+		},
+		"movie": {
+			"name": "name",
+			"thumbnails": "img",
+			"dateCreated": "unveilon",
+			"director": "dir"
+		},
+		"aggregateRating": {
+			"wrapper": "aggrate",
+			"aggregatedRatingValue": "arv",
+			"maxRangeOfRating": "mr",
+			"numberOfRatings": "rc"
+		},
+		"reviews": {
+			"parentWrapper": "reviews",
+			"childWrapper": "urate",
+			"raterName": "rater",
+			"ratedValue": "rv",
+			"maxRateRange": "mr",
+			"reviewPublishedOn": "rpOn",
+			"authorTypeSuffix": {
+				"person": "P",
+				"organisation": "O"
+			}
 		}
 	},
 	"aggregatorVariables": {
 		"articleBasename": "rjs-article",
 		"timeFormat": "yyyy-MM-dd hh:mm a",
-		"movieBasename": "rmovie",
+		"movieBasename": "rjs-movie",
 		"domainAddress": "cresteem.com",
 		"recipeBaseID": "rrecipe",
 		"courseBaseID": "rcourse",

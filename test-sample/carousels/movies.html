@@ -1,71 +1,133 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Movies</title>
-  </head>
-  <body>
-    <div id="rmovie-1">
-      <p class="rmovie-1-name">Dawn of Justice</p>
-      <img
-        class="rmovie-1-img"
-        src="https://miro.medium.com/v2/resize:fit:7680/1*IC3vGBv9v2l4Pll4v3CNSw.jpeg"
-        alt=""
-      />
-      <p class="rmovie-1-dc">2016-02-05</p>
-      <p class="rmovie-1-dir">Zack Synder</p>
-      <div class="aggrate-info">
-        <!-- aggregate rate that got -->
-        <p class="rmovie-1-arv">100</p>
 
-        <!-- max possibly rate -->
-        <p class="rmovie-1-arl">100</p>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Movies</title>
+</head>
 
-        <p class="rmovie-1-arc">1000</p>
-        <div class="userreviews">
-          <div class="rmovie-1-urate">
-            <p class="rname">Darsan</p>
-            <p class="br">100</p>
-            <p class="rt">98</p>
-            <p class="rpname">IMDB</p>
-          </div>
+<body>
+	<!-- id is mandatory for anchor link -->
+	<!-- movieBasename-id -->
+	<div id="rjs-movie-1">
 
-          <div class="rmovie-1-urate">
-            <p class="rname">Priya</p>
-            <p class="br">100</p>
-            <p class="rt">98</p>
-            <p class="rpname">IMDB</p>
-          </div>
-        </div>
-      </div>
-    </div>
+		<!-- name of the movie -->
+		<p class="rjs-movie-1-name">Dawn of Justice</p>
 
-    <div id="rmovie-2">
-      <p class="rmovie-2-name">The Dark Knight Rises</p>
-      <img
-        class="rmovie-2-img"
-        src="https://variety.com/wp-content/uploads/2013/07/dark_knight_rises.jpg"
-        alt=""
-      />
-      <p class="rmovie-2-dc">2010-11-03</p>
-      <p class="rmovie-2-dir">C.Nolan</p>
-      <div class="aggrate-info">
-        <!-- aggregate rate that got -->
-        <p class="rmovie-2-arv">98</p>
+		<!--images -->
+		<img class="rjs-movie-1-img" src="https://i.imgur.com/GdoMshp.jpeg" alt="" />
+		<img class="rjs-movie-1-img" src="https://i.imgur.com/yXDOO5w.png" alt="" />
 
-        <!-- max possibly rate -->
-        <p class="rmovie-2-arl">100</p>
+		<!-- date released YYYY-MM-DD -->
+		<p class="rjs-movie-1-unveilOn">2016-02-05</p>
 
-        <p class="rmovie-2-arc">1000</p>
-      </div>
+		<!-- directors -->
+		<p class="rjs-movie-1-dir">Zack Synder</p>
+		<p class="rjs-movie-1-dir">Example-2</p>
 
-      <div class="rmovie-2-urate">
-        <p class="rname">Dean</p>
-        <p class="br">100</p>
-        <p class="rt">90</p>
-        <p class="rpname">Rotten Tomato</p>
-      </div>
-    </div>
-  </body>
+
+		<!-- aggregate review -->
+		<div class="rjs-movie-1-aggrate">
+			<!-- aggregated rate value-->
+			<p class="arv">100</p>
+
+			<!-- max range of rating -->
+			<p class="mr">100</p>
+
+			<!-- number of user ratings  -->
+			<p class="rc">1000</p>
+		</div>
+
+		<!-- user reviews -->
+		<div class="rjs-movie-1-reviews">
+
+			<!-- user rate instance -->
+			<div class="urate">
+
+				<p class="raterP">Darsan</p><!-- rater name|  P(person) and O(organisation) - suffix is reserved-->
+
+				<p class="mr">100</p><!-- max rate range in system -->
+
+				<p class="rv">98</p><!-- ratedValue -->
+
+				<p class="rpOn">IMDB</p><!-- rating published on -->
+			</div>
+
+			<div class="urate">
+
+				<p class="raterO">Dean Media</p><!-- rater name|  P(person) and O(organisation) - suffix is reserved-->
+
+				<p class="mr">5</p><!-- max rate range in system -->
+
+				<p class="rv">4.5</p><!-- ratedValue -->
+
+				<p class="rpOn">RottenTomato</p><!-- rating published on -->
+			</div>
+
+		</div><!-- user reviews ended -->
+
+	</div><!-- movie 1 ended -->
+
+	<!-- id is mandatory for anchor link -->
+	<div id="rjs-movie-2">
+
+		<!-- name of the movie -->
+		<p class="rjs-movie-2-name">Justice League</p>
+
+		<!--images -->
+		<img class="rjs-movie-2-img" src="https://i.imgur.com/FReAq9b.jpeg" alt="" />
+		<img class="rjs-movie-2-img" src="https://i.imgur.com/tdl6BTi.jpeg" alt="" />
+
+		<!-- date released -->
+		<p class="rjs-movie-2-unveilOn">2017-04-10</p>
+
+		<!-- directors -->
+		<p class="rjs-movie-2-dir">Zack Synder</p>
+		<p class="rjs-movie-2-dir">Joss Whedon</p>
+
+
+		<!-- aggregate review -->
+		<div class="rjs-movie-2-aggrate">
+			<!-- aggregated rate value-->
+			<p class="arv">95</p>
+
+			<!-- max range of rating -->
+			<p class="mr">100</p>
+
+			<!-- number of user ratings  -->
+			<p class="rc">800</p>
+		</div>
+
+		<!-- user reviews -->
+		<div class="rjs-movie-2-reviews">
+
+			<!-- user rate instance -->
+			<div class="urate">
+
+				<p class="raterP">Darsan</p><!-- rater name|  P(person) and O(organisation) - suffix is reserved-->
+
+				<p class="mr">100</p><!-- max rate range in system -->
+
+				<p class="rv">90</p><!-- ratedValue -->
+
+				<p class="rpOn">IMDB</p><!-- rating published on -->
+			</div>
+
+			<div class="urate">
+
+				<p class="raterO">Dean Media</p><!-- rater name|  P(person) and O(organisation) - suffix is reserved-->
+
+				<p class="mr">5</p><!-- max rate range in system -->
+
+				<p class="rv">3.5</p><!-- ratedValue -->
+
+				<p class="rpOn">Rotten Tomato</p><!-- rating published on -->
+			</div>
+
+		</div><!-- user reviews ended -->
+
+	</div><!-- movie 2 ended -->
+</body>
+
 </html>
