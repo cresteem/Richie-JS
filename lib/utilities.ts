@@ -7,11 +7,14 @@ import { aggregatorVariables } from "../richie.config.json";
 import {
 	GeoOptions,
 	aggregateRatingOptions,
+	breadCrumbMeta,
 	videoObjectOptions,
 } from "./options";
 
 import { format } from "@prettier/sync";
 import { writeFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
+import { dirname } from "node:path";
 
 const { domainAddress, productGroupIDHashLength, timeFormat } =
 	aggregatorVariables;
@@ -265,4 +268,32 @@ export function writeOutput(
 				);
 			});
 	});
+}
+
+export function generateMeta(
+	currentUrl: string,
+	realLevel: number,
+	preserveBasename: boolean,
+): breadCrumbMeta {
+	const htmlString = readFileSync(currentUrl, {
+		encoding: "utf8",
+	});
+
+	const listItem: breadCrumbMeta = {} as breadCrumbMeta;
+
+	//name is title of page
+	listItem.name = load(htmlString)("title").html() as string;
+
+	//item is url of page
+	listItem.item = new URL(
+		preserveBasename ?
+			currentUrl.replace("html", "")
+		:	dirname(currentUrl),
+		httpsDomainBase,
+	).href;
+
+	//hierarchical position of page
+	listItem.position = realLevel;
+
+	return listItem;
 }

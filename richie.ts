@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join, basename } from "node:path";
 
 import * as aggregator from "./lib/aggregator";
-import { serializeArticle } from "./lib/serializer";
+import { serializeArticle, serializeBreadCrumb } from "./lib/serializer";
 
 import { createJsonLD, writeOutput } from "./lib/utilities";
 
@@ -25,8 +25,28 @@ export function makeArticle(
 	});
 }
 
+export function makeBreadcrumb(
+	htmlPath: string,
+	source: string,
+	destinationFile: string,
+): Promise<void> {
+	const aggregatedData = aggregator.breadCrumb(htmlPath);
+	const serializedData = serializeBreadCrumb(aggregatedData);
+	const richResultSnippet = createJsonLD(serializedData);
+
+	return new Promise((resolve, reject) => {
+		writeOutput(source, destinationFile, richResultSnippet)
+			.then(() => {
+				resolve();
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+}
+
 async function richie(): Promise<void> {
-	const filepath = "test-sample/article.html";
+	const filepath = "test-sample/breadcrumb/sub-breadcrumb/notindex.html";
 	const destinationFile = join(
 		process.cwd(),
 		"outputs",
@@ -36,7 +56,7 @@ async function richie(): Promise<void> {
 	const source = await readFile(filepath, { encoding: "utf8" });
 
 	return new Promise((resolve, reject) => {
-		makeArticle(source, destinationFile)
+		makeBreadcrumb(filepath, source, destinationFile)
 			.then(() => {
 				resolve();
 			})

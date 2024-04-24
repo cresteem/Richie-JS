@@ -1,6 +1,11 @@
 import { readFileSync, existsSync, writeFileSync } from "node:fs";
 import { load } from "cheerio";
-import { articleOptions, articleTypeChoices } from "./options";
+import {
+	articleOptions,
+	articleTypeChoices,
+	breadCrumbListOptions,
+	breadCrumbMeta,
+} from "./options";
 
 import {
 	parseDateString,
@@ -8,6 +13,7 @@ import {
 	getGeoCode,
 	extractTime,
 	httpsDomainBase,
+	generateMeta,
 } from "./utilities";
 
 import { relative, dirname, basename, join, resolve } from "node:path";
@@ -180,4 +186,81 @@ export function article(htmlString: string): articleOptions {
 		images: images,
 	};
 	return result;
+}
+
+export function breadCrumb(htmlPath: string): breadCrumbListOptions {
+	/* result holder */
+	let breadCrumbMetaList: breadCrumbMeta[] = new Array();
+
+	/* extract relative path from root of document */
+	const relativePath: string = relative(cwd(), htmlPath);
+
+	/* path branches in chronological order */
+	const pathTree: string[] = relativePath.split("\\");
+
+	/* check if input htmlpath is index.html */
+	const sourceIsIndex: boolean = basename(htmlPath) === "index.html";
+
+	/* number of choronological branch/dir level */
+	/* only dir counts - omit index.html */
+	const levelCounts: number =
+		sourceIsIndex ? pathTree.length - 1 : pathTree.length;
+
+	/* In first iteration no need to check file existance */
+	let firstIteration: boolean = true;
+
+	let realLevel: number = levelCounts; //to track real chronological level according to web protocol
+
+	for (let i: number = 0; i < levelCounts; i++) {
+		/* assume in first iteration file
+		always exist so skip existance check */
+		if (firstIteration) {
+			let itemUrl: string = pathTree.join("\\");
+
+			const preserveBasename: boolean = sourceIsIndex ? false : true;
+
+			const listItem: breadCrumbMeta = generateMeta(
+				itemUrl,
+				realLevel,
+				preserveBasename,
+			);
+
+			breadCrumbMetaList.push(listItem);
+
+			pathTree.pop(); //pop one level as it is completed
+
+			/* if source is index pop two times otherwise pop one time*/
+			//EX: L1/L2/L3/index.html => L1/L2
+			if (sourceIsIndex) pathTree.pop();
+
+			//switching flag for next iterations
+			firstIteration = false;
+		} else {
+			//check if index html is available for each levels
+			// L1/L2 => L1/L2/index.html
+			const requiredFile: string = pathTree.join("\\") + "\\index.html";
+
+			if (existsSync(requiredFile)) {
+				const listItem: breadCrumbMeta = generateMeta(
+					requiredFile,
+					realLevel,
+					false,
+				);
+
+				breadCrumbMetaList.push(listItem);
+			} else {
+				/* there is no required file so that is assumed as skipped branch 
+				as ripple effect change position of previous indices by subtract 1 */
+				breadCrumbMetaList = breadCrumbMetaList.map((meta) => {
+					meta.position = meta.position - 1;
+					return meta;
+				});
+			}
+			pathTree.pop(); //pop one
+		}
+
+		realLevel -= 1;
+	}
+
+	return { breadCrumbMetas: breadCrumbMetaList.reverse() };
 }

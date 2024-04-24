@@ -71,7 +71,7 @@ export interface articleOptions {
 /* article option ended */
 
 /* breadcrumbList option */
-interface breadCrumbMeta {
+export interface breadCrumbMeta {
 	name: string; //"title of page",
 	item: string; //"url of page"
 	position: number;
