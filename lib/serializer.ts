@@ -114,7 +114,7 @@ function videoObjectSerializer(
 				videoObject.interactionStatistic.interactionCount,
 		},
 		expires: videoObject.expires,
-		hasPart: [] as ClipOffset[],
+		hasPart: [""],
 	};
 
 	//haspart
@@ -129,6 +129,8 @@ function videoObjectSerializer(
 			};
 			serializedVideoObject.hasPart.push(partItem);
 		}
+	} else {
+		delete serializedVideoObject.hasPart;
 	}
 
 	return serializedVideoObject;
@@ -139,6 +141,7 @@ function nutritionalInfoSerializer(nutritionalInfo: NutritionInfoOptions) {
 		"@type": "NutritionInformation",
 		calories: nutritionalInfo.calories,
 	};
+	return serializedNutritionalInfo;
 }
 
 export function serializeArticle(
