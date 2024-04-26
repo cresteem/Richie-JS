@@ -114,6 +114,7 @@ export interface movieOptions {
 }
 /* movieOptions ended*/
 
+//recipe things beginning
 /* InteractionCounterOptions */
 type interactionType =
 	| "WatchAction"
@@ -130,7 +131,7 @@ interface InteractionCounterOptions {
 /* InteractionCounterOptions ended*/
 
 /* ClipOffset */
-interface ClipOffset {
+export interface ClipOffset {
 	name: string;
 	startOffset: number;
 	endOffset: number;
@@ -142,7 +143,7 @@ interface ClipOffset {
 export interface videoObjectOptions {
 	videoTitle: string;
 	description: string;
-	thumbnailUrls: string | string[];
+	thumbnailUrl: string;
 	contentUrl: string;
 	embedUrl: string;
 	uploadDate: string;
@@ -154,7 +155,7 @@ export interface videoObjectOptions {
 /* videoObjectOptions ended*/
 
 /* HowToStep */
-interface HowToStep {
+export interface HowToStep {
 	shortStep: string;
 	longStep: string;
 	url: string;
@@ -162,14 +163,8 @@ interface HowToStep {
 }
 /* HowToStep ended */
 
-/* completeInstructionsOptions */
-interface completeInstructionsOptions {
-	steps: HowToStep[];
-}
-/*completeInstructionsOptions  ended*/
-
 /* NutritionInfoOptions */
-interface NutritionInfoOptions {
+export interface NutritionInfoOptions {
 	calories: string;
 }
 /* NutritionInfoOptions ended*/
@@ -191,7 +186,7 @@ export interface RecipeOptions {
 	recipeCuisine: string;
 	nutrition: NutritionInfoOptions;
 	recipeIngredients: string[];
-	instruction: completeInstructionsOptions;
+	instruction: HowToStep[];
 	aggregateRating: aggregateRatingOptions;
 	videoObject: videoObjectOptions;
 }

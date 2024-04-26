@@ -7,6 +7,8 @@ import {
 	serializeBreadCrumb,
 	serializeMovie,
 	serializeMovieCarousel,
+	serializeRecipe,
+	serializeRecipeCarousel,
 } from "./lib/serializer";
 
 import { createJsonLD, writeOutput } from "./lib/utilities";
@@ -90,8 +92,48 @@ export function makeMovieCarousel(
 	});
 }
 
+export async function makeRecipe(
+	htmlPath: string,
+	source: string,
+	destinationFile: string,
+): Promise<void> {
+	const aggregatedData = await aggregator.recipe(source, htmlPath);
+	const serializedData = serializeRecipe(aggregatedData);
+	const richResultSnippet = createJsonLD(serializedData);
+
+	return new Promise((resolve, reject) => {
+		writeOutput(source, destinationFile, richResultSnippet)
+			.then(() => {
+				resolve();
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+}
+
+export async function makeRecipeCarousel(
+	htmlPath: string,
+	source: string,
+	destinationFile: string,
+): Promise<void> {
+	const aggregatedData = await aggregator.recipe(source, htmlPath);
+	const serializedData = serializeRecipeCarousel(aggregatedData);
+	const richResultSnippet = createJsonLD(serializedData);
+
+	return new Promise((resolve, reject) => {
+		writeOutput(source, destinationFile, richResultSnippet)
+			.then(() => {
+				resolve();
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+}
+
 async function richie(): Promise<void> {
-	const filepath = "test-sample/carousels/movies.html";
+	const filepath = "test-sample/carousels/recipies.html";
 	const destinationFile = join(
 		process.cwd(),
 		"outputs",
@@ -101,7 +143,7 @@ async function richie(): Promise<void> {
 	const source = await readFile(filepath, { encoding: "utf8" });
 
 	return new Promise((resolve, reject) => {
-		makeMovieCarousel(filepath, source, destinationFile)
+		makeRecipe(filepath, source, destinationFile)
 			.then(() => {
 				resolve();
 			})

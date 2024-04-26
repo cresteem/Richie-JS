@@ -1,6 +1,9 @@
 import { readFileSync, existsSync, writeFileSync } from "node:fs";
 import { load } from "cheerio";
 import {
+	HowToStep,
+	NutritionInfoOptions,
+	RecipeOptions,
 	aggregateRatingOptions,
 	articleOptions,
 	articleTypeChoices,
@@ -18,6 +21,8 @@ import {
 	extractTime,
 	httpsDomainBase,
 	generateMeta,
+	durationInISO,
+	recipeTotaltime,
 } from "./utilities";
 
 import { relative, dirname, basename, join, resolve } from "node:path";
@@ -25,8 +30,8 @@ import { cwd } from "node:process";
 
 import { aggregatorVariables, reservedNames } from "../richie.config.json";
 const {
-	articleBasename,
-	movieBasename,
+	articleBaseID,
+	movieBaseID,
 	recipeBaseID,
 	courseBaseID,
 	restaurantBaseID,
@@ -40,6 +45,7 @@ const {
 	productBaseID,
 	productPriceValidUntilNext,
 	producrVariableDelimiter,
+	domainAddress,
 } = aggregatorVariables;
 
 import { getCode } from "country-list";
@@ -62,7 +68,7 @@ export function article(htmlString: string): articleOptions {
 
 	/* published date */
 	const pdt: string = $(
-		`.${articleBasename}-${reservedNames.article.publishedDate}`,
+		`.${articleBaseID}-${reservedNames.article.publishedDate}`,
 	).html() as string;
 	let publishedDate: string;
 	if (pdt) {
@@ -73,7 +79,7 @@ export function article(htmlString: string): articleOptions {
 
 	/* modified date */
 	const mdt: string = $(
-		`.${articleBasename}-${reservedNames.article.modifiedDate}`,
+		`.${articleBaseID}-${reservedNames.article.modifiedDate}`,
 	).html() as string;
 	let modifiedDate: string;
 	if (mdt) {
@@ -84,7 +90,7 @@ export function article(htmlString: string): articleOptions {
 
 	/* thumbnail images */
 	const images: string[] = new Array();
-	$(`.${articleBasename}-${reservedNames.article.thumbnails}`).each(
+	$(`.${articleBaseID}-${reservedNames.article.thumbnails}`).each(
 		(_index, img) => {
 			const imgurl: string = $(img).attr("src") as string;
 			if (imgurl) {
@@ -100,7 +106,7 @@ export function article(htmlString: string): articleOptions {
 
 	/* author meta constant part all start with "a", so */
 	$(
-		`[class^="${articleBasename}-${reservedNames.article.authorNameStartwith}"]`,
+		`[class^="${articleBaseID}-${reservedNames.article.authorNameStartwith}"]`,
 	).each((index, elem) => {
 		const className = $(elem).attr("class")?.toLowerCase();
 
@@ -149,9 +155,9 @@ export function article(htmlString: string): articleOptions {
 	/* publisher meta extraction */
 	const publisherMetaData: Record<string, any> = {};
 
-	const pdtselctor = `[class="${articleBasename}-${reservedNames.article.publishedDate}"]`;
+	const pdtselctor = `[class="${articleBaseID}-${reservedNames.article.publishedDate}"]`;
 	$(
-		`[class^="${articleBasename}-${reservedNames.article.publisherNameStartwith}"]:not(${pdtselctor})`,
+		`[class^="${articleBaseID}-${reservedNames.article.publisherNameStartwith}"]:not(${pdtselctor})`,
 	).each((_index, elem) => {
 		const className = $(elem).attr("class")?.toLowerCase();
 
@@ -277,7 +283,7 @@ export function movie(
 
 	const movieMetas: Record<string, movieOptions> = {};
 
-	$(`[class^="${movieBasename}-"]`).each((_index, elem) => {
+	$(`[class^="${movieBaseID}-"]`).each((_index, elem) => {
 		/* make class name as case insensitive */
 		const className: string = $(elem)
 			.attr("class")
@@ -288,7 +294,7 @@ export function movie(
 		/* class must have id-type along with moviebase so 3 or more is expected */
 		if (classNameSplits.length < 3) {
 			throw new Error(
-				`Error in ${className} : class name must be like [${movieBasename}-id-type]`,
+				`Error in ${className} : class name must be like [${movieBaseID}-id-type]`,
 			);
 		}
 
@@ -302,7 +308,7 @@ export function movie(
 			//adding url deeplink
 			movieMetas[id].url = new URL(
 				relative(cwd(), htmlPath).replace(".html", "") +
-					`#${movieBasename}-${id}`,
+					`#${movieBaseID}-${id}`,
 				httpsDomainBase,
 			).href;
 
@@ -449,4 +455,223 @@ export function movie(
 	});
 
 	return Object.values(movieMetas);
+}
+
+export async function recipe(
+	htmlString: string,
+	htmlPath: string,
+): Promise<RecipeOptions[]> {
+	const $ = load(htmlString);
+
+	const recipeMetas: Record<string, RecipeOptions> = {};
+
+	const videoMetaPromises: Promise<void>[] = new Array();
+
+	$(`[class^="${recipeBaseID}-"]`).each((_index, elem) => {
+		/* make class name as case insensitive */
+		const className: string = $(elem)
+			.attr("class")
+			?.toLowerCase() as string;
+
+		const classNameSplits: string[] = className.split("-");
+
+		/* class must have id-type along with moviebase so 3 or more is expected */
+		if (classNameSplits.length < 3) {
+			throw new Error(
+				`Error in ${className} : class name must be like [${recipeBaseID}-id-type]`,
+			);
+		}
+
+		const [id, type] = classNameSplits.slice(-2);
+
+		//one time initialization
+		if (!Object.keys(recipeMetas).includes(id)) {
+			//create object for it
+			recipeMetas[id] = {} as RecipeOptions;
+
+			//deeplink to course
+			const url = new URL(
+				`${relative(cwd(), htmlPath).replace(
+					".html",
+					"",
+				)}#${recipeBaseID}-${id}`,
+				httpsDomainBase,
+			).href;
+
+			recipeMetas[id].url = url;
+			recipeMetas[id].imageUrls = [];
+			recipeMetas[id].recipeIngredients = [];
+			recipeMetas[id].instruction = [] as HowToStep[];
+			recipeMetas[id].nutrition = {} as NutritionInfoOptions;
+		}
+
+		if (type === reservedNames.recipe.name) {
+			recipeMetas[id].nameOfRecipe = $(elem).html() as string;
+		} else if (type === reservedNames.recipe.thumbnails) {
+			const imgurl: string = $(elem).attr("src") as string;
+
+			if (!imgurl) {
+				throw new Error("No src in img tag");
+			}
+
+			recipeMetas[id].imageUrls.push(imgurl);
+		} else if (type === reservedNames.recipe.authorName) {
+			recipeMetas[id].author = $(elem).html() as string;
+		} else if (type === reservedNames.recipe.publishedDate) {
+			recipeMetas[id].datePublished = $(elem).html() as string;
+		} else if (type === reservedNames.recipe.description) {
+			let description = $(elem).html() as string;
+
+			/* replace \n with space */
+			description = description?.replace(/\n/g, " ");
+			/* remove \t */
+			description = description?.replace(/\t/g, "");
+
+			recipeMetas[id].description = description.trim();
+		}
+		//preparation time
+		else if (Object.values(reservedNames.recipe.preptime).includes(type)) {
+			const rawRime: string = $(elem).html() as string;
+
+			recipeMetas[id].prepTime = durationInISO(
+				rawRime,
+				type,
+				reservedNames.recipe.preptime,
+			);
+		} //cooking time
+		else if (Object.values(reservedNames.recipe.cooktime).includes(type)) {
+			const rawRime: string = $(elem).html() as string;
+
+			recipeMetas[id].cookTime = durationInISO(
+				rawRime,
+				type,
+				reservedNames.recipe.cooktime,
+			);
+		}
+		//recipeYeild
+		else if (type === reservedNames.recipe.serveCount) {
+			recipeMetas[id].recipeYeild = parseInt($(elem).html() as string);
+		}
+		//recipeCategory
+		else if (type === reservedNames.recipe.recipeCategory) {
+			recipeMetas[id].recipeCategory = $(elem).html() as string;
+		}
+		//cuisine
+		else if (type === reservedNames.recipe.recipeCuisine) {
+			recipeMetas[id].recipeCuisine = $(elem).html() as string;
+		}
+		//nutritions
+		else if (type === reservedNames.recipe.nutritionInformations.wrapper) {
+			let calories: string = $(elem)
+				.find(`.${reservedNames.recipe.nutritionInformations.calories}`)
+				.html() as string;
+
+			/* preserve only digits */
+			calories = calories.replace(/\D/g, "");
+
+			recipeMetas[id].nutrition.calories = `${calories} calories`;
+		}
+		//recipe ingredients
+		else if (type === reservedNames.recipe.ingredients) {
+			$(elem)
+				.children("li")
+				.each((_index, ingredientElem) => {
+					recipeMetas[id].recipeIngredients.push(
+						$(ingredientElem).html()?.trim() as string,
+					);
+				});
+		}
+		//recipe Instructions
+		else if (type === reservedNames.recipe.instructions.wrapper) {
+			const steps = $(elem).find(
+				`.${reservedNames.recipe.instructions.childwrapper}`,
+			);
+
+			steps.each((_index, stepElem) => {
+				const stepID: string = $(stepElem).attr("id") as string;
+
+				if (!stepID) {
+					throw new Error("Each step wrapper should have id");
+				}
+
+				const shortStep: string = $(stepElem)
+					.find(`.${reservedNames.recipe.instructions.shortInstruction}`)
+					.html() as string;
+
+				const longStep: string = $(stepElem)
+					.find(`.${reservedNames.recipe.instructions.longInstruction}`)
+					.html() as string;
+
+				const imageUrl: string = $(stepElem)
+					.find(`.${reservedNames.recipe.instructions.image}`)
+					.attr("src") as string;
+
+				const url = new URL(
+					`${relative(cwd(), htmlPath).replace(".html", "")}#${stepID}`,
+					httpsDomainBase,
+				).href;
+
+				recipeMetas[id].instruction.push({
+					shortStep: shortStep,
+					longStep: longStep.replace(/\n/g, " ").replace(/\t/g, "").trim(),
+					imageUrl: imageUrl,
+					url: url,
+				});
+			});
+		}
+		//aggregateRating
+		else if (type === reservedNames.aggregateRating.wrapper) {
+			recipeMetas[id].aggregateRating = {} as aggregateRatingOptions;
+			recipeMetas[id].aggregateRating.ratingValue = parseFloat(
+				$(elem)
+					.find(`.${reservedNames.aggregateRating.aggregatedRatingValue}`)
+					.html() as string,
+			);
+
+			recipeMetas[id].aggregateRating.maxRateRange = parseFloat(
+				$(elem)
+					.find(`.${reservedNames.aggregateRating.maxRangeOfRating}`)
+					.html() as string,
+			);
+
+			recipeMetas[id].aggregateRating.numberOfRatings = parseInt(
+				$(elem)
+					.find(`.${reservedNames.aggregateRating.numberOfRatings}`)
+					.html() as string,
+			);
+		}
+		//videoObject
+		else if (type === reservedNames.recipe.video) {
+			videoMetaPromises.push(
+				(async () => {
+					recipeMetas[id].videoObject = await ytVideoMeta(
+						$(elem).attr("src") as string,
+					);
+				})(),
+			);
+		}
+		//keywords
+		else if (type === reservedNames.recipe.keywords) {
+			const kwlist: string[] = new Array();
+
+			$(elem)
+				.children("li")
+				.each((_index, kw) => {
+					kwlist.push($(kw).html() as string);
+				});
+
+			recipeMetas[id].keywords = kwlist.join(", ");
+		}
+	});
+
+	//calculate total time overall preptime + cooktime
+	const recipeMetaData = Object.values(recipeMetas).map((meta) => {
+		meta.totalTime = recipeTotaltime(meta.prepTime, meta.cookTime);
+		return meta;
+	});
+
+	//resolve all ytProms
+	await Promise.all(videoMetaPromises);
+
+	return recipeMetaData;
 }

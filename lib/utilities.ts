@@ -3,7 +3,7 @@ import axios from "axios";
 import { load } from "cheerio";
 import puppeteer from "puppeteer";
 import { createHash, randomBytes } from "node:crypto";
-import { aggregatorVariables } from "../richie.config.json";
+import { aggregatorVariables, reservedNames } from "../richie.config.json";
 import {
 	GeoOptions,
 	aggregateRatingOptions,
@@ -36,6 +36,10 @@ export function parseDateString(date: string): string {
 export async function ytVideoMeta(
 	embedUrl: string,
 ): Promise<videoObjectOptions> {
+	if (!embedUrl) {
+		throw new Error("Link is null");
+	}
+
 	const videoId: string = embedUrl.match(
 		/\/embed\/([^?]+)/,
 	)?.[1] as string;
@@ -57,10 +61,10 @@ export async function ytVideoMeta(
 		$('meta[name="description"]').attr("content") ??
 		"description not found";
 
-	const thumbnailUrl: string[] = [
+	const thumbnailUrl: string =
 		$('meta[property="og:image"]').attr("content") ??
-			"thumbnail url not found",
-	];
+		"thumbnail url not found";
+
 	const uploadDate: string =
 		$('meta[itemprop="datePublished"]').attr("content") ??
 		"upload date not found";
@@ -84,7 +88,7 @@ export async function ytVideoMeta(
 	return {
 		videoTitle: videoTitle,
 		description: description,
-		thumbnailUrls: thumbnailUrl,
+		thumbnailUrl: thumbnailUrl,
 		uploadDate: uploadDate,
 		duration: duration,
 		interactionStatistic: {
@@ -296,4 +300,91 @@ export function generateMeta(
 	listItem.position = realLevel;
 
 	return listItem;
+}
+
+export function durationInISO(
+	timeText: string,
+	elemType: string,
+	classObject: Record<string, string>,
+): string {
+	let timeResult: string = "";
+
+	/* regular expression to extract time digits */
+	const time = timeText.match(/\d+/g);
+
+	if (!time?.[0]) {
+		throw new Error("UnExpected time format in duartion");
+	}
+
+	if (elemType === classObject.minutes) {
+		timeResult = `PT${time?.[0]}M`;
+	} else if (elemType === classObject.hours) {
+		timeResult = `PT${time?.[0]}H`;
+	} else if (elemType === classObject.hoursAndMinutes) {
+		timeResult = `PT${time?.[0]}H${time?.[1]}M`;
+	}
+
+	return timeResult;
+}
+
+export function recipeTotaltime(
+	preparationTime: string,
+	cookingTime: string,
+): string {
+	/* config checker */
+	const hoursConditions =
+		reservedNames.recipe.cooktime.hours.endsWith(
+			reservedNames.durationID.hours,
+		) &&
+		reservedNames.recipe.preptime.hours.endsWith(
+			reservedNames.durationID.hours,
+		);
+	const minutesConditions =
+		reservedNames.recipe.cooktime.minutes.endsWith(
+			reservedNames.durationID.minutes,
+		) &&
+		reservedNames.recipe.preptime.minutes.endsWith(
+			reservedNames.durationID.minutes,
+		);
+	const configSatisfied = hoursConditions && minutesConditions;
+	if (!configSatisfied) {
+		throw new Error(
+			`Configuration Error: reservedNames.recipe.(cooktime)&(preptime) hours and minutes
+			 should end with reservedNames.durationID.(minutes)&(hours)`,
+		);
+	}
+
+	function extractTime(isoDuration: string): Record<string, number> {
+		isoDuration = isoDuration.toLowerCase();
+
+		const timeMatch = isoDuration.match(/\d+/g);
+
+		let time: Record<string, number> = { hours: 0, minutes: 0 };
+
+		if (
+			isoDuration.includes(reservedNames.durationID.hours) &&
+			isoDuration.includes(reservedNames.durationID.minutes)
+		) {
+			time.hours = parseInt(timeMatch?.[0] ?? "0");
+			time.minutes = parseInt(timeMatch?.[1] ?? "0");
+		} else if (isoDuration.includes(reservedNames.durationID.hours)) {
+			time.hours = parseInt(timeMatch?.[0] ?? "0");
+		} else if (isoDuration.includes(reservedNames.durationID.minutes)) {
+			time.minutes = parseInt(timeMatch?.[0] ?? "0");
+		}
+		return time;
+	}
+
+	let totalTime: string;
+
+	const extractedPrepTime = extractTime(preparationTime);
+	const extractedCookTime = extractTime(cookingTime);
+
+	const totalHours = extractedPrepTime.hours + extractedCookTime.hours;
+	const totalMinutes =
+		extractedPrepTime.minutes + extractedCookTime.minutes;
+
+	totalTime = `PT${totalHours > 0 ? totalHours + "H" : ""}${totalMinutes > 0 ? totalMinutes + "M" : ""}`;
+
+	return totalTime;
 }

@@ -40,14 +40,52 @@
 				"person": "P",
 				"organisation": "O"
 			}
+		},
+		"recipe": {
+			"name": "name",
+			"thumbnails": "img",
+			"authorName": "aname",
+			"publishedDate": "pdt",
+			"description": "desc",
+			"recipeCuisine": "cuisine",
+			"preptime": {
+				"hours": "pth",
+				"minutes": "ptm",
+				"hoursAndMinutes": "pthm"
+			},
+			"cooktime": {
+				"hours": "cth",
+				"minutes": "ctm",
+				"hoursAndMinutes": "cthm"
+			},
+			"keywords": "kw",
+			"serveCount": "serves",
+			"recipeCategory": "cat",
+			"nutritionInformations": {
+				"wrapper": "nutrition",
+				"calories": "cal"
+			},
+			"ingredients": "ingredient",
+			"instructions": {
+				"wrapper": "instructions",
+				"childwrapper": "step",
+				"shortInstruction": "short",
+				"longInstruction": "long",
+				"image": "simg"
+			},
+			"video": "vframe"
+		},
+		"durationID": {
+			"hours": "h",
+			"minutes": "m"
 		}
 	},
 	"aggregatorVariables": {
-		"articleBasename": "rjs-article",
+		"articleBaseID": "rjs-article",
 		"timeFormat": "yyyy-MM-dd hh:mm a",
-		"movieBasename": "rjs-movie",
+		"movieBaseID": "rjs-movie",
 		"domainAddress": "cresteem.com",
-		"recipeBaseID": "rrecipe",
+		"recipeBaseID": "rjs-recipe",
 		"courseBaseID": "rcourse",
 		"restaurantBaseID": "rrest",
 		"faqBaseID": "rfaq",

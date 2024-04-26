@@ -28,7 +28,8 @@
 		"build": "rimraf dist && npx tsc -b",
 		"watch": "npx tsc --watch",
 		"br": "cls && rimraf dist && npx tsc -b && node ./dist/richie.js",
-		"rp": "node ./dist/richie.js"
+		"rp": "node ./dist/richie.js",
+		"clean": "cls && rimraf dist"
 	},
 	"repository": {
 		"type": "git",
