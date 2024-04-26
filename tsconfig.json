@@ -26,13 +26,13 @@
 		"pretty": false,
 		"noUnusedLocals": false,
 		"noImplicitOverride": false,
-		"noUnusedParameters": false,
+		"noUnusedParameters": true,
 		"noUncheckedIndexedAccess": false,
 		"sourceMap": false,
 		"removeComments": true
 	},
 	"exclude": [
 		"node_modules",
-		"test.ts"
+		
 	]
 }

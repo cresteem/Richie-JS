@@ -112,7 +112,7 @@ export function article(htmlString: string): articleOptions {
 	/* author meta constant part all start with "a", so */
 	$(
 		`[class^="${articleBaseID}-${reservedNames.article.authorNameStartwith}"]`,
-	).each((index, elem) => {
+	).each((_index, elem) => {
 		const className = $(elem).attr("class")?.toLowerCase();
 
 		/* EX: rjs-article-anamep-1 */
