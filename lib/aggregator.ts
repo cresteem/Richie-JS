@@ -1,6 +1,8 @@
 import { readFileSync, existsSync, writeFileSync } from "node:fs";
 import { load } from "cheerio";
 import {
+	CourseInstanceOptions,
+	CourseOptions,
 	HowToStep,
 	NutritionInfoOptions,
 	RecipeOptions,
@@ -10,7 +12,9 @@ import {
 	authorTypeChoices,
 	breadCrumbListOptions,
 	breadCrumbMeta,
+	courseModeChoices,
 	movieOptions,
+	repeatFrequencyChoices,
 	reviewOptions,
 } from "./options";
 
@@ -23,6 +27,7 @@ import {
 	generateMeta,
 	durationInISO,
 	recipeTotaltime,
+	periodTextToHours,
 } from "./utilities";
 
 import { relative, dirname, basename, join, resolve } from "node:path";
@@ -674,4 +679,170 @@ export async function recipe(
 	await Promise.all(videoMetaPromises);
 
 	return recipeMetaData;
+}
+
+export function course(
+	htmlString: string,
+	htmlPath: string,
+): CourseOptions[] {
+	const $ = load(htmlString);
+
+	const courseMetas: Record<string, CourseOptions> = {};
+
+	$(`[class^="${courseBaseID}-"]`).each((_index, elem) => {
+		/* make class name as case insensitive */
+		const className: string = $(elem)
+			.attr("class")
+			?.toLowerCase() as string;
+
+		const classNameSplits: string[] = className.split("-");
+
+		/* class must have id-type along with moviebase so 3 or more is expected */
+		if (classNameSplits.length < 3) {
+			throw new Error(
+				`Error in ${className} : class name must be like [${courseBaseID}-id-type]`,
+			);
+		}
+
+		const [id, type] = classNameSplits.slice(-2);
+
+		//basic initiation
+		if (!Object.keys(courseMetas).includes(id)) {
+			//create object for it
+			courseMetas[id] = {} as CourseOptions;
+			courseMetas[id].hasCourseInstance = {} as CourseInstanceOptions;
+			courseMetas[id].hasCourseInstance.language = [];
+
+			//deeplink to course
+			const url: string = new URL(
+				`${relative(cwd(), htmlPath).replace(".html", "")}#${courseBaseID}-${id}`,
+				httpsDomainBase,
+			).href;
+
+			courseMetas[id].url = url;
+		}
+
+		//getting metas
+		if (type === reservedNames.course.courseName) {
+			courseMetas[id].courseName = $(elem).html() as string;
+
+			const courseLanguage = $(elem).data(
+				reservedNames.course.language,
+			) as string;
+
+			if (courseLanguage) {
+				courseMetas[id].hasCourseInstance.language.push(
+					...courseLanguage.split(","),
+				);
+			}
+		} else if (type === reservedNames.course.language) {
+			const courseLanguage: string = $(elem).html() as string;
+
+			courseMetas[id].hasCourseInstance.language.push(
+				...courseLanguage.split(","),
+			);
+		} else if (type === reservedNames.course.description) {
+			let description: string = $(elem).html() as string;
+
+			courseMetas[id].description = description
+				.replace(/\t/g, "")
+				.replace(/\n/g, " ")
+				.trim();
+		} else if (type === reservedNames.course.publisherUrl) {
+			/* if element is not <a> tag throw error */
+			if (!$(elem).is("a")) {
+				throw new Error(
+					`Publisher url(${reservedNames.course.publisherUrl}) element should be a <a> tag`,
+				);
+			}
+
+			const providerUrl: string = $(elem).attr("href") as string;
+
+			let providerName: string;
+			/* find if it has child elem as provider name */
+			if ($(elem).children().length > 0) {
+				providerName = $(elem)
+					.find(`.${reservedNames.course.publisherName}`)
+					.html()
+					?.trim() as string;
+
+				if (!providerName) {
+					/* extract elem without class name */
+					providerName = $(elem).children(":first-child").html() as string;
+				}
+			} else {
+				providerName = $(elem).html() as string;
+			}
+
+			courseMetas[id].provider = {
+				isOrg: true,
+				name: providerName,
+				sameAs: providerUrl,
+			};
+		} else if (type === reservedNames.course.mode) {
+			const mode: string = $(elem).html()?.toLowerCase() as string;
+
+			const availableModeType: courseModeChoices[] & string[] = [
+				"onsite",
+				"online",
+				"blended",
+			];
+
+			if (!availableModeType.includes(mode)) {
+				throw new Error(
+					"given mode in HTML is not supported.\nOnly these are supported by Richie JS\n[ " +
+						availableModeType.join(", ") +
+						" ]",
+				);
+			}
+
+			courseMetas[id].hasCourseInstance.mode = mode as courseModeChoices;
+		} else if (type === reservedNames.course.instructor) {
+			/* replace by<space> or BY<space> or By<space> */
+			let instructor: string = $(elem)
+				.html()
+				?.replace(/by /gi, "") as string;
+
+			courseMetas[id].hasCourseInstance.instructor = instructor;
+		} else if (type === reservedNames.course.duration) {
+			/* extract digit only from inner text */
+			/* EX: 24 Hours / 15 Days / 2Months / 2Weeks*/
+			const durationAndPeriodType: string = $(elem).html() as string;
+
+			const durationPeriod: string = periodTextToHours(
+				durationAndPeriodType,
+			);
+
+			const repeatFrequency: string = (
+				$(elem).data(reservedNames.course.courseFrequency) as string
+			).toLowerCase();
+
+			const repeatCount: number = parseInt(
+				$(elem).data(reservedNames.course.courseRepeatation) as string,
+			);
+
+			courseMetas[id].hasCourseInstance.schedule = {
+				duration: durationPeriod,
+				repeatFrequency: repeatFrequency as repeatFrequencyChoices,
+				repeatCount: repeatCount,
+			};
+		} else if (type === reservedNames.course.fees) {
+			/* extract digit alone */
+			const price: number = parseFloat(
+				$(elem).html()?.replace(/\D+/g, "") as string,
+			);
+
+			const currency: string = (
+				$(elem).data(reservedNames.course.feesCurrency) as string
+			).toUpperCase();
+
+			courseMetas[id].offer = {
+				category: "Fees",
+				price: price,
+				priceCurrency: currency,
+			};
+		}
+	});
+
+	return Object.values(courseMetas);
 }

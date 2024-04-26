@@ -192,27 +192,25 @@ export interface RecipeOptions {
 }
 /* recipeOption ended*/
 
+/* course things started */
 /* CourseSchedule */
-type repeatFrequency = "daily" | "weekly" | "monthly";
+export type repeatFrequencyChoices = "daily" | "weekly" | "monthly";
 
 interface CourseScheduleOptions {
 	duration: string;
-	repeatFrequency: repeatFrequency;
+	repeatFrequency: repeatFrequencyChoices;
 	repeatCount: number;
 }
-/* CourseSchedule ended*/
+
+export type courseModeChoices = "online" | "onsite" | "blended";
 
 /* CourseInstanceOptions */
-interface CourseInstanceOptions {
-	mode: "offline" | "online" | "hybrid";
+export interface CourseInstanceOptions {
+	mode: courseModeChoices;
 	instructor: string;
-	language: string;
-	duration: string;
-	repeatFrequency: repeatFrequency;
-	repeatCount: number;
+	language: string[];
 	schedule: CourseScheduleOptions;
 }
-/* CourseInstanceOptions ended*/
 
 interface Provider {
 	name: string;
@@ -226,12 +224,9 @@ export interface CourseOptions {
 	description: string;
 	provider: Provider;
 	url: string;
-	price: number;
-	priceCurrency: Currency;
 	hasCourseInstance: CourseInstanceOptions;
 	offer: Offers;
 }
-/* courseOption ended*/
 
 /* Offer */
 
@@ -258,9 +253,12 @@ type ItemCondition =
 	| "UsedCondition"
 	| "RefurbishedCondition";
 
+type OfferCategoryChoices = "Fees" | "Digital" | "Membership";
+
 interface Offers {
 	price: number;
 	priceCurrency: Currency;
+	category?: OfferCategoryChoices;
 	link?: string;
 	validFrom?: string;
 	validTill?: string;
@@ -271,6 +269,8 @@ interface Offers {
 }
 
 /* Offer ended*/
+
+/* course things ended */
 
 /* Postal */
 interface PostalAddressOptions {

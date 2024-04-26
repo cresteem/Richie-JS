@@ -388,3 +388,27 @@ export function recipeTotaltime(
 
 	return totalTime;
 }
+
+export function periodTextToHours(durationAndPeriodType: string): string {
+	/* extract digit only from inner text
+	 EX: 24 Hours / 15 Days / 2Months / 2Weeks*/
+
+	const durationInDigit: string = durationAndPeriodType.match(
+		/\d+/,
+	)?.[0] as string;
+
+	const parsedDurationInDigit = parseFloat(durationInDigit ?? "0");
+
+	const durationPeriodType: string = durationAndPeriodType
+		.match(/[a-zA-Z]+/)?.[0]
+		.toLowerCase() as string;
+
+	let duration = `PT${
+		durationPeriodType.includes("month") ? parsedDurationInDigit * 30 * 24
+		: durationPeriodType.includes("week") ? parsedDurationInDigit * 7 * 24
+		: durationPeriodType.includes("day") ? parsedDurationInDigit * 1 * 24
+		: parsedDurationInDigit
+	}H`;
+
+	return duration;
+}

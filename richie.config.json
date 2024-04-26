@@ -78,6 +78,20 @@
 		"durationID": {
 			"hours": "h",
 			"minutes": "m"
+		},
+		"course": {
+			"courseName": "name",
+			"language": "lang",
+			"mode": "mode",
+			"instructor": "ins",
+			"description": "desc",
+			"duration": "period",
+			"courseFrequency": "freq",
+			"courseRepeatation": "rep",
+			"fees": "fee",
+			"feesCurrency": "currency",
+			"publisherName": "pname",
+			"publisherUrl": "purl"
 		}
 	},
 	"aggregatorVariables": {
@@ -86,7 +100,7 @@
 		"movieBaseID": "rjs-movie",
 		"domainAddress": "cresteem.com",
 		"recipeBaseID": "rjs-recipe",
-		"courseBaseID": "rcourse",
+		"courseBaseID": "rjs-course",
 		"restaurantBaseID": "rrest",
 		"faqBaseID": "rfaq",
 		"siteSearchBoxFieldName": "query_str",
