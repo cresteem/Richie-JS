@@ -115,7 +115,8 @@
 				"timein24": "HR",
 				"timein12": "hr"
 			},
-			"menuLink": "menu"
+			"menuLink": "menu",
+			"mapFrame": "map"
 		}
 	},
 	"aggregatorVariables": {

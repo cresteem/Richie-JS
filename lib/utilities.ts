@@ -103,7 +103,9 @@ export async function ytVideoMeta(
 
 /* it is only good if you have google business page */
 export async function getGeoCode(address: string): Promise<GeoOptions> {
-	const url = encodeURI(`https://www.google.com/maps?q=${address}`);
+	const url: string = encodeURI(
+		`https://www.google.com/maps?q=${address}`,
+	);
 
 	//browser instance
 	const browser = await puppeteer.launch();
@@ -114,15 +116,18 @@ export async function getGeoCode(address: string): Promise<GeoOptions> {
 	//wait until completed loaded and url updated
 	await page.waitForNavigation();
 
-	const geocodeRegex = /\/@(-?\d+\.\d+),(-?\d+\.\d+),\d+z\//;
-	const geocodes = page.url().match(geocodeRegex);
+	const geocodes: string[] = page
+		.url()
+		.split("/")[6]
+		.split(",")
+		.slice(0, 2);
 
 	//close browser instance
 	await browser.close();
 
 	return {
-		latitude: parseInt(geocodes?.[1] ?? "0"),
-		longitude: parseInt(geocodes?.[2] ?? "0"),
+		latitude: parseFloat(geocodes?.[0].replace("@", "") ?? "0"),
+		longitude: parseFloat(geocodes?.[1] ?? "0"),
 	};
 }
 
@@ -433,4 +438,31 @@ export function elemTypeAndIDExtracter(
 	const [id, type] = classNameSplits.slice(-2);
 
 	return [id, type];
+}
+
+export function rotateCircular(
+	sourceArray: string[],
+	rotateCount: number,
+): string[] {
+	const n = sourceArray.length;
+	rotateCount = rotateCount % n; // to handle cases where rotateCount > n
+	if (rotateCount === 0) {
+		return sourceArray;
+	}
+	return sourceArray
+		.slice(-rotateCount)
+		.concat(sourceArray.slice(0, n - rotateCount));
+}
+
+export function srcToCoordinates(src: string): Record<string, number> {
+	//extract coordinates using string extraction method on src of map iframe
+	const startPosOfX: number = src.indexOf("2d") + 2;
+	const startPosOfY: number = src.indexOf("3d") + 2;
+	const endPos: number = src.indexOf("2m");
+
+	const coordinates = {
+		longitude: parseFloat(src.slice(startPosOfX, startPosOfY - 4)),
+		latitude: parseFloat(src.slice(startPosOfY, endPos)),
+	};
+	return coordinates;
 }

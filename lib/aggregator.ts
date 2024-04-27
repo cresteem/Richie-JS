@@ -1,11 +1,12 @@
 import { readFileSync, existsSync, writeFileSync } from "node:fs";
-import { load } from "cheerio";
+import { Cheerio, CheerioAPI, Element, load } from "cheerio";
 import {
 	CourseInstanceOptions,
 	CourseOptions,
 	HowToStep,
 	NutritionInfoOptions,
 	RecipeOptions,
+	RestaurantOptions,
 	aggregateRatingOptions,
 	articleOptions,
 	articleTypeChoices,
@@ -28,6 +29,9 @@ import {
 	durationInISO,
 	recipeTotaltime,
 	periodTextToHours,
+	elemTypeAndIDExtracter,
+	rotateCircular,
+	srcToCoordinates,
 } from "./utilities";
 
 import { relative, dirname, basename, join, resolve } from "node:path";
@@ -113,19 +117,7 @@ export function article(htmlString: string): articleOptions {
 	$(
 		`[class^="${articleBaseID}-${reservedNames.article.authorNameStartwith}"]`,
 	).each((_index, elem) => {
-		const className = $(elem).attr("class")?.toLowerCase();
-
-		/* EX: rjs-article-anamep-1 */
-
-		const classNameSplits = className?.split("-") ?? [];
-		/* splited should be more than 2 */
-		if (classNameSplits.length <= 2) {
-			throw new Error(
-				"Error while extracting author meta - check class names",
-			);
-		}
-		/* only get constantPoint - type and id | anamep-1*/
-		const [type, id] = classNameSplits?.slice(-2) ?? [];
+		const [type, id] = elemTypeAndIDExtracter($, elem, articleBaseID);
 
 		//check if id not already exist
 		if (!Object.keys(authorMetaData).includes(id)) {
@@ -164,16 +156,7 @@ export function article(htmlString: string): articleOptions {
 	$(
 		`[class^="${articleBaseID}-${reservedNames.article.publisherNameStartwith}"]:not(${pdtselctor})`,
 	).each((_index, elem) => {
-		const className = $(elem).attr("class")?.toLowerCase();
-
-		const classNameSplits = className?.split("-") ?? [];
-		if (classNameSplits.length <= 2) {
-			throw new Error(
-				"Error while extracting publisher meta - check class names",
-			);
-		}
-
-		const [type, id] = classNameSplits.slice(-2) ?? [];
+		const [type, id] = elemTypeAndIDExtracter($, elem, articleBaseID);
 
 		//check if id already exist
 		if (!Object.keys(publisherMetaData).includes(id)) {
@@ -289,21 +272,7 @@ export function movie(
 	const movieMetas: Record<string, movieOptions> = {};
 
 	$(`[class^="${movieBaseID}-"]`).each((_index, elem) => {
-		/* make class name as case insensitive */
-		const className: string = $(elem)
-			.attr("class")
-			?.toLowerCase() as string;
-
-		const classNameSplits: string[] = className.split("-");
-
-		/* class must have id-type along with moviebase so 3 or more is expected */
-		if (classNameSplits.length < 3) {
-			throw new Error(
-				`Error in ${className} : class name must be like [${movieBaseID}-id-type]`,
-			);
-		}
-
-		const [id, type] = classNameSplits.slice(-2);
+		const [id, type] = elemTypeAndIDExtracter($, elem, movieBaseID);
 
 		//one time intiation block for each id
 		if (!Object.keys(movieMetas).includes(id)) {
@@ -473,21 +442,7 @@ export async function recipe(
 	const videoMetaPromises: Promise<void>[] = new Array();
 
 	$(`[class^="${recipeBaseID}-"]`).each((_index, elem) => {
-		/* make class name as case insensitive */
-		const className: string = $(elem)
-			.attr("class")
-			?.toLowerCase() as string;
-
-		const classNameSplits: string[] = className.split("-");
-
-		/* class must have id-type along with moviebase so 3 or more is expected */
-		if (classNameSplits.length < 3) {
-			throw new Error(
-				`Error in ${className} : class name must be like [${recipeBaseID}-id-type]`,
-			);
-		}
-
-		const [id, type] = classNameSplits.slice(-2);
+		const [id, type] = elemTypeAndIDExtracter($, elem, recipeBaseID);
 
 		//one time initialization
 		if (!Object.keys(recipeMetas).includes(id)) {
@@ -690,21 +645,7 @@ export function course(
 	const courseMetas: Record<string, CourseOptions> = {};
 
 	$(`[class^="${courseBaseID}-"]`).each((_index, elem) => {
-		/* make class name as case insensitive */
-		const className: string = $(elem)
-			.attr("class")
-			?.toLowerCase() as string;
-
-		const classNameSplits: string[] = className.split("-");
-
-		/* class must have id-type along with moviebase so 3 or more is expected */
-		if (classNameSplits.length < 3) {
-			throw new Error(
-				`Error in ${className} : class name must be like [${courseBaseID}-id-type]`,
-			);
-		}
-
-		const [id, type] = classNameSplits.slice(-2);
+		const [id, type] = elemTypeAndIDExtracter($, elem, courseBaseID);
 
 		//basic initiation
 		if (!Object.keys(courseMetas).includes(id)) {
@@ -845,4 +786,392 @@ export function course(
 	});
 
 	return Object.values(courseMetas);
+}
+
+export async function restaurant(
+	htmlString: string,
+	htmlPath: string,
+): Promise<RestaurantOptions[]> {
+	const $ = load(htmlString);
+
+	const restaurantMetas: Record<string, RestaurantOptions> = {};
+
+	$(`[class^="${restaurantBaseID}-"]`).each((_index, elem) => {
+		const [id, type] = elemTypeAndIDExtracter($, elem, restaurantBaseID);
+
+		//basic initiation
+		if (!Object.keys(restaurantMetas).includes(id)) {
+			//create object for it
+			restaurantMetas[id] = {} as RestaurantOptions;
+			restaurantMetas[id].image = [];
+			restaurantMetas[id].review = [];
+			restaurantMetas[id].openingHoursSpecification = [];
+			restaurantMetas[id].aggregateRating = {} as aggregateRatingOptions;
+			restaurantMetas[id].servesCuisine = [];
+
+			//deeplink to restaurant
+			const url: string = new URL(
+				`${relative(cwd(), htmlPath).replace(
+					".html",
+					"",
+				)}#${restaurantBaseID}-${id}`,
+				httpsDomainBase,
+			).href;
+
+			restaurantMetas[id].url = url;
+		}
+
+		if (type === reservedNames.restaurant.name) {
+			restaurantMetas[id].businessName = $(elem).html()?.trim() as string;
+		} else if (type === reservedNames.restaurant.location.wrapper) {
+			/* address */
+			//street
+			const streetList: string[] = new Array();
+			$(elem)
+				.find(`.${reservedNames.restaurant.location.street}`)
+				.each((_index, streetElem) => {
+					streetList.push($(streetElem).html()?.trim() ?? "");
+				});
+
+			/* join multi line street address into one with comma seperation 
+        	and remove unintended double comma to put one comma
+        	*/
+			const combinedStreet: string = streetList
+				.join(", ")
+				.replace(",,", ",");
+
+			//city
+			const city: string = $(elem)
+				.find(`.${reservedNames.restaurant.location.city}`)
+				.html() as string;
+
+			//state
+			const state: string = $(elem)
+				.find(`.${reservedNames.restaurant.location.state}`)
+				.html() as string;
+
+			//pincode
+			const pincode: string = $(elem)
+				.find(`.${reservedNames.restaurant.location.pincode}`)
+				.html()
+				?.replace("-", "")
+				.replace(" ", "") as string;
+
+			let parsedPincode: number;
+			try {
+				parsedPincode = parseInt(pincode);
+			} catch {
+				console.log("Pincode should be numbers");
+				process.exit(1);
+			}
+
+			//country
+			const countryInnerText: string =
+				$(elem)
+					.find(`.${reservedNames.restaurant.location.country}`)
+					.html() ?? "";
+
+			/* generate 2d code */
+			const countryCode2D: string = getCode(countryInnerText) as string;
+
+			restaurantMetas[id].address = {
+				streetAddress: combinedStreet,
+				addressLocality: city,
+				addressRegion: state,
+				addressCountry: countryCode2D,
+				postalCode: parsedPincode,
+			};
+		}
+
+		//image
+		else if (type === reservedNames.restaurant.images) {
+			const imgLink: string = $(elem).attr("src") ?? "";
+
+			if (!imgLink) {
+				throw new Error("Src not found in image tag, ID: " + id);
+			}
+
+			restaurantMetas[id].image.push(imgLink);
+		}
+
+		//review
+		else if (type === reservedNames.reviews.parentWrapper) {
+			const userReviews = $(elem).find(
+				`.${reservedNames.reviews.childWrapper}`,
+			);
+
+			userReviews.each((_index, userReview) => {
+				//rating value
+				const ratingValue: number = parseFloat(
+					$(userReview)
+						.find(`.${reservedNames.reviews.ratedValue}`)
+						.html() as string,
+				);
+
+				//max rating possible
+				const possibleMaxRate: number = parseFloat(
+					$(userReview)
+						.find(`.${reservedNames.reviews.maxRateRange}`)
+						.html() as string,
+				);
+
+				//author
+				let raterName: string = $(userReview)
+					.find(
+						`.${reservedNames.reviews.raterName}${reservedNames.reviews.authorTypeSuffix.person}`,
+					)
+					.html() as string;
+				let authorIsOrg: boolean = false;
+
+				/* Assumming rater as organisation*/
+				if (!raterName) {
+					raterName = $(userReview)
+						.find(
+							`.${reservedNames.reviews.raterName}${reservedNames.reviews.authorTypeSuffix.organisation}`,
+						)
+						.html() as string;
+					if (!raterName) {
+						throw new Error(
+							"Something wrong with reviewer name or element | ID:" + id,
+						);
+					}
+					authorIsOrg = true;
+				}
+
+				//publisher
+				const publisher: string =
+					$(userReview)
+						.find(`.${reservedNames.reviews.reviewPublishedOn}`)
+						.html() ?? "";
+
+				restaurantMetas[id].review.push({
+					raterName: raterName,
+					raterType: authorIsOrg ? "Organization" : "Person",
+					ratingValue: ratingValue,
+					maxRateRange: possibleMaxRate,
+					publisherName: publisher ?? null,
+				});
+			});
+		} else if (type === reservedNames.restaurant.telephone) {
+			//telephone
+			restaurantMetas[id].telephone = $(elem).html() as string;
+
+			//reservationAvailability
+			const reservationAvailability: boolean = $(elem).data(
+				reservedNames.restaurant.reservationDataVar,
+			) as boolean;
+
+			restaurantMetas[id].acceptsReservations = reservationAvailability;
+		}
+
+		//service Cuisine
+		else if (type === reservedNames.restaurant.cuisineType) {
+			restaurantMetas[id].servesCuisine.push(
+				$(elem).html()?.trim() as string,
+			);
+		}
+		//priceRange
+		else if (type === reservedNames.restaurant.priceRange) {
+			restaurantMetas[id].priceRange = $(elem).html()?.trim() as string;
+		}
+		//opening Hours specifications
+		else if (type === reservedNames.restaurant.workHours.wrapper) {
+			const Days: string[] = [
+				"Sunday",
+				"Monday",
+				"Tuesday",
+				"Wednesday",
+				"Thursday",
+				"Friday",
+				"Saturday",
+			];
+
+			const timeFormatClasses: string = `.${reservedNames.restaurant.workHours.timein12}, .${reservedNames.restaurant.workHours.timein24}`;
+
+			//iterating each wdr and wd that available in workhours
+			$(elem)
+				.find(
+					`.${reservedNames.restaurant.workHours.dayRange},.${reservedNames.restaurant.workHours.dayAlone}`,
+				)
+				.each((_index, workHoursElem) => {
+					const className: string = $(workHoursElem)
+						.attr("class")
+						?.trim() as string;
+
+					/* if it is range */
+					if (className === reservedNames.restaurant.workHours.dayRange) {
+						const range = $(workHoursElem);
+
+						//either hr or HR
+						const timeElem = $(range.children(timeFormatClasses)?.[0]);
+
+						//for time range
+						let [opens, closes]: [opens: string, closes: string] = [
+							"",
+							"",
+						];
+
+						if (
+							timeElem.attr("class") ===
+							reservedNames.restaurant.workHours.timein24
+						) {
+							[opens, closes] = extractTime(
+								timeElem.html()?.trim() ?? "0",
+								true,
+							);
+						} else {
+							[opens, closes] = extractTime(
+								timeElem.html()?.trim() ?? "0",
+								false,
+							);
+						}
+
+						//remove child of parent and only get text of parent
+						range.children().remove();
+
+						//making in camelcase
+						const [startDay, endDay] = range
+							.text()
+							?.trim()
+							.split("-")
+							.map((day) => {
+								day = day.trim().toLowerCase();
+								return day.charAt(0).toUpperCase() + day.slice(1);
+							}) as string[];
+
+						const startPos: number = Days.indexOf(startDay);
+						const endPos: number = Days.indexOf(endDay);
+
+						let dayOfWeek: string[];
+						if (startPos < endPos) {
+							dayOfWeek = Days.slice(startPos, endPos + 1);
+						} else {
+							const rotateCount: number = startPos - endPos;
+
+							const daycount: number = startPos + endPos;
+							const numberOfDaysInWeek: number = 7;
+
+							dayOfWeek = rotateCircular(Days, rotateCount).slice(
+								numberOfDaysInWeek - startPos,
+								daycount,
+							);
+						}
+
+						restaurantMetas[id].openingHoursSpecification.push({
+							dayOfWeek: dayOfWeek,
+							opens: opens,
+							closes: closes,
+						});
+					}
+					//if it is single day
+					else if (
+						className === reservedNames.restaurant.workHours.dayAlone
+					) {
+						const dayElem = $(workHoursElem);
+
+						//extract time before removing
+						//either hr or HR
+						const timeElem = dayElem.children(timeFormatClasses).first();
+
+						const timeElemInner = timeElem.html()?.trim();
+
+						if (!timeElemInner) {
+							throw new Error(
+								"Error: Check working hours in html | ID: " + id,
+							);
+						}
+
+						//for time range
+						let [opens, closes]: [opens: string, closes: string] = [
+							"",
+							"",
+						];
+						if (
+							timeElem.attr("class") ===
+							reservedNames.restaurant.workHours.timein24
+						) {
+							[opens, closes] = extractTime(
+								timeElemInner,
+								true,
+							) as string[];
+						} else {
+							[opens, closes] = extractTime(timeElemInner, false);
+						}
+
+						dayElem.children().remove();
+
+						//camelcase
+						let day = dayElem.html()?.trim() as string;
+						day = day.charAt(0).toUpperCase() + day.slice(1).toLowerCase();
+
+						restaurantMetas[id].openingHoursSpecification.push({
+							dayOfWeek: [day],
+							opens: opens,
+							closes: closes,
+						});
+					}
+				});
+		} else if (type === reservedNames.restaurant.menuLink) {
+			restaurantMetas[id].menu = $(elem).attr("href") as string;
+		} else if (type === reservedNames.aggregateRating.wrapper) {
+			restaurantMetas[id].aggregateRating.ratingValue = parseFloat(
+				$(elem)
+					.find(`.${reservedNames.aggregateRating.aggregatedRatingValue}`)
+					.first()
+					.html() as string,
+			);
+
+			restaurantMetas[id].aggregateRating.numberOfRatings = parseFloat(
+				$(elem)
+					.find(`.${reservedNames.aggregateRating.numberOfRatings}`)
+					.first()
+					.html() as string,
+			);
+
+			restaurantMetas[id].aggregateRating.maxRateRange = parseFloat(
+				$(elem)
+					.find(`.${reservedNames.aggregateRating.maxRangeOfRating}`)
+					.first()
+					.html() as string,
+			);
+		} else if (type === reservedNames.restaurant.mapFrame) {
+			const frameSrc: string = $(elem).attr("src") as string;
+			const { latitude, longitude } = srcToCoordinates(frameSrc);
+
+			restaurantMetas[id].geo = {
+				latitude: latitude,
+				longitude: longitude,
+			};
+		}
+	});
+
+	//make geocode if previously not generated with map iframe
+	const fetchGeoLocation = async (meta: RestaurantOptions) => {
+		if (!meta.geo) {
+			console.log(
+				"Warning: No Map frame was found in HTML\nMaking approximate coordinates..",
+			);
+			const completeAddress = [
+				meta.businessName,
+				meta.address.streetAddress,
+				meta.address.addressLocality,
+				meta.address.addressRegion,
+				meta.address.postalCode,
+				meta.address.addressCountry,
+			].join(",");
+
+			const { latitude, longitude } = await getGeoCode(completeAddress);
+
+			meta.geo = { latitude, longitude };
+		}
+		return meta;
+	};
+
+	// Use Promise.all to await all asynchronous operations
+	const RestaurantMetaData: Awaited<RestaurantOptions[]> =
+		await Promise.all(
+			Object.values(restaurantMetas).map(fetchGeoLocation),
+		);
+
+	return RestaurantMetaData;
 }

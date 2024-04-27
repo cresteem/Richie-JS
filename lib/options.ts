@@ -292,7 +292,7 @@ export interface GeoOptions {
 /* geo options ended*/
 
 /* OpeningHours */
-interface OpeningHoursSpecificationOptions {
+export interface OpeningHoursSpecificationOptions {
 	dayOfWeek: string[];
 	opens: string; // "HH:MM";
 	closes: string; // "HH:MM";
