@@ -2,257 +2,247 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurants</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Restaurants</title>
 </head>
 
 <body>
-    <main>
-        <div id="rrest-1">
-            <!-- name -->
-            <p class="rrest-1-name">Hooky Pookie 2</p>
+	<main>
+		<div id="rjs-restaurant-1">
+			<!-- name -->
+			<p class="rjs-restaurant-1-name">Hooky Pookie</p>
 
-            <!-- image=[] -->
-            <div>
-                <img class="rrest-1-img"
-                    src="https://t3.ftcdn.net/jpg/06/31/36/22/360_F_631362231_5VR8Eo0R8VEflgSIfl0RgQvzyW194T5c.jpg"
-                    alt="picture of reception">
+			<!-- image=[] -->
+			<div>
+				<img class="rjs-restaurant-1-img" src="https://i.imgur.com/3aIBedv.jpeg" alt="picture of reception">
+				<img class="rjs-restaurant-1-img" src="https://i.imgur.com/RbIZogg.jpeg" alt="another 1">
+				<img class="rjs-restaurant-1-img" src="https://i.imgur.com/UL6OJWN.jpeg" alt="another 1">
+			</div>
 
-                <img class="rrest-1-img"
-                    src="https://t3.ftcdn.net/jpg/06/31/36/22/360_F_631362231_5VR8Eo0R8VEflgSIfl0RgQvzyW194T5c.jpg"
-                    alt="another 1">
-                <img class="rrest-1-img"
-                    src="https://t3.ftcdn.net/jpg/06/31/36/22/360_F_631362231_5VR8Eo0R8VEflgSIfl0RgQvzyW194T5c.jpg"
-                    alt="another 1">
-            </div>
+			<!-- address -->
+			<!-- geo will be generated from address -->
+			<div class="rjs-restaurant-1-loc">
+				<!-- loc-st for street -->
+				<!-- any number of loc-st can be created but 2 is good -->
+				<p class="stl">30, MGR Nagar Street</p>
+				<p class="stl">Office Road</p>
 
-            <!-- address -->
-            <!-- geo will be generated from address -->
-            <div class="rrest-1-loc">
-                <!-- loc-st for street -->
-                <!-- any number of loc-st can be created but 2 is good -->
-                <p class="loc-st">30, MGR Nagar Street</p>
-                <p class="loc-st">Office Road</p>
+				<!-- city -->
+				<p class="ct">Nagapattinam</p>
 
-                <!-- city -->
-                <p class="loc-ct">Nagapattinam</p>
+				<!-- state -->
+				<p class="st">TamilNadu</p>
 
-                <!-- state -->
-                <p class="loc-reg">TamilNadu</p>
+				<!-- pincode -->
+				<p class="loc-pc">611-002</p>
 
-                <!-- pincode -->
-                <p class="loc-pc">611-002</p>
+				<!-- country -->
+				<p class="ctry">India</p>
+			</div>
 
-                <!-- country -->
-                <p class="loc-ctry">India</p>
-            </div>
+			<!-- review -->
+			<section class="rjs-restaurant-1-reviews">
 
-            <!-- review -->
-            <section class="rrest-1-review">
-                <div class="urating">
-                    <!-- rating value -->
-                    <p class="review-rv">4.5</p>
+				<div class="urate">
+					<!-- rating value -->
+					<p class="rv">4.5</p>
 
-                    <!-- max rate -->
-                    <p class="review-mr">5</p>
+					<!-- max rate -->
+					<p class="mr">5</p>
 
-                    <!-- authorO is Organisation class - pub class prop not req-->
-                    <!-- authorP is Person class - pub class prop req-->
-                    <!-- <p class="review-authorO">Foogle</p> -->
-                    <p class="review-authorP">Dean</p>
+					<!-- authorO is Organisation class - pub class prop not req-->
+					<!-- authorP is Person class - pub class prop req-->
+					<!-- <p class="review-authorO">Foogle</p> -->
+					<p class="raterP">Dean</p>
 
-                    <p class="review-pub">Amazon</p>
-                </div>
+					<p class="rpOn">Amazon</p>
+				</div>
 
-                <div class="urating">
-                    <!-- rating value -->
-                    <p class="review-rv">4.5</p>
+				<div class="urate">
+					<!-- rating value -->
+					<p class="rv">4.5</p>
 
-                    <!-- max rate -->
-                    <p class="review-mr">5</p>
+					<!-- max rate -->
+					<p class="mr">5</p>
 
-                    <!-- authorO is Organisation class - pub class prop not req-->
-                    <!-- authorP is Person class - pub class prop req-->
-                    <!-- <p class="review-authorO">Foogle</p> -->
-                    <p class="review-authorP">Someone</p>
+					<!-- authorO is Organisation class - pub class prop not req-->
+					<!-- authorP is Person class - pub class prop req-->
+					<!-- <p class="review-authorO">Foogle</p> -->
+					<p class="raterP">Someone</p>
 
-                    <p class="review-pub">Noogle</p>
-                </div>
-            </section>
+					<p class="rpOn">Noogle</p>
+				</div>
 
-            <!-- telephone -->
-            <!-- data-reservation="true" for reservation accepted (Boolean)-->
-            <p class="rrest-1-tel" data-reservation="true">+91-8425937243</p>
+			</section>
 
-            <!-- serv cuisine - can be more than 1-->
-            <p class="rrest-1-csn">Asian</p>
-            <p class="rrest-1-csn">Mexican</p>
+			<!-- telephone -->
+			<!-- data-reservation="true" for reservation accepted (Boolean)-->
+			<p class="rjs-restaurant-1-tel" data-reserve="true">+91-8425937243</p>
 
-            <!-- price range -->
-            <p class="rrest-1-pr">$200 - $500</p>
+			<!-- serv cuisine - can be more than 1-->
+			<p class="rjs-restaurant-1-csnt">Asian</p>
+			<p class="rjs-restaurant-1-csnt">Mexican</p>
 
-            <!-- opening hour specification -->
-            <section class="rrest-1-workhrs">
-                <!-- wdr for working day range -->
-                <!-- wdr-HR  capital HR means 24 hour format specification -->
-                <!-- wdr-hr capital hr means 12 hour format specification -->
-                <!-- sepeartor should be - -->
-                <p class="wdr">Sunday - Thursday <span class="HR">(10:00 - 21:00)</span></p>
-                <!-- <p class="wdr">Sunday - Thursday <span class="wdr-hr">(10:00AM - 09:00PM)</span></p> -->
+			<!-- price range -->
+			<p class="rjs-restaurant-1-price">$200 - $500</p>
 
-                <!-- wd for single working day-->
-                <!-- wd-HR  capital HR means 24 hour format specification -->
-                <!-- wd-hr capital hr means 12 hour format specification -->
-                <p class="wd">Saturday <span class="HR">(13:00 - 18:00)</span></p>
-                <!-- <p class="wd">Saturday <span class="wd-hr">(01:00PM - 06:00PM)</span></p> -->
+			<!-- opening hour specification -->
+			<section class="rjs-restaurant-1-workhours">
+				<!-- wdr for working day range -->
+				<!-- wdr-HR  capital HR means 24 hour format specification -->
+				<!-- wdr-hr capital hr means 12 hour format specification -->
+				<!-- sepeartor should be - -->
+				<p class="wdr">Sunday - Thursday <span class="HR">(10:00 - 21:00)</span></p>
+				<!-- <p class="wdr">Sunday - Thursday <span class="wdr-hr">(10:00AM - 09:00PM)</span></p> -->
 
-                <p class="wd">Friday <span class="hr">(10:00AM - 06:00PM)</span></p>
+				<!-- wd for single working day-->
+				<!-- wd-HR  capital HR means 24 hour format specification -->
+				<!-- wd-hr capital hr means 12 hour format specification -->
+				<p class="wd">Saturday <span class="HR">(13:00 - 18:00)</span></p>
+				<!-- <p class="wd">Saturday <span class="wd-hr">(01:00PM - 06:00PM)</span></p> -->
 
-            </section>
+				<p class="wd">Friday <span class="hr">(10:00AM - 06:00PM)</span></p>
 
-            <!-- menu optional menu url-->
-            <a class="rrest-1-menu" href="https://www.restaurant.com/menu">
-                <p>Menu</p>
-            </a>
+			</section>
+
+			<!-- menu optional menu url-->
+			<a class="rjs-restaurant-1-menu" href="https://www.restaurant.com/menu">
+				<p>Menu</p>
+			</a>
 
 
-            <!-- aggregate review -->
-            <div>
-                <!-- aggregate rate that got -->
-                <p class="rrest-1-arv">100</p>
+			<!-- aggregate review -->
+			<div class="rjs-restaurant-1-aggrate">
+				<!-- aggregate rate that got -->
+				<p class="arv">100</p>
 
-                <!-- max possibly rate -->
-                <p class="rrest-1-arl">100</p>
+				<!-- max possibly rate -->
+				<p class="mr">100</p>
 
-                <!-- total user rate count -->
-                <p class="rrest-1-arc">1000</p>
-            </div>
+				<!-- total user rate count -->
+				<p class="rjs-restaurant-1-rc">1000</p>
+			</div>
 
-        </div>
+		</div>
 
-        <div id="rrest-2">
-            <!-- name -->
-            <p class="rrest-2-name">Hooky Pookie</p>
+		<!-- restaurant 2 -->
+		<div id="rjs-restaurant-2">
+			<!-- name -->
+			<p class="rjs-restaurant-2-name">Gotham Restaurant</p>
 
-            <!-- image=[] -->
-            <div>
-                <img class="rrest-2-img"
-                    src="https://t3.ftcdn.net/jpg/06/31/36/22/360_F_631362231_5VR8Eo0R8VEflgSIfl0RgQvzyW194T5c.jpg"
-                    alt="picture of reception">
+			<!-- image=[] -->
+			<div>
+				<img class="rjs-restaurant-2-img"
+					src="https://lh3.googleusercontent.com/p/AF1QipNaSKp5Aj8n9Pcqf2TCckFMMS93N4rEXmGHNTnd"
+					alt="picture of reception">
 
-                <img class="rrest-2-img"
-                    src="https://t3.ftcdn.net/jpg/06/31/36/22/360_F_631362231_5VR8Eo0R8VEflgSIfl0RgQvzyW194T5c.jpg"
-                    alt="another 1">
-                <img class="rrest-2-img"
-                    src="https://t3.ftcdn.net/jpg/06/31/36/22/360_F_631362231_5VR8Eo0R8VEflgSIfl0RgQvzyW194T5c.jpg"
-                    alt="another 1">
-            </div>
+			</div>
 
-            <!-- address -->
-            <!-- geo will be generated from address -->
-            <div class="rrest-2-loc">
-                <!-- loc-st for street -->
-                <!-- any number of loc-st can be created but 2 is good -->
-                <p class="loc-st">90, MGR Nagar Street</p>
-                <p class="loc-st">Public Office Road</p>
-
-                <!-- city -->
-                <p class="loc-ct">Nagapattinam</p>
-
-                <!-- state -->
-                <p class="loc-reg">TamilNadu</p>
-
-                <!-- pincode -->
-                <p class="loc-pc">611-001</p>
-
-                <!-- country -->
-                <p class="loc-ctry">India</p>
-            </div>
-
-            <!-- review -->
-            <section class="rrest-2-review">
-                <div class="urating">
-                    <!-- rating value -->
-                    <p class="review-rv">4.5</p>
-
-                    <!-- max rate -->
-                    <p class="review-mr">5</p>
-
-                    <!-- authorO is Organisation class - pub class prop not req-->
-                    <!-- authorP is Person class - pub class prop req-->
-                    <!-- <p class="review-authorO">Foogle</p> -->
-                    <p class="review-authorP">John</p>
-
-                    <p class="review-pub">Foogle</p>
-                </div>
-
-                <div class="urating">
-                    <!-- rating value -->
-                    <p class="review-rv">4.5</p>
-
-                    <!-- max rate -->
-                    <p class="review-mr">5</p>
-
-                    <!-- authorO is Organisation class - pub class prop not req-->
-                    <!-- authorP is Person class - pub class prop req-->
-                    <!-- <p class="review-authorO">Foogle</p> -->
-                    <p class="review-authorP">John</p>
-
-                    <p class="review-pub">Foogle</p>
-                </div>
-            </section>
-
-            <!-- telephone -->
-            <!-- data-reservation="true" for reservation accepted (Boolean)-->
-            <p class="rrest-2-tel" data-reservation="true">+91-8425937253</p>
-
-            <!-- serv cuisine - can be more than 1-->
-            <p class="rrest-2-csn">Asian</p>
-            <p class="rrest-2-csn">Mexican</p>
-
-            <!-- price range -->
-            <p class="rrest-2-pr">$100 - $500</p>
-
-            <!-- opening hour specification -->
-            <section class="rrest-2-workhrs">
-                <!-- wdr for working day range -->
-                <!-- wdr-HR  capital HR means 24 hour format specification -->
-                <!-- wdr-hr capital hr means 12 hour format specification -->
-                <!-- sepeartor should be - -->
-                <p class="wdr">Sunday - Thursday <span class="HR">(10:00 - 21:00)</span></p>
-                <!-- <p class="wdr">Sunday - Thursday <span class="wdr-hr">(10:00AM - 09:00PM)</span></p> -->
-
-                <!-- wd for single working day-->
-                <!-- wd-HR  capital HR means 24 hour format specification -->
-                <!-- wd-hr capital hr means 12 hour format specification -->
-                <p class="wd">Saturday <span class="HR">(13:00 - 18:00)</span></p>
-                <!-- <p class="wd">Saturday <span class="wd-hr">(01:00PM - 06:00PM)</span></p> -->
-
-                <p class="wd">Friday <span class="hr">(10:00AM - 06:00PM)</span></p>
-
-            </section>
-
-            <!-- menu optional menu url-->
-            <a class="rrest-2-menu" href="https://www.yourrestaurant.com/menu">
-                <p>Menu</p>
-            </a>
+			<!-- address -->
+			<!-- geo will be generated from address -->
+			<div class="rjs-restaurant-2-loc">
+				<!-- loc-st for street -->
+				<!-- any number of loc-st can be created but 2 is good -->
+				<p class="stl">12 E 12th St</p>
 
 
-            <!-- aggregate review -->
-            <div>
-                <!-- aggregate rate that got -->
-                <p class="rrest-2-arv">100</p>
+				<!-- city -->
+				<p class="ct">New York</p>
 
-                <!-- max possibly rate -->
-                <p class="rrest-2-arl">100</p>
+				<!-- state -->
+				<p class="st">NY</p>
 
-                <!-- total user rate count -->
-                <p class="rrest-2-arc">1000</p>
-            </div>
+				<!-- pincode -->
+				<p class="loc-pc">10003</p>
 
-        </div>
-    </main>
+				<!-- country -->
+				<p class="ctry">United States</p>
+			</div>
+
+			<!-- review -->
+			<section class="rjs-restaurant-2-reviews">
+
+				<div class="urate">
+					<!-- rating value -->
+					<p class="rv">4.9</p>
+
+					<!-- max rate -->
+					<p class="mr">5</p>
+
+					<!-- authorO is Organisation class - pub class prop not req-->
+					<!-- authorP is Person class - pub class prop req-->
+					<!-- <p class="review-authorO">Foogle</p> -->
+					<p class="raterP">Sammy</p>
+
+					<p class="rpOn">Google</p>
+				</div>
+
+				<div class="urate">
+					<!-- rating value -->
+					<p class="rv">4.6</p>
+
+					<!-- max rate -->
+					<p class="mr">5</p>
+
+					<!-- authorO is Organisation class - pub class prop not req-->
+					<!-- authorP is Person class - pub class prop req-->
+					<!-- <p class="review-authorO">Foogle</p> -->
+					<p class="raterP">John</p>
+
+					<p class="rpOn">Noogle</p>
+				</div>
+
+			</section>
+
+			<!-- telephone -->
+			<!-- data-reservation="true" for reservation accepted (Boolean)-->
+			<p class="rjs-restaurant-2-tel" data-reserve="false">+1 212-380-8060</p>
+
+			<!-- serv cuisine - can be more than 1-->
+			<p class="rjs-restaurant-2-csnt">American</p>
+			<p class="rjs-restaurant-2-csnt">Mexican</p>
+
+			<!-- price range -->
+			<p class="rjs-restaurant-2-price">$100 - $1200</p>
+
+			<!-- opening hour specification -->
+			<section class="rjs-restaurant-2-workhours">
+				<!-- wdr for working day range -->
+				<!-- wdr-HR  capital HR means 24 hour format specification -->
+				<!-- wdr-hr capital hr means 12 hour format specification -->
+				<!-- sepeartor should be - -->
+				<p class="wdr">Monday - Thursday <span class="HR">(08:00 - 21:00)</span></p>
+
+				<!-- wd for single working day-->
+				<!-- wd-HR  capital HR means 24 hour format specification -->
+				<!-- wd-hr capital hr means 12 hour format specification -->
+				<p class="wd">Saturday <span class="HR">(13:00 - 18:00)</span></p>
+
+				<p class="wd">Friday <span class="hr">(10:00AM - 06:00PM)</span></p>
+
+			</section>
+
+			<!-- menu optional menu url-->
+			<a class="rjs-restaurant-2-menu" href="https://www.gotham.com/menu">
+				<p>Menu</p>
+			</a>
+
+
+			<!-- aggregate review -->
+			<div class="rjs-restaurant-2-aggrate">
+				<!-- aggregate rate that got -->
+				<p class="arv">78</p>
+
+				<!-- max possibly rate -->
+				<p class="mr">100</p>
+
+				<!-- total user rate count -->
+				<p class="rjs-restaurant-2-rc">9873</p>
+			</div>
+
+		</div>
+	</main>
 </body>
 
 </html>

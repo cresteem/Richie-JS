@@ -109,6 +109,7 @@
 			"cuisineType": "csnt",
 			"priceRange": "price",
 			"workHours": {
+				"wrapper": "workhours",
 				"dayRange": "wdr",
 				"dayAlone": "wd",
 				"timein24": "HR",
@@ -124,7 +125,7 @@
 		"domainAddress": "cresteem.com",
 		"recipeBaseID": "rjs-recipe",
 		"courseBaseID": "rjs-course",
-		"restaurantBaseID": "rrest",
+		"restaurantBaseID": "rjs-restaurant",
 		"faqBaseID": "rfaq",
 		"siteSearchBoxFieldName": "query_str",
 		"softwareAppBaseID": "rsapp",
