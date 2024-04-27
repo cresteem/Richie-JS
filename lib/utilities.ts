@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import axios from "axios";
-import { load } from "cheerio";
+import { CheerioAPI, Element, load } from "cheerio";
 import puppeteer from "puppeteer";
 import { createHash, randomBytes } from "node:crypto";
 import { aggregatorVariables, reservedNames } from "../richie.config.json";
@@ -411,4 +411,26 @@ export function periodTextToHours(durationAndPeriodType: string): string {
 	}H`;
 
 	return duration;
+}
+
+export function elemTypeAndIDExtracter(
+	$: CheerioAPI,
+	elem: Element,
+	baseID: string,
+): string[] {
+	/* make class name as case insensitive */
+	const className: string = $(elem).attr("class")?.toLowerCase() as string;
+
+	const classNameSplits: string[] = className.split("-");
+
+	/* class must have id-type along with moviebase so 3 or more is expected */
+	if (classNameSplits.length < 3) {
+		throw new Error(
+			`Error in ${className} : class name must be like [${baseID}-id-type]`,
+		);
+	}
+
+	const [id, type] = classNameSplits.slice(-2);
+
+	return [id, type];
 }

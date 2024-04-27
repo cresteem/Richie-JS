@@ -272,6 +272,8 @@ interface Offers {
 
 /* course things ended */
 
+/* restaurant things beginning */
+
 /* Postal */
 interface PostalAddressOptions {
 	streetAddress: string; //address
@@ -291,7 +293,7 @@ export interface GeoOptions {
 
 /* OpeningHours */
 interface OpeningHoursSpecificationOptions {
-	dayOfWeek: string | string[];
+	dayOfWeek: string[];
 	opens: string; // "HH:MM";
 	closes: string; // "HH:MM";
 }
@@ -301,7 +303,7 @@ interface OpeningHoursSpecificationOptions {
 export interface LocalBusinessOptions {
 	businessName: string;
 	address: PostalAddressOptions;
-	image: string | string[];
+	image: string[];
 	review: reviewOptions[];
 	geo: GeoOptions;
 	url: string;
@@ -310,18 +312,20 @@ export interface LocalBusinessOptions {
 	openingHoursSpecification: OpeningHoursSpecificationOptions[];
 	acceptsReservations: boolean;
 	aggregateRating: aggregateRatingOptions;
-	areaServed?: string | string[];
+	areaServed?: string[];
 	menu?: string;
-	keywords?: string[];
+	keywords?: string;
 }
 
 /* LocalBusinessOptions ended*/
 
 /* restaurant */
 export interface RestaurantOptions extends LocalBusinessOptions {
-	servesCuisine: string[];
+	servesCuisine: string;
 }
 /* restaurant ended*/
+
+/* restaurant things ending */
 
 /* FAQ */
 
