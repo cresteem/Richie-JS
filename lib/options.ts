@@ -321,7 +321,7 @@ export interface LocalBusinessOptions {
 
 /* restaurant */
 export interface RestaurantOptions extends LocalBusinessOptions {
-	servesCuisine: string;
+	servesCuisine: string[];
 }
 /* restaurant ended*/
 

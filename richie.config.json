@@ -92,6 +92,29 @@
 			"feesCurrency": "currency",
 			"publisherName": "pname",
 			"publisherUrl": "purl"
+		},
+		"restaurant": {
+			"name": "name",
+			"images": "img",
+			"location": {
+				"wrapper": "loc",
+				"street": "stl",
+				"city": "ct",
+				"state": "st",
+				"country": "ctry",
+				"pincode": "pc"
+			},
+			"telephone": "tel",
+			"reservationDataVar": "reserve",
+			"cuisineType": "csnt",
+			"priceRange": "price",
+			"workHours": {
+				"dayRange": "wdr",
+				"dayAlone": "wd",
+				"timein24": "HR",
+				"timein12": "hr"
+			},
+			"menuLink": "menu"
 		}
 	},
 	"aggregatorVariables": {
