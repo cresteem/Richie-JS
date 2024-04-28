@@ -129,6 +129,11 @@
 			"category": "cat",
 			"price": "price",
 			"priceCurrencyDataVar": "currency"
+		},
+		"video": {
+			"frame": "fr",
+			"segmentsWrapper": "index",
+			"startOffsetDataVar": "offset"
 		}
 	},
 	"aggregatorVariables": {
@@ -142,7 +147,7 @@
 		"faqBaseID": "rjs-faq",
 		"siteSearchBoxFieldName": "query_str",
 		"softwareAppBaseID": "rjs-sapp",
-		"videoBaseID": "rvid",
+		"videoBaseID": "rjs-video",
 		"localBusinessBaseID": "rlb",
 		"organisationBaseID": "rorg",
 		"profileBaseID": "rpp",

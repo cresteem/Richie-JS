@@ -15,6 +15,7 @@ import {
 	serializeRestaurant,
 	serializeRestaurantCarousel,
 	serializeSoftwareApp,
+	serializeVideo,
 } from "./lib/serializer";
 
 import { createJsonLD, writeOutput } from "./lib/utilities";
@@ -218,7 +219,7 @@ export async function makeRestaurantCarousel(
 	});
 }
 
-export async function makeFAQ(
+export function makeFAQ(
 	source: string,
 	destinationFile: string,
 ): Promise<void> {
@@ -237,7 +238,7 @@ export async function makeFAQ(
 	});
 }
 
-export async function makeSoftwareApp(
+export function makeSoftwareApp(
 	source: string,
 	destinationFile: string,
 ): Promise<void> {
@@ -256,8 +257,27 @@ export async function makeSoftwareApp(
 	});
 }
 
+export async function makeVideo(
+	source: string,
+	destinationFile: string,
+): Promise<void> {
+	const aggregatedData = await aggregator.video(source);
+	const serializedData = serializeVideo(aggregatedData);
+	const richResultSnippet = createJsonLD(serializedData);
+
+	return new Promise((resolve, reject) => {
+		writeOutput(source, destinationFile, richResultSnippet)
+			.then(() => {
+				resolve();
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+}
+
 async function richie(): Promise<void> {
-	const filepath = "test-sample/softwareapp.html";
+	const filepath = "test-sample/videos.html";
 	const destinationFile = join(
 		process.cwd(),
 		"outputs",
@@ -267,7 +287,7 @@ async function richie(): Promise<void> {
 	const source = await readFile(filepath, { encoding: "utf8" });
 
 	return new Promise((resolve, reject) => {
-		makeSoftwareApp(source, destinationFile)
+		makeVideo(source, destinationFile)
 			.then(() => {
 				resolve();
 			})

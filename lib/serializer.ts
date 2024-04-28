@@ -666,3 +666,58 @@ export function serializeSoftwareApp(
 
 	return serializedJsonLDList;
 }
+
+function commonVideoSerializer(
+	instance: videoObjectOptions,
+): Record<string, any> {
+	const serializedJsonLD: Record<string, any> = {
+		"@context": "https://schema.org",
+		"@type": "VideoObject",
+		name: instance.videoTitle,
+		description: instance.description,
+		thumbnailUrl: instance.thumbnailUrl,
+		contentUrl: instance.contentUrl,
+		embedUrl: instance.embedUrl,
+		uploadDate: instance.uploadDate,
+		duration: instance.duration,
+		interactionStatistic: {
+			"@type": "InteractionCounter",
+			interactionType: {
+				"@type": instance.interactionStatistic.interactionType,
+			},
+			userInteractionCount: instance.interactionStatistic.interactionCount,
+		},
+		expires: instance.expires,
+		hasPart: [],
+	};
+
+	for (const part of instance.hasPart ?? []) {
+		const clipItem = {
+			"@type": "Clip",
+			name: part.name,
+			startOffset: part.startOffset,
+			endOffset: part.endOffset,
+			url: `${instance.contentUrl}&t=${part.startOffset}s`,
+		};
+		serializedJsonLD.hasPart.push(clipItem);
+	}
+
+	/* delete if empty */
+	if (serializedJsonLD.hasPart.length === 0) {
+		delete serializedJsonLD.hasPart;
+	}
+
+	return serializedJsonLD;
+}
+
+export function serializeVideo(
+	videoData: videoObjectOptions[],
+): Record<string, any>[] {
+	const serializedJsonLDList: Record<string, any>[] = new Array();
+
+	videoData.forEach((instance) => {
+		serializedJsonLDList.push(commonVideoSerializer(instance));
+	});
+
+	return serializedJsonLDList;
+}
