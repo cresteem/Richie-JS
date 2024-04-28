@@ -93,7 +93,7 @@
 			"publisherName": "pname",
 			"publisherUrl": "purl"
 		},
-		"restaurant": {
+		"businessEntity": {
 			"name": "name",
 			"images": "img",
 			"location": {
@@ -106,7 +106,6 @@
 			},
 			"telephone": "tel",
 			"reservationDataVar": "reserve",
-			"cuisineType": "csnt",
 			"priceRange": "price",
 			"workHours": {
 				"wrapper": "workhours",
@@ -117,6 +116,13 @@
 			},
 			"menuLink": "menu",
 			"mapFrame": "map"
+		},
+		"restaurant": {
+			"cuisineType": "csnt"
+		},
+		"localBusiness": {
+			"keywords": "kw",
+			"areaAvailablity": "areaserves"
 		},
 		"faqPage": {
 			"question": "question",
@@ -148,7 +154,7 @@
 		"siteSearchBoxFieldName": "query_str",
 		"softwareAppBaseID": "rjs-sapp",
 		"videoBaseID": "rjs-video",
-		"localBusinessBaseID": "rlb",
+		"localBusinessBaseID": "rjs-lb",
 		"organisationBaseID": "rorg",
 		"profileBaseID": "rpp",
 		"eventBaseID": "revent",

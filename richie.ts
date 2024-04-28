@@ -8,6 +8,7 @@ import {
 	serializeCourse,
 	serializeCourseCarousel,
 	serializeFAQ,
+	serializeLocalBusiness,
 	serializeMovie,
 	serializeMovieCarousel,
 	serializeRecipe,
@@ -276,8 +277,28 @@ export async function makeVideo(
 	});
 }
 
+export async function makeLocalBusiness(
+	htmlPath: string,
+	source: string,
+	destinationFile: string,
+): Promise<void> {
+	const aggregatedData = await aggregator.localBusiness(source, htmlPath);
+	const serializedData = serializeLocalBusiness(aggregatedData);
+	const richResultSnippet = createJsonLD(serializedData);
+
+	return new Promise((resolve, reject) => {
+		writeOutput(source, destinationFile, richResultSnippet)
+			.then(() => {
+				resolve();
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+}
+
 async function richie(): Promise<void> {
-	const filepath = "test-sample/videos.html";
+	const filepath = "test-sample/localbusiness.html";
 	const destinationFile = join(
 		process.cwd(),
 		"outputs",
@@ -287,7 +308,7 @@ async function richie(): Promise<void> {
 	const source = await readFile(filepath, { encoding: "utf8" });
 
 	return new Promise((resolve, reject) => {
-		makeVideo(source, destinationFile)
+		makeLocalBusiness(filepath, source, destinationFile)
 			.then(() => {
 				resolve();
 			})

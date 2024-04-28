@@ -275,7 +275,7 @@ interface Offers {
 /* restaurant things beginning */
 
 /* Postal */
-interface PostalAddressOptions {
+export interface PostalAddressOptions {
 	streetAddress: string; //address
 	addressLocality: string; //city
 	addressRegion: string; //state
@@ -291,9 +291,19 @@ export interface GeoOptions {
 }
 /* geo options ended*/
 
+export enum Weekdays {
+	"Sunday",
+	"Monday",
+	"Tuesday",
+	"Wednesday",
+	"Thursday",
+	"Friday",
+	"Saturday",
+}
+
 /* OpeningHours */
 export interface OpeningHoursSpecificationOptions {
-	dayOfWeek: string[];
+	dayOfWeek: Weekdays[] | string[];
 	opens: string; // "HH:MM";
 	closes: string; // "HH:MM";
 }

@@ -2,148 +2,286 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Local Business</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Restaurants</title>
 </head>
 
 <body>
-    <main>
-        <div id="lc1">
-            <!-- name -->
-            <p class="rlb-1-name">Business X</p>
+	<main>
+		<div id="rjs-lb-1">
+			<!-- name -->
+			<p class="rjs-lb-1-name">Hookie Dookie</p>
 
-            <!-- image=[] -->
-            <div>
-                <img class="rlb-1-img"
-                    src="https://t3.ftcdn.net/jpg/06/31/36/22/360_F_631362231_5VR8Eo0R8VEflgSIfl0RgQvzyW194T5c.jpg"
-                    alt="picture of reception">
+			<!-- image=[] -->
+			<div>
+				<img class="rjs-lb-1-img" src="https://i.imgur.com/3aIBedv.jpeg" alt="picture of reception">
+				<img class="rjs-lb-1-img" src="https://i.imgur.com/RbIZogg.jpeg" alt="another 1">
+				<img class="rjs-lb-1-img" src="https://i.imgur.com/UL6OJWN.jpeg" alt="another 1">
+			</div>
 
-                <img class="rlb-1-img"
-                    src="https://t3.ftcdn.net/jpg/06/31/36/22/360_F_631362231_5VR8Eo0R8VEflgSIfl0RgQvzyW194T5c.jpg"
-                    alt="another 1">
-                <img class="rlb-1-img"
-                    src="https://t3.ftcdn.net/jpg/06/31/36/22/360_F_631362231_5VR8Eo0R8VEflgSIfl0RgQvzyW194T5c.jpg"
-                    alt="another 1">
-            </div>
+			<!-- address -->
+			<!-- geo will be generated from address -->
+			<div class="rjs-lb-1-loc">
+				<!-- loc-st for street -->
+				<!-- any number of loc-st can be created but 2 is good -->
+				<p class="stl">008, Papanna street</p>
+				<p class="stl">St Mark's Rd</p>
 
-            <!-- address -->
-            <!-- geo will be generated from address -->
-            <div class="rlb-1-loc">
-                <!-- loc-st for street -->
-                <!-- any number of loc-st can be created but 2 is good -->
-                <p class="loc-st">90, MGR Nagar Street</p>
-                <p class="loc-st">Public Office Road</p>
+				<!-- city -->
+				<p class="ct">Bengaluru</p>
 
-                <!-- city -->
-                <p class="loc-ct">Nagapattinam</p>
+				<!-- state -->
+				<p class="st">Karnataka</p>
 
-                <!-- state -->
-                <p class="loc-reg">TamilNadu</p>
+				<!-- pincode -->
+				<p class="pc">560001</p>
 
-                <!-- pincode -->
-                <p class="loc-pc">611-001</p>
+				<!-- country -->
+				<p class="ctry">India</p>
+			</div>
 
-                <!-- country -->
-                <p class="loc-ctry">India</p>
-            </div>
+			<!-- review -->
+			<section class="rjs-lb-1-reviews">
 
-            <!-- review -->
-            <section class="rlb-1-review">
-                <div class="urating">
-                    <!-- rating value -->
-                    <p class="review-rv">4.5</p>
+				<div class="urate">
+					<!-- rating value -->
+					<p class="rv">4.5</p>
 
-                    <!-- max rate -->
-                    <p class="review-mr">5</p>
+					<!-- max rate -->
+					<p class="mr">5</p>
 
-                    <!-- authorO is Organisation class - pub class prop not req-->
-                    <!-- authorP is Person class - pub class prop req-->
-                    <!-- <p class="review-authorO">Foogle</p> -->
-                    <p class="review-authorP">John</p>
+					<!-- authorO is Organisation class - pub class prop not req-->
+					<!-- authorP is Person class - pub class prop req-->
+					<!-- <p class="review-authorO">Foogle</p> -->
+					<p class="raterP">Dean</p>
 
-                    <p class="review-pub">Foogle</p>
-                </div>
+					<p class="rpOn">Amazon</p>
+				</div>
 
-                <div class="urating">
-                    <!-- rating value -->
-                    <p class="review-rv">4.5</p>
+				<div class="urate">
+					<!-- rating value -->
+					<p class="rv">4.5</p>
 
-                    <!-- max rate -->
-                    <p class="review-mr">5</p>
+					<!-- max rate -->
+					<p class="mr">5</p>
 
-                    <!-- authorO is Organisation class - pub class prop not req-->
-                    <!-- authorP is Person class - pub class prop req-->
-                    <!-- <p class="review-authorO">Foogle</p> -->
-                    <p class="review-authorP">John</p>
+					<!-- authorO is Organisation class - pub class prop not req-->
+					<!-- authorP is Person class - pub class prop req-->
+					<!-- <p class="review-authorO">Foogle</p> -->
+					<p class="raterP">Someone</p>
 
-                    <p class="review-pub">Foogle</p>
-                </div>
-            </section>
+					<p class="rpOn">Noogle</p>
+				</div>
 
-            <!-- telephone -->
-            <!-- data-reservation="true" for reservation accepted (Boolean)-->
-            <p class="rlb-1-tel" data-reservation="true">+91-8425937253</p>
+			</section>
 
-            <!-- price range -->
-            <p class="rlb-1-pr">$100 - $500</p>
+			<!-- telephone -->
+			<!-- data-reservation="true" for reservation accepted (Boolean)-->
+			<p class="rjs-lb-1-tel" data-reserve="true">+91-8425937243</p>
 
-            <!-- opening hour specification -->
-            <section class="rlb-1-workhrs">
-                <!-- wdr for working day range -->
-                <!-- wdr-HR  capital HR means 24 hour format specification -->
-                <!-- wdr-hr capital hr means 12 hour format specification -->
-                <!-- sepeartor should be - -->
-                <p class="wdr">Sunday - Thursday <span class="HR">(10:00 - 21:00)</span></p>
-                <!-- <p class="wdr">Sunday - Thursday <span class="wdr-hr">(10:00AM - 09:00PM)</span></p> -->
+			<!-- serv cuisine - can be more than 1-->
+			<p class="rjs-lb-1-csnt">Asian</p>
+			<p class="rjs-lb-1-csnt">Mexican</p>
 
-                <!-- wd for single working day-->
-                <!-- wd-HR  capital HR means 24 hour format specification -->
-                <!-- wd-hr capital hr means 12 hour format specification -->
-                <p class="wd">Saturday <span class="HR">(13:00 - 18:00)</span></p>
-                <!-- <p class="wd">Saturday <span class="wd-hr">(01:00PM - 06:00PM)</span></p> -->
+			<!-- price range -->
+			<p class="rjs-lb-1-price">$200 - $500</p>
 
-                <p class="wd">Friday <span class="hr">(10:00AM - 06:00PM)</span></p>
+			<!-- opening hour specification -->
+			<section class="rjs-lb-1-workhours">
+				<!-- wdr for working day range -->
+				<!-- wdr-HR  capital HR means 24 hour format specification -->
+				<!-- wdr-hr capital hr means 12 hour format specification -->
+				<!-- sepeartor should be - -->
+				<p class="wdr">Sunday - Thursday <span class="HR">(10:00 - 21:00)</span></p>
+				<!-- <p class="wdr">Sunday - Thursday <span class="wdr-hr">(10:00AM - 09:00PM)</span></p> -->
 
-            </section>
+				<!-- wd for single working day-->
+				<!-- wd-HR  capital HR means 24 hour format specification -->
+				<!-- wd-hr capital hr means 12 hour format specification -->
+				<p class="wd">Saturday <span class="HR">(13:00 - 18:00)</span></p>
+				<!-- <p class="wd">Saturday <span class="hr">(01:00PM - 06:00PM)</span></p> -->
 
-            <!-- menu optional menu url-->
-            <a class="rlb-1-menu" href="https://www.yourbusiness.com/menu">
-                <p>Menu</p>
-            </a>
+				<p class="wd">Friday <span class="hr">(10:00AM - 06:00PM)</span></p>
+
+			</section>
+
+			<!-- menu optional menu url-->
+			<a class="rjs-lb-1-menu" href="https://www.restaurant.com/menu">
+				<p>Menu</p>
+			</a>
 
 
-            <!-- aggregate review -->
-            <div>
-                <!-- aggregate rate that got -->
-                <p class="rlb-1-arv">100</p>
+			<!-- aggregate review -->
+			<div class="rjs-lb-1-aggrate">
+				<!-- aggregate rate that got -->
+				<p class="arv">100</p>
 
-                <!-- max possibly rate -->
-                <p class="rlb-1-arl">100</p>
+				<!-- max possibly rate -->
+				<p class="mr">100</p>
 
-                <!-- total user rate count -->
-                <p class="rlb-1-arc">1000</p>
-            </div>
+				<!-- total user rate count -->
+				<p class="rc">1000</p>
+			</div>
 
-            <p class="rlb-1-keywords">
-                <span>#Tag1</span>
-                <span>#Tag2</span>
-                <span>#Tag3</span>
-                <span>#Tag4</span>
-            </p>
-<!-- 
-            <p class="rlb-1-availablearea">
-                <span>Nagapattinam</span>
-                <span>Karaikal</span>
-                <span>Thiruvarur</span>
+			<iframe class="rjs-lb-1-map"
+				src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.010685301285!2d77.59783687373181!3d12.971167914890476!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae17900055fdd7%3A0x6d90920a8379858d!2sHookie%20Dookie%20Cafe%20Lounge!5e0!3m2!1sen!2sin!4v1714251053888!5m2!1sen!2sin"
+				width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy"
+				referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+			<p class="rjs-lb-1-kw">
+				<span>#Tag1</span>
+				<span>#Tag2</span>
+				<span>#Tag3</span>
+				<span>#Tag4</span>
+			</p>
+
+			<p class="rjs-lb-1-areaserves">
+				<span>Chennai</span>
+				<span>Osur</span>
+				<span>Hyderabad</span>
+			</p>
+			<!-- 
+            <p class="rjs-lb-1-areaserves">
+                Bangalore
+            </p> -->
+		</div>
+
+		<!-- restaurant 2 -->
+		<div id="rjs-lb-2">
+			<!-- name -->
+			<p class="rjs-lb-2-name">Gotham Restaurant</p>
+
+			<!-- image=[] -->
+			<div>
+				<img class="rjs-lb-2-img"
+					src="https://lh3.googleusercontent.com/p/AF1QipNaSKp5Aj8n9Pcqf2TCckFMMS93N4rEXmGHNTnd"
+					alt="picture of reception">
+
+			</div>
+
+			<!-- address -->
+			<!-- geo will be generated from address -->
+			<div class="rjs-lb-2-loc">
+				<!-- loc-st for street -->
+				<!-- any number of loc-st can be created but 2 is good -->
+				<p class="stl">12 E 12th St</p>
+
+
+				<!-- city -->
+				<p class="ct">New York</p>
+
+				<!-- state -->
+				<p class="st">NY</p>
+
+				<!-- pincode -->
+				<p class="pc">10003</p>
+
+				<!-- country -->
+				<p class="ctry">United States of America</p>
+			</div>
+
+			<!-- review -->
+			<section class="rjs-lb-2-reviews">
+
+				<div class="urate">
+					<!-- rating value -->
+					<p class="rv">4.9</p>
+
+					<!-- max rate -->
+					<p class="mr">5</p>
+
+					<!-- authorO is Organisation class - pub class prop not req-->
+					<!-- authorP is Person class - pub class prop req-->
+					<!-- <p class="review-authorO">Foogle</p> -->
+					<p class="raterP">Sammy</p>
+
+					<p class="rpOn">Google</p>
+				</div>
+
+				<div class="urate">
+					<!-- rating value -->
+					<p class="rv">4.6</p>
+
+					<!-- max rate -->
+					<p class="mr">5</p>
+
+					<!-- authorO is Organisation class - pub class prop not req-->
+					<!-- authorP is Person class - pub class prop req-->
+					<!-- <p class="review-authorO">Foogle</p> -->
+					<p class="raterP">John</p>
+
+					<p class="rpOn">Noogle</p>
+				</div>
+
+			</section>
+
+			<!-- telephone -->
+			<!-- data-reservation="true" for reservation accepted (Boolean)-->
+			<p class="rjs-lb-2-tel" data-reserve="false">+1 212-380-8060</p>
+
+
+			<!-- price range -->
+			<p class="rjs-lb-2-price">$100 - $1200</p>
+
+			<!-- opening hour specification -->
+			<section class="rjs-lb-2-workhours">
+				<!-- wdr for working day range -->
+				<!-- wdr-HR  capital HR means 24 hour format specification -->
+				<!-- wdr-hr capital hr means 12 hour format specification -->
+				<!-- sepeartor should be - -->
+				<p class="wdr">Saturday - Thursday<span class="HR">(08:00 - 21:00)</span></p>
+
+				<!-- wd for single working day-->
+				<!-- wd-HR  capital HR means 24 hour format specification -->
+				<!-- wd-hr capital hr means 12 hour format specification -->
+				<p class="wd">Saturday <span class="HR">(13:00 - 18:00)</span></p>
+
+				<p class="wd">Friday <span class="hr">(10:00AM - 06:00PM)</span></p>
+
+			</section>
+
+			<!-- menu optional menu url-->
+			<a class="rjs-lb-2-menu" href="https://www.gotham.com/menu">
+				<p>Menu</p>
+			</a>
+
+
+			<!-- aggregate review -->
+			<div class="rjs-lb-2-aggrate">
+				<!-- aggregate rate that got -->
+				<p class="arv">78</p>
+
+				<!-- max possibly rate -->
+				<p class="mr">100</p>
+
+				<!-- total user rate count -->
+				<p class="rc">9873</p>
+			</div>
+
+			<iframe class="rjs-lb-2-map"
+				src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3023.264596144853!2d-73.99830762464724!3d40.73420297304284!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25999ce85bd67%3A0x3d32c30c093bc099!2sGotham%20Restaurant!5e0!3m2!1sen!2sin!4v1714230109461!5m2!1sen!2sin"
+				width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy"
+				referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+			<p class="rjs-lb-2-kw">
+				<span>#Tag1</span>
+				<span>#Tag2</span>
+				<span>#Tag3</span>
+				<span>#Tag4</span>
+			</p>
+			<!-- 
+            <p class="rjs-lb-2-areaserves">
+                <span>New York</span>
+                <span>Queens</span>
+                <span>Dakota</span>
             </p> -->
 
-            <p class="rlb-1-availablearea">
-                Nagapattinam
-            </p>
-
-        </div>
-    </main>
+			<p class="rjs-lb-2-areaserves">
+				New York
+			</p>
+		</div>
+	</main>
 </body>
 
 </html>

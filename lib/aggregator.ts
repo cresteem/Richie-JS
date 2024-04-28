@@ -6,11 +6,13 @@ import {
 	CourseOptions,
 	FAQMeta,
 	HowToStep,
+	LocalBusinessOptions,
 	NutritionInfoOptions,
 	OperatingSystem,
 	RecipeOptions,
 	RestaurantOptions,
 	SoftwareAppOptions,
+	Weekdays,
 	aggregateRatingOptions,
 	articleOptions,
 	articleTypeChoices,
@@ -39,6 +41,7 @@ import {
 	srcToCoordinates,
 	faqStripper,
 	partialCategoryMatch,
+	fetchGeoLocation,
 } from "./utilities";
 
 import { relative, dirname, basename, join, resolve } from "node:path";
@@ -795,6 +798,319 @@ export function course(
 	return Object.values(courseMetas);
 }
 
+function commonBusinessEntityThings(
+	businessEntityMeta: LocalBusinessOptions | RestaurantOptions,
+	id: string,
+	type: string,
+	elem: Element,
+	$: CheerioAPI,
+) {
+	if (type === reservedNames.businessEntity.name) {
+		businessEntityMeta.businessName = $(elem).html()?.trim() as string;
+	} else if (type === reservedNames.businessEntity.location.wrapper) {
+		/* address */
+		//street
+		const streetList: string[] = new Array();
+		$(elem)
+			.find(`.${reservedNames.businessEntity.location.street}`)
+			.each((_index, streetElem) => {
+				streetList.push($(streetElem).html()?.trim() ?? "");
+			});
+
+		/* join multi line street address into one with comma seperation 
+		and remove unintended double comma to put one comma
+		*/
+		const combinedStreet: string = streetList
+			.join(", ")
+			.replace(",,", ",");
+
+		//city
+		const city: string = $(elem)
+			.find(`.${reservedNames.businessEntity.location.city}`)
+			.html() as string;
+
+		//state
+		const state: string = $(elem)
+			.find(`.${reservedNames.businessEntity.location.state}`)
+			.html() as string;
+
+		//pincode
+		const pincode: string = $(elem)
+			.find(`.${reservedNames.businessEntity.location.pincode}`)
+			.html()
+			?.replace("-", "")
+			.replace(" ", "") as string;
+
+		let parsedPincode: number;
+		try {
+			parsedPincode = parseInt(pincode);
+		} catch {
+			console.log("Pincode should be numbers");
+			process.exit(1);
+		}
+
+		//country
+		const countryInnerText: string =
+			$(elem)
+				.find(`.${reservedNames.businessEntity.location.country}`)
+				.html() ?? "";
+
+		/* generate 2d code */
+		const countryCode2D: string = getCode(countryInnerText) as string;
+
+		businessEntityMeta.address = {
+			streetAddress: combinedStreet,
+			addressLocality: city,
+			addressRegion: state,
+			addressCountry: countryCode2D,
+			postalCode: parsedPincode,
+		};
+	}
+
+	//image
+	else if (type === reservedNames.businessEntity.images) {
+		const imgLink: string = $(elem).attr("src") ?? "";
+
+		if (!imgLink) {
+			throw new Error("Src not found in image tag, ID: " + id);
+		}
+
+		businessEntityMeta.image.push(imgLink);
+	}
+
+	//review
+	else if (type === reservedNames.reviews.parentWrapper) {
+		const userReviews = $(elem).find(
+			`.${reservedNames.reviews.childWrapper}`,
+		);
+
+		userReviews.each((_index, userReview) => {
+			//rating value
+			const ratingValue: number = parseFloat(
+				$(userReview)
+					.find(`.${reservedNames.reviews.ratedValue}`)
+					.html() as string,
+			);
+
+			//max rating possible
+			const possibleMaxRate: number = parseFloat(
+				$(userReview)
+					.find(`.${reservedNames.reviews.maxRateRange}`)
+					.html() as string,
+			);
+
+			//author
+			let raterName: string = $(userReview)
+				.find(
+					`.${reservedNames.reviews.raterName}${reservedNames.reviews.authorTypeSuffix.person}`,
+				)
+				.html() as string;
+			let authorIsOrg: boolean = false;
+
+			/* Assumming rater as organisation*/
+			if (!raterName) {
+				raterName = $(userReview)
+					.find(
+						`.${reservedNames.reviews.raterName}${reservedNames.reviews.authorTypeSuffix.organisation}`,
+					)
+					.html() as string;
+				if (!raterName) {
+					throw new Error(
+						"Something wrong with reviewer name or element | ID:" + id,
+					);
+				}
+				authorIsOrg = true;
+			}
+
+			//publisher
+			const publisher: string =
+				$(userReview)
+					.find(`.${reservedNames.reviews.reviewPublishedOn}`)
+					.html() ?? "";
+
+			businessEntityMeta.review.push({
+				raterName: raterName,
+				raterType: authorIsOrg ? "Organization" : "Person",
+				ratingValue: ratingValue,
+				maxRateRange: possibleMaxRate,
+				publisherName: publisher ?? null,
+			});
+		});
+	} else if (type === reservedNames.businessEntity.telephone) {
+		//telephone
+		businessEntityMeta.telephone = $(elem).html() as string;
+
+		//reservationAvailability
+		const reservationAvailability: boolean = $(elem).data(
+			reservedNames.businessEntity.reservationDataVar,
+		) as boolean;
+
+		businessEntityMeta.acceptsReservations = reservationAvailability;
+	}
+
+	//priceRange
+	else if (type === reservedNames.businessEntity.priceRange) {
+		businessEntityMeta.priceRange = $(elem).html()?.trim() as string;
+	}
+	//opening Hours specifications
+	else if (type === reservedNames.businessEntity.workHours.wrapper) {
+		const Days: string[] = Object.values(Weekdays).filter(
+			(value) => typeof value === "string",
+		) as string[];
+
+		const timeFormatClasses: string = `.${reservedNames.businessEntity.workHours.timein12}, .${reservedNames.businessEntity.workHours.timein24}`;
+
+		//iterating each wdr and wd that available in workhours
+		$(elem)
+			.find(
+				`.${reservedNames.businessEntity.workHours.dayRange},.${reservedNames.businessEntity.workHours.dayAlone}`,
+			)
+			.each((_index, workHoursElem) => {
+				const className: string = $(workHoursElem)
+					.attr("class")
+					?.trim() as string;
+
+				/* if it is range */
+				if (
+					className === reservedNames.businessEntity.workHours.dayRange
+				) {
+					const range = $(workHoursElem);
+
+					//either hr or HR
+					const timeElem = $(range.children(timeFormatClasses)?.[0]);
+
+					//for time range
+					let [opens, closes]: [opens: string, closes: string] = ["", ""];
+
+					if (
+						timeElem.attr("class") ===
+						reservedNames.businessEntity.workHours.timein24
+					) {
+						[opens, closes] = extractTime(
+							timeElem.html()?.trim() ?? "0",
+							true,
+						);
+					} else {
+						[opens, closes] = extractTime(
+							timeElem.html()?.trim() ?? "0",
+							false,
+						);
+					}
+
+					//remove child of parent and only get text of parent
+					range.children().remove();
+
+					//making in camelcase
+					const [startDay, endDay] = range
+						.text()
+						?.trim()
+						.split("-")
+						.map((day: string) => {
+							day = day.trim().toLowerCase();
+							return day.charAt(0).toUpperCase() + day.slice(1);
+						}) as string[];
+
+					const startPos: number = Days.indexOf(startDay);
+					const endPos: number = Days.indexOf(endDay);
+
+					let dayOfWeek: string[];
+					if (startPos < endPos) {
+						dayOfWeek = Days.slice(startPos, endPos + 1);
+					} else {
+						const rotateCount: number = startPos - endPos;
+
+						const daycount: number = startPos + endPos;
+						const numberOfDaysInWeek: number = 7;
+
+						dayOfWeek = rotateCircular(Days, rotateCount).slice(
+							numberOfDaysInWeek - startPos,
+							daycount,
+						);
+					}
+
+					businessEntityMeta.openingHoursSpecification.push({
+						dayOfWeek: dayOfWeek,
+						opens: opens,
+						closes: closes,
+					});
+				}
+				//if it is single day
+				else if (
+					className === reservedNames.businessEntity.workHours.dayAlone
+				) {
+					const dayElem = $(workHoursElem);
+
+					//extract time before removing
+					//either hr or HR
+					const timeElem = dayElem.children(timeFormatClasses).first();
+
+					const timeElemInner = timeElem.html()?.trim();
+
+					if (!timeElemInner) {
+						throw new Error(
+							"Error: Check working hours in html | ID: " + id,
+						);
+					}
+
+					//for time range
+					let [opens, closes]: [opens: string, closes: string] = ["", ""];
+					if (
+						timeElem.attr("class") ===
+						reservedNames.businessEntity.workHours.timein24
+					) {
+						[opens, closes] = extractTime(timeElemInner, true) as string[];
+					} else {
+						[opens, closes] = extractTime(timeElemInner, false);
+					}
+
+					dayElem.children().remove();
+
+					//camelcase
+					let day = dayElem.html()?.trim() as string;
+					day = day.charAt(0).toUpperCase() + day.slice(1).toLowerCase();
+
+					businessEntityMeta.openingHoursSpecification.push({
+						dayOfWeek: [day],
+						opens: opens,
+						closes: closes,
+					});
+				}
+			});
+	} else if (type === reservedNames.businessEntity.menuLink) {
+		businessEntityMeta.menu = $(elem).attr("href") as string;
+	} else if (type === reservedNames.aggregateRating.wrapper) {
+		businessEntityMeta.aggregateRating.ratingValue = parseFloat(
+			$(elem)
+				.find(`.${reservedNames.aggregateRating.aggregatedRatingValue}`)
+				.first()
+				.html() as string,
+		);
+
+		businessEntityMeta.aggregateRating.numberOfRatings = parseFloat(
+			$(elem)
+				.find(`.${reservedNames.aggregateRating.numberOfRatings}`)
+				.first()
+				.html() as string,
+		);
+
+		businessEntityMeta.aggregateRating.maxRateRange = parseFloat(
+			$(elem)
+				.find(`.${reservedNames.aggregateRating.maxRangeOfRating}`)
+				.first()
+				.html() as string,
+		);
+	} else if (type === reservedNames.businessEntity.mapFrame) {
+		const frameSrc: string = $(elem).attr("src") as string;
+		const { latitude, longitude } = srcToCoordinates(frameSrc);
+
+		businessEntityMeta.geo = {
+			latitude: latitude,
+			longitude: longitude,
+		};
+	}
+	return businessEntityMeta;
+}
+
 export async function restaurant(
 	htmlString: string,
 	htmlPath: string,
@@ -828,357 +1144,27 @@ export async function restaurant(
 			restaurantMetas[id].url = url;
 		}
 
-		if (type === reservedNames.restaurant.name) {
-			restaurantMetas[id].businessName = $(elem).html()?.trim() as string;
-		} else if (type === reservedNames.restaurant.location.wrapper) {
-			/* address */
-			//street
-			const streetList: string[] = new Array();
-			$(elem)
-				.find(`.${reservedNames.restaurant.location.street}`)
-				.each((_index, streetElem) => {
-					streetList.push($(streetElem).html()?.trim() ?? "");
-				});
-
-			/* join multi line street address into one with comma seperation 
-        	and remove unintended double comma to put one comma
-        	*/
-			const combinedStreet: string = streetList
-				.join(", ")
-				.replace(",,", ",");
-
-			//city
-			const city: string = $(elem)
-				.find(`.${reservedNames.restaurant.location.city}`)
-				.html() as string;
-
-			//state
-			const state: string = $(elem)
-				.find(`.${reservedNames.restaurant.location.state}`)
-				.html() as string;
-
-			//pincode
-			const pincode: string = $(elem)
-				.find(`.${reservedNames.restaurant.location.pincode}`)
-				.html()
-				?.replace("-", "")
-				.replace(" ", "") as string;
-
-			let parsedPincode: number;
-			try {
-				parsedPincode = parseInt(pincode);
-			} catch {
-				console.log("Pincode should be numbers");
-				process.exit(1);
-			}
-
-			//country
-			const countryInnerText: string =
-				$(elem)
-					.find(`.${reservedNames.restaurant.location.country}`)
-					.html() ?? "";
-
-			/* generate 2d code */
-			const countryCode2D: string = getCode(countryInnerText) as string;
-
-			restaurantMetas[id].address = {
-				streetAddress: combinedStreet,
-				addressLocality: city,
-				addressRegion: state,
-				addressCountry: countryCode2D,
-				postalCode: parsedPincode,
-			};
-		}
-
-		//image
-		else if (type === reservedNames.restaurant.images) {
-			const imgLink: string = $(elem).attr("src") ?? "";
-
-			if (!imgLink) {
-				throw new Error("Src not found in image tag, ID: " + id);
-			}
-
-			restaurantMetas[id].image.push(imgLink);
-		}
-
-		//review
-		else if (type === reservedNames.reviews.parentWrapper) {
-			const userReviews = $(elem).find(
-				`.${reservedNames.reviews.childWrapper}`,
-			);
-
-			userReviews.each((_index, userReview) => {
-				//rating value
-				const ratingValue: number = parseFloat(
-					$(userReview)
-						.find(`.${reservedNames.reviews.ratedValue}`)
-						.html() as string,
-				);
-
-				//max rating possible
-				const possibleMaxRate: number = parseFloat(
-					$(userReview)
-						.find(`.${reservedNames.reviews.maxRateRange}`)
-						.html() as string,
-				);
-
-				//author
-				let raterName: string = $(userReview)
-					.find(
-						`.${reservedNames.reviews.raterName}${reservedNames.reviews.authorTypeSuffix.person}`,
-					)
-					.html() as string;
-				let authorIsOrg: boolean = false;
-
-				/* Assumming rater as organisation*/
-				if (!raterName) {
-					raterName = $(userReview)
-						.find(
-							`.${reservedNames.reviews.raterName}${reservedNames.reviews.authorTypeSuffix.organisation}`,
-						)
-						.html() as string;
-					if (!raterName) {
-						throw new Error(
-							"Something wrong with reviewer name or element | ID:" + id,
-						);
-					}
-					authorIsOrg = true;
-				}
-
-				//publisher
-				const publisher: string =
-					$(userReview)
-						.find(`.${reservedNames.reviews.reviewPublishedOn}`)
-						.html() ?? "";
-
-				restaurantMetas[id].review.push({
-					raterName: raterName,
-					raterType: authorIsOrg ? "Organization" : "Person",
-					ratingValue: ratingValue,
-					maxRateRange: possibleMaxRate,
-					publisherName: publisher ?? null,
-				});
-			});
-		} else if (type === reservedNames.restaurant.telephone) {
-			//telephone
-			restaurantMetas[id].telephone = $(elem).html() as string;
-
-			//reservationAvailability
-			const reservationAvailability: boolean = $(elem).data(
-				reservedNames.restaurant.reservationDataVar,
-			) as boolean;
-
-			restaurantMetas[id].acceptsReservations = reservationAvailability;
-		}
-
 		//service Cuisine
-		else if (type === reservedNames.restaurant.cuisineType) {
+		if (type === reservedNames.restaurant.cuisineType) {
 			restaurantMetas[id].servesCuisine.push(
 				$(elem).html()?.trim() as string,
 			);
-		}
-		//priceRange
-		else if (type === reservedNames.restaurant.priceRange) {
-			restaurantMetas[id].priceRange = $(elem).html()?.trim() as string;
-		}
-		//opening Hours specifications
-		else if (type === reservedNames.restaurant.workHours.wrapper) {
-			const Days: string[] = [
-				"Sunday",
-				"Monday",
-				"Tuesday",
-				"Wednesday",
-				"Thursday",
-				"Friday",
-				"Saturday",
-			];
-
-			const timeFormatClasses: string = `.${reservedNames.restaurant.workHours.timein12}, .${reservedNames.restaurant.workHours.timein24}`;
-
-			//iterating each wdr and wd that available in workhours
-			$(elem)
-				.find(
-					`.${reservedNames.restaurant.workHours.dayRange},.${reservedNames.restaurant.workHours.dayAlone}`,
-				)
-				.each((_index, workHoursElem) => {
-					const className: string = $(workHoursElem)
-						.attr("class")
-						?.trim() as string;
-
-					/* if it is range */
-					if (className === reservedNames.restaurant.workHours.dayRange) {
-						const range = $(workHoursElem);
-
-						//either hr or HR
-						const timeElem = $(range.children(timeFormatClasses)?.[0]);
-
-						//for time range
-						let [opens, closes]: [opens: string, closes: string] = [
-							"",
-							"",
-						];
-
-						if (
-							timeElem.attr("class") ===
-							reservedNames.restaurant.workHours.timein24
-						) {
-							[opens, closes] = extractTime(
-								timeElem.html()?.trim() ?? "0",
-								true,
-							);
-						} else {
-							[opens, closes] = extractTime(
-								timeElem.html()?.trim() ?? "0",
-								false,
-							);
-						}
-
-						//remove child of parent and only get text of parent
-						range.children().remove();
-
-						//making in camelcase
-						const [startDay, endDay] = range
-							.text()
-							?.trim()
-							.split("-")
-							.map((day) => {
-								day = day.trim().toLowerCase();
-								return day.charAt(0).toUpperCase() + day.slice(1);
-							}) as string[];
-
-						const startPos: number = Days.indexOf(startDay);
-						const endPos: number = Days.indexOf(endDay);
-
-						let dayOfWeek: string[];
-						if (startPos < endPos) {
-							dayOfWeek = Days.slice(startPos, endPos + 1);
-						} else {
-							const rotateCount: number = startPos - endPos;
-
-							const daycount: number = startPos + endPos;
-							const numberOfDaysInWeek: number = 7;
-
-							dayOfWeek = rotateCircular(Days, rotateCount).slice(
-								numberOfDaysInWeek - startPos,
-								daycount,
-							);
-						}
-
-						restaurantMetas[id].openingHoursSpecification.push({
-							dayOfWeek: dayOfWeek,
-							opens: opens,
-							closes: closes,
-						});
-					}
-					//if it is single day
-					else if (
-						className === reservedNames.restaurant.workHours.dayAlone
-					) {
-						const dayElem = $(workHoursElem);
-
-						//extract time before removing
-						//either hr or HR
-						const timeElem = dayElem.children(timeFormatClasses).first();
-
-						const timeElemInner = timeElem.html()?.trim();
-
-						if (!timeElemInner) {
-							throw new Error(
-								"Error: Check working hours in html | ID: " + id,
-							);
-						}
-
-						//for time range
-						let [opens, closes]: [opens: string, closes: string] = [
-							"",
-							"",
-						];
-						if (
-							timeElem.attr("class") ===
-							reservedNames.restaurant.workHours.timein24
-						) {
-							[opens, closes] = extractTime(
-								timeElemInner,
-								true,
-							) as string[];
-						} else {
-							[opens, closes] = extractTime(timeElemInner, false);
-						}
-
-						dayElem.children().remove();
-
-						//camelcase
-						let day = dayElem.html()?.trim() as string;
-						day = day.charAt(0).toUpperCase() + day.slice(1).toLowerCase();
-
-						restaurantMetas[id].openingHoursSpecification.push({
-							dayOfWeek: [day],
-							opens: opens,
-							closes: closes,
-						});
-					}
-				});
-		} else if (type === reservedNames.restaurant.menuLink) {
-			restaurantMetas[id].menu = $(elem).attr("href") as string;
-		} else if (type === reservedNames.aggregateRating.wrapper) {
-			restaurantMetas[id].aggregateRating.ratingValue = parseFloat(
-				$(elem)
-					.find(`.${reservedNames.aggregateRating.aggregatedRatingValue}`)
-					.first()
-					.html() as string,
-			);
-
-			restaurantMetas[id].aggregateRating.numberOfRatings = parseFloat(
-				$(elem)
-					.find(`.${reservedNames.aggregateRating.numberOfRatings}`)
-					.first()
-					.html() as string,
-			);
-
-			restaurantMetas[id].aggregateRating.maxRateRange = parseFloat(
-				$(elem)
-					.find(`.${reservedNames.aggregateRating.maxRangeOfRating}`)
-					.first()
-					.html() as string,
-			);
-		} else if (type === reservedNames.restaurant.mapFrame) {
-			const frameSrc: string = $(elem).attr("src") as string;
-			const { latitude, longitude } = srcToCoordinates(frameSrc);
-
-			restaurantMetas[id].geo = {
-				latitude: latitude,
-				longitude: longitude,
-			};
+		} else {
+			restaurantMetas[id] = commonBusinessEntityThings(
+				restaurantMetas[id],
+				id,
+				type,
+				elem,
+				$,
+			) as RestaurantOptions;
 		}
 	});
 
-	//make geocode if previously not generated with map iframe
-	const fetchGeoLocation = async (meta: RestaurantOptions) => {
-		if (!meta.geo) {
-			console.log(
-				"Warning: No Map frame was found in HTML\nMaking approximate coordinates..",
-			);
-			const completeAddress = [
-				meta.businessName,
-				meta.address.streetAddress,
-				meta.address.addressLocality,
-				meta.address.addressRegion,
-				meta.address.postalCode,
-				meta.address.addressCountry,
-			].join(",");
-
-			const { latitude, longitude } = await getGeoCode(completeAddress);
-
-			meta.geo = { latitude, longitude };
-		}
-		return meta;
-	};
-
 	// Use Promise.all to await all asynchronous operations
 	const RestaurantMetaData: Awaited<RestaurantOptions[]> =
-		await Promise.all(
+		(await Promise.all(
 			Object.values(restaurantMetas).map(fetchGeoLocation),
-		);
+		)) as RestaurantOptions[];
 
 	return RestaurantMetaData;
 }
@@ -1345,4 +1331,94 @@ export async function video(
 	});
 	await Promise.all(videoMetaPromises);
 	return Object.values(videoMetas);
+}
+
+export async function localBusiness(
+	htmlString: string,
+	htmlPath: string,
+): Promise<LocalBusinessOptions[]> {
+	const $ = load(htmlString);
+
+	const localBusinessMetas: Record<string, LocalBusinessOptions> = {};
+
+	$(`[class^="${localBusinessBaseID}-"]`).each((_index, elem) => {
+		const [id, type] = elemTypeAndIDExtracter(
+			$,
+			elem,
+			localBusinessBaseID,
+		);
+
+		//basic initiation
+		if (!Object.keys(localBusinessMetas).includes(id)) {
+			//create object for it
+			localBusinessMetas[id] = {} as LocalBusinessOptions;
+			localBusinessMetas[id].image = [];
+			localBusinessMetas[id].review = [];
+			localBusinessMetas[id].openingHoursSpecification = [];
+			localBusinessMetas[id].aggregateRating =
+				{} as aggregateRatingOptions;
+
+			localBusinessMetas[id].areaServed = [];
+			//deeplink to localBusiness
+			const url: string = new URL(
+				`${relative(cwd(), htmlPath).replace(
+					".html",
+					"",
+				)}#${localBusinessBaseID}-${id}`,
+				httpsDomainBase,
+			).href;
+
+			localBusinessMetas[id].url = url;
+		}
+
+		if (type === reservedNames.localBusiness.keywords) {
+			const keywords: string[] = new Array();
+			$(elem)
+				.children()
+				.each((_index: number, keyword: Element) => {
+					keywords.push($(keyword).html()?.trim() ?? "");
+				});
+
+			localBusinessMetas[id].keywords = keywords.join(", ");
+		} else if (type === reservedNames.localBusiness.areaAvailablity) {
+			const areaAvailablity: string[] = new Array();
+			const hasChild: boolean = $(elem).children().length > 0;
+
+			if (hasChild) {
+				$(elem)
+					.children()
+					.each((_index: number, areaElem: Element) => {
+						let availablearea: string = $(areaElem)
+							.html()
+							?.trim() as string;
+
+						//remove special chars to retain only alphanumeric text
+						availablearea = availablearea?.replace(/[^a-zA-Z0-9]/g, "");
+						areaAvailablity.push(availablearea);
+					});
+			} else {
+				let availablearea: string = $(elem).html()?.trim() as string;
+				//remove special chars to retain only alphanumeric text
+				availablearea = availablearea?.replace(/[^a-zA-Z0-9]/g, "");
+				areaAvailablity.push(availablearea);
+			}
+			localBusinessMetas[id].areaServed = areaAvailablity;
+		} else {
+			localBusinessMetas[id] = commonBusinessEntityThings(
+				localBusinessMetas[id],
+				id,
+				type,
+				elem,
+				$,
+			) as LocalBusinessOptions;
+		}
+	});
+
+	// Use Promise.all to await all asynchronous operations
+	const localBusinessMetaData: Awaited<LocalBusinessOptions[]> =
+		(await Promise.all(
+			Object.values(localBusinessMetas).map(fetchGeoLocation),
+		)) as LocalBusinessOptions[];
+
+	return localBusinessMetaData;
 }

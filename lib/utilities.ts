@@ -7,6 +7,8 @@ import { aggregatorVariables, reservedNames } from "../richie.config.json";
 import {
 	ApplicationCategory,
 	GeoOptions,
+	LocalBusinessOptions,
+	RestaurantOptions,
 	aggregateRatingOptions,
 	breadCrumbMeta,
 	videoObjectOptions,
@@ -500,4 +502,28 @@ export function partialCategoryMatch(
 	});
 	/* if no match found it returns apptype(input) as it was */
 	return matchedIndex !== -1 ? categories[matchedIndex] : appType;
+}
+
+//make geocode if previously not generated with map iframe
+export async function fetchGeoLocation(
+	meta: LocalBusinessOptions | RestaurantOptions,
+): Promise<LocalBusinessOptions | RestaurantOptions> {
+	if (!meta.geo) {
+		console.log(
+			"Warning: No Map frame was found in HTML\nMaking approximate coordinates..",
+		);
+		const completeAddress = [
+			meta.businessName,
+			meta.address.streetAddress,
+			meta.address.addressLocality,
+			meta.address.addressRegion,
+			meta.address.postalCode,
+			meta.address.addressCountry,
+		].join(",");
+
+		const { latitude, longitude } = await getGeoCode(completeAddress);
+
+		meta.geo = { latitude, longitude };
+	}
+	return meta;
 }
