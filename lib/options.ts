@@ -337,7 +337,7 @@ export interface FAQMeta {
 /* FAQ ended*/
 
 /* SoftwareApp */
-type OperatingSystem =
+export type OperatingSystem =
 	| "ANDROID"
 	| "WINDOWS"
 	| "MAC"
@@ -347,12 +347,35 @@ type OperatingSystem =
 	| "PS5"
 	| "XBOX 360";
 
+export enum ApplicationCategory {
+	"GameApplication",
+	"SocialNetworkingApplication",
+	"TravelApplication",
+	"ShoppingApplication",
+	"SportsApplication",
+	"LifestyleApplication",
+	"BusinessApplication",
+	"DesignApplication",
+	"DeveloperApplication",
+	"DriverApplication",
+	"EducationalApplication",
+	"HealthApplication",
+	"FinanceApplication",
+	"SecurityApplication",
+	"BrowserApplication",
+	"CommunicationApplication",
+	"DesktopEnhancementApplication",
+	"EntertainmentApplication",
+	"MultimediaApplication",
+	"HomeApplication",
+	"UtilitiesApplication",
+	"ReferenceApplication",
+}
+
 export interface SoftwareAppOptions {
 	name: string;
 	operatingSystem: OperatingSystem[];
-	category: string;
-	price: number;
-	priceCurrency: Currency;
+	category: ApplicationCategory;
 	aggregateRating: aggregateRatingOptions;
 	offer: Offers;
 }

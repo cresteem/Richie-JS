@@ -5,6 +5,7 @@ import puppeteer from "puppeteer";
 import { createHash, randomBytes } from "node:crypto";
 import { aggregatorVariables, reservedNames } from "../richie.config.json";
 import {
+	ApplicationCategory,
 	GeoOptions,
 	aggregateRatingOptions,
 	breadCrumbMeta,
@@ -478,4 +479,25 @@ export function faqStripper(input: string): string {
 	strippedString = strippedString.replace(/\n/g, " ").replace(/\t/g, " ");
 
 	return strippedString;
+}
+
+export function partialCategoryMatch(
+	appType: string,
+): string | ApplicationCategory {
+	let matchedIndex: number = -1;
+
+	const categories: string[] = Object.values(ApplicationCategory).filter(
+		(value) => typeof value === "string",
+	) as string[];
+
+	categories.some((type: string, index: number) => {
+		if (type.includes(appType)) {
+			matchedIndex = index;
+			return true;
+		} else {
+			return false;
+		}
+	});
+	/* if no match found it returns apptype(input) as it was */
+	return matchedIndex !== -1 ? categories[matchedIndex] : appType;
 }

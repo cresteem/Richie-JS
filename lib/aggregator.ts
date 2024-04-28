@@ -1,13 +1,16 @@
 import { readFileSync, existsSync, writeFileSync } from "node:fs";
 import { Cheerio, CheerioAPI, Element, load } from "cheerio";
 import {
+	ApplicationCategory,
 	CourseInstanceOptions,
 	CourseOptions,
 	FAQMeta,
 	HowToStep,
 	NutritionInfoOptions,
+	OperatingSystem,
 	RecipeOptions,
 	RestaurantOptions,
+	SoftwareAppOptions,
 	aggregateRatingOptions,
 	articleOptions,
 	articleTypeChoices,
@@ -34,6 +37,7 @@ import {
 	rotateCircular,
 	srcToCoordinates,
 	faqStripper,
+	partialCategoryMatch,
 } from "./utilities";
 
 import { relative, dirname, basename, join, resolve } from "node:path";
@@ -1206,4 +1210,75 @@ export function FAQ(htmlString: string): FAQMeta[] {
 	});
 
 	return faqsMetaData;
+}
+
+export function softwareApp(htmlString: string): SoftwareAppOptions[] {
+	const $ = load(htmlString);
+
+	const softwareAppMetas: Record<string, SoftwareAppOptions> = {};
+
+	$(`[class^="${softwareAppBaseID}-"]`).each((_index, elem) => {
+		const [id, type] = elemTypeAndIDExtracter($, elem, softwareAppBaseID);
+
+		//basic initiation
+		if (!Object.keys(softwareAppMetas).includes(id)) {
+			//create object for it
+			softwareAppMetas[id] = {} as SoftwareAppOptions;
+			softwareAppMetas[id].aggregateRating = {} as aggregateRatingOptions;
+			softwareAppMetas[id].operatingSystem = [];
+		}
+
+		const elemInner: string = $(elem).html()?.trim() as string;
+
+		if (type === reservedNames.softwareApp.name) {
+			softwareAppMetas[id].name = elemInner;
+		} else if (type === reservedNames.softwareApp.category) {
+			softwareAppMetas[id].category = partialCategoryMatch(
+				elemInner,
+			) as ApplicationCategory;
+		} else if (type === reservedNames.softwareApp.operatingSystem) {
+			const currentOSList: OperatingSystem[] = elemInner
+				.split(reservedNames.softwareApp.OSSeperator)
+				.map((elem) => elem.toUpperCase()) as OperatingSystem[];
+
+			const oldOSList: OperatingSystem[] =
+				softwareAppMetas[id].operatingSystem;
+
+			softwareAppMetas[id].operatingSystem =
+				oldOSList.concat(currentOSList);
+		} else if (type === reservedNames.aggregateRating.wrapper) {
+			softwareAppMetas[id].aggregateRating.ratingValue = parseFloat(
+				$(elem)
+					.find(`.${reservedNames.aggregateRating.aggregatedRatingValue}`)
+					.html() ?? "0",
+			);
+			softwareAppMetas[id].aggregateRating.maxRateRange = parseFloat(
+				$(elem)
+					.find(`.${reservedNames.aggregateRating.maxRangeOfRating}`)
+					.html() ?? "0",
+			);
+			softwareAppMetas[id].aggregateRating.numberOfRatings = parseInt(
+				$(elem)
+					.find(`.${reservedNames.aggregateRating.numberOfRatings}`)
+					.html() ?? "0",
+			);
+		} else if (type === reservedNames.softwareApp.price) {
+			const currency: string = $(elem).data(
+				reservedNames.softwareApp.priceCurrencyDataVar,
+			) as string;
+
+			if (!currency) {
+				throw new Error(
+					`Add data-${reservedNames.softwareApp.priceCurrencyDataVar} in price element \nReference ID: ${id}`,
+				);
+			}
+
+			softwareAppMetas[id].offer = {
+				price: parseFloat(elemInner),
+				priceCurrency: currency.toUpperCase(),
+			};
+		}
+	});
+
+	return Object.values(softwareAppMetas);
 }

@@ -14,6 +14,7 @@ import {
 	serializeRecipeCarousel,
 	serializeRestaurant,
 	serializeRestaurantCarousel,
+	serializeSoftwareApp,
 } from "./lib/serializer";
 
 import { createJsonLD, writeOutput } from "./lib/utilities";
@@ -236,8 +237,27 @@ export async function makeFAQ(
 	});
 }
 
+export async function makeSoftwareApp(
+	source: string,
+	destinationFile: string,
+): Promise<void> {
+	const aggregatedData = aggregator.softwareApp(source);
+	const serializedData = serializeSoftwareApp(aggregatedData);
+	const richResultSnippet = createJsonLD(serializedData);
+
+	return new Promise((resolve, reject) => {
+		writeOutput(source, destinationFile, richResultSnippet)
+			.then(() => {
+				resolve();
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+}
+
 async function richie(): Promise<void> {
-	const filepath = "test-sample/faq.html";
+	const filepath = "test-sample/softwareapp.html";
 	const destinationFile = join(
 		process.cwd(),
 		"outputs",
@@ -247,7 +267,7 @@ async function richie(): Promise<void> {
 	const source = await readFile(filepath, { encoding: "utf8" });
 
 	return new Promise((resolve, reject) => {
-		makeFAQ(source, destinationFile)
+		makeSoftwareApp(source, destinationFile)
 			.then(() => {
 				resolve();
 			})

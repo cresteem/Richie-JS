@@ -121,6 +121,14 @@
 		"faqPage": {
 			"question": "question",
 			"answer": "answer"
+		},
+		"softwareApp": {
+			"name": "name",
+			"operatingSystem": "os",
+			"OSSeperator": ",",
+			"category": "cat",
+			"price": "price",
+			"priceCurrencyDataVar": "currency"
 		}
 	},
 	"aggregatorVariables": {
@@ -133,7 +141,7 @@
 		"restaurantBaseID": "rjs-restaurant",
 		"faqBaseID": "rjs-faq",
 		"siteSearchBoxFieldName": "query_str",
-		"softwareAppBaseID": "rsapp",
+		"softwareAppBaseID": "rjs-sapp",
 		"videoBaseID": "rvid",
 		"localBusinessBaseID": "rlb",
 		"organisationBaseID": "rorg",
