@@ -4,7 +4,6 @@ import {
 	movieOptions,
 	RecipeOptions,
 	CourseOptions,
-	FAQPageOptions,
 	SoftwareAppOptions,
 	videoObjectOptions,
 	RestaurantOptions,
@@ -23,6 +22,7 @@ import {
 	ClipOffset,
 	NutritionInfoOptions,
 	OpeningHoursSpecificationOptions,
+	FAQMeta,
 } from "./options";
 
 import {
@@ -613,6 +613,28 @@ export function serializeRestaurantCarousel(
 
 		//adding to first level parent
 		serializedJsonLD.itemListElement.push(ListItem);
+	}
+
+	return serializedJsonLD;
+}
+
+export function serializeFAQ(FAQData: FAQMeta[]): Record<string, any> {
+	const serializedJsonLD: Record<string, any> = {
+		"@context": "https://schema.org",
+		"@type": "FAQPage",
+		mainEntity: new Array(),
+	};
+
+	for (const faq of FAQData) {
+		const faqItem: Record<string, any> = {
+			"@type": "Question",
+			name: faq.question,
+			acceptedAnswer: {
+				"@type": "Answer",
+				text: faq.answer,
+			},
+		};
+		serializedJsonLD.mainEntity.push(faqItem);
 	}
 
 	return serializedJsonLD;

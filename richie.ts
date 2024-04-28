@@ -7,6 +7,7 @@ import {
 	serializeBreadCrumb,
 	serializeCourse,
 	serializeCourseCarousel,
+	serializeFAQ,
 	serializeMovie,
 	serializeMovieCarousel,
 	serializeRecipe,
@@ -216,8 +217,27 @@ export async function makeRestaurantCarousel(
 	});
 }
 
+export async function makeFAQ(
+	source: string,
+	destinationFile: string,
+): Promise<void> {
+	const aggregatedData = aggregator.FAQ(source);
+	const serializedData = serializeFAQ(aggregatedData);
+	const richResultSnippet = createJsonLD(serializedData);
+
+	return new Promise((resolve, reject) => {
+		writeOutput(source, destinationFile, richResultSnippet)
+			.then(() => {
+				resolve();
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+}
+
 async function richie(): Promise<void> {
-	const filepath = "test-sample/carousels/restaurants.html";
+	const filepath = "test-sample/faq.html";
 	const destinationFile = join(
 		process.cwd(),
 		"outputs",
@@ -227,7 +247,7 @@ async function richie(): Promise<void> {
 	const source = await readFile(filepath, { encoding: "utf8" });
 
 	return new Promise((resolve, reject) => {
-		makeRestaurantCarousel(filepath, source, destinationFile)
+		makeFAQ(source, destinationFile)
 			.then(() => {
 				resolve();
 			})

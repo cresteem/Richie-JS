@@ -466,3 +466,16 @@ export function srcToCoordinates(src: string): Record<string, number> {
 	};
 	return coordinates;
 }
+
+export function faqStripper(input: string): string {
+	/* remove html's opening and closing tag to only preserve text */
+	let strippedString: string = input.replace(/<[^>]+>/g, "");
+
+	/* remove unwanted space */
+	strippedString = strippedString.replace(/\s+/g, " ").trim();
+
+	/* handle \t \n characters */
+	strippedString = strippedString.replace(/\n/g, " ").replace(/\t/g, " ");
+
+	return strippedString;
+}

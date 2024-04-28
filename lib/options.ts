@@ -329,14 +329,11 @@ export interface RestaurantOptions extends LocalBusinessOptions {
 
 /* FAQ */
 
-interface FAQ {
+export interface FAQMeta {
 	question: string;
 	answer: string;
 }
 
-export interface FAQPageOptions {
-	mainEntity: FAQ[];
-}
 /* FAQ ended*/
 
 /* SoftwareApp */

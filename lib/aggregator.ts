@@ -3,6 +3,7 @@ import { Cheerio, CheerioAPI, Element, load } from "cheerio";
 import {
 	CourseInstanceOptions,
 	CourseOptions,
+	FAQMeta,
 	HowToStep,
 	NutritionInfoOptions,
 	RecipeOptions,
@@ -32,6 +33,7 @@ import {
 	elemTypeAndIDExtracter,
 	rotateCircular,
 	srcToCoordinates,
+	faqStripper,
 } from "./utilities";
 
 import { relative, dirname, basename, join, resolve } from "node:path";
@@ -1174,4 +1176,34 @@ export async function restaurant(
 		);
 
 	return RestaurantMetaData;
+}
+
+export function FAQ(htmlString: string): FAQMeta[] {
+	const $ = load(htmlString);
+
+	const faqsMetaData: FAQMeta[] = [] as FAQMeta[];
+
+	$(`.${faqBaseID}`).each((_index, elem) => {
+		/* question */
+		let question: string = $(elem)
+			.find(`.${reservedNames.faqPage.question}`)
+			.first()
+			.html() as string;
+
+		/* answer */
+		let answer: string = $(elem)
+			.find(`.${reservedNames.faqPage.answer}`)
+			.first()
+			.html() as string;
+
+		question = faqStripper(question);
+		answer = faqStripper(answer);
+
+		faqsMetaData.push({
+			question: question,
+			answer: answer,
+		});
+	});
+
+	return faqsMetaData;
 }

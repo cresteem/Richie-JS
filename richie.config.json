@@ -117,6 +117,10 @@
 			},
 			"menuLink": "menu",
 			"mapFrame": "map"
+		},
+		"faqPage": {
+			"question": "question",
+			"answer": "answer"
 		}
 	},
 	"aggregatorVariables": {
@@ -127,7 +131,7 @@
 		"recipeBaseID": "rjs-recipe",
 		"courseBaseID": "rjs-course",
 		"restaurantBaseID": "rjs-restaurant",
-		"faqBaseID": "rfaq",
+		"faqBaseID": "rjs-faq",
 		"siteSearchBoxFieldName": "query_str",
 		"softwareAppBaseID": "rsapp",
 		"videoBaseID": "rvid",
