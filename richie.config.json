@@ -140,6 +140,14 @@
 			"frame": "fr",
 			"segmentsWrapper": "index",
 			"startOffsetDataVar": "offset"
+		},
+		"organisation": {
+			"logo": "logo",
+			"socialMediaLink": "smlink",
+			"description": "desc",
+			"email": "email",
+			"foundingYear": "found",
+			"taxid": "tid"
 		}
 	},
 	"aggregatorVariables": {
@@ -155,7 +163,7 @@
 		"softwareAppBaseID": "rjs-sapp",
 		"videoBaseID": "rjs-video",
 		"localBusinessBaseID": "rjs-lb",
-		"organisationBaseID": "rorg",
+		"organisationBaseID": "rjs-org",
 		"profileBaseID": "rpp",
 		"eventBaseID": "revent",
 		"productBaseID": "rprod",

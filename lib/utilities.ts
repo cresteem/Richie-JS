@@ -470,7 +470,7 @@ export function srcToCoordinates(src: string): Record<string, number> {
 	return coordinates;
 }
 
-export function faqStripper(input: string): string {
+export function longTextStripper(input: string): string {
 	/* remove html's opening and closing tag to only preserve text */
 	let strippedString: string = input.replace(/<[^>]+>/g, "");
 

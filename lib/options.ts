@@ -423,9 +423,9 @@ export interface ProfilePageOptions {
 export interface OrganisationOptions {
 	name: string;
 	logo: string;
-	image: string | string[];
+	image: string[];
 	url: string;
-	sameAs: string | string[];
+	sameAs: string[];
 	description: string;
 	email: string;
 	telephone: string;

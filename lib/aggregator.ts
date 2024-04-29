@@ -9,6 +9,8 @@ import {
 	LocalBusinessOptions,
 	NutritionInfoOptions,
 	OperatingSystem,
+	OrganisationOptions,
+	PostalAddressOptions,
 	RecipeOptions,
 	RestaurantOptions,
 	SoftwareAppOptions,
@@ -39,7 +41,7 @@ import {
 	elemTypeAndIDExtracter,
 	rotateCircular,
 	srcToCoordinates,
-	faqStripper,
+	longTextStripper,
 	partialCategoryMatch,
 	fetchGeoLocation,
 } from "./utilities";
@@ -72,7 +74,7 @@ import { stat } from "node:fs/promises";
 
 /* function definitions */
 export function article(htmlString: string): articleOptions {
-	const $ = load(htmlString);
+	const $: CheerioAPI = load(htmlString);
 
 	//default is Article
 	const articleType: articleTypeChoices = ($("body").data(
@@ -277,7 +279,7 @@ export function movie(
 	htmlString: string,
 	htmlPath: string,
 ): movieOptions[] {
-	const $ = load(htmlString);
+	const $: CheerioAPI = load(htmlString);
 
 	const movieMetas: Record<string, movieOptions> = {};
 
@@ -445,7 +447,7 @@ export async function recipe(
 	htmlString: string,
 	htmlPath: string,
 ): Promise<RecipeOptions[]> {
-	const $ = load(htmlString);
+	const $: CheerioAPI = load(htmlString);
 
 	const recipeMetas: Record<string, RecipeOptions> = {};
 
@@ -650,7 +652,7 @@ export function course(
 	htmlString: string,
 	htmlPath: string,
 ): CourseOptions[] {
-	const $ = load(htmlString);
+	const $: CheerioAPI = load(htmlString);
 
 	const courseMetas: Record<string, CourseOptions> = {};
 
@@ -798,6 +800,66 @@ export function course(
 	return Object.values(courseMetas);
 }
 
+function commonLocationExtractor(
+	$: CheerioAPI,
+	elem: Element,
+): PostalAddressOptions {
+	/* address */
+	//street
+	const streetList: string[] = new Array();
+	$(elem)
+		.find(`.${reservedNames.businessEntity.location.street}`)
+		.each((_index: number, streetElem: Element) => {
+			streetList.push($(streetElem).html()?.trim() ?? "");
+		});
+
+	/* join multi line street address into one with comma seperation 
+		and remove unintended double comma to put one comma
+		*/
+	const combinedStreet: string = streetList.join(", ").replace(",,", ",");
+
+	//city
+	const city: string = $(elem)
+		.find(`.${reservedNames.businessEntity.location.city}`)
+		.html() as string;
+
+	//state
+	const state: string = $(elem)
+		.find(`.${reservedNames.businessEntity.location.state}`)
+		.html() as string;
+
+	//pincode
+	const pincode: string = $(elem)
+		.find(`.${reservedNames.businessEntity.location.pincode}`)
+		.html()
+		?.replace("-", "")
+		.replace(" ", "") as string;
+
+	let parsedPincode: number;
+	try {
+		parsedPincode = parseInt(pincode);
+	} catch {
+		console.log("Pincode should be numbers");
+		process.exit(1);
+	}
+
+	//country
+	const countryInnerText: string =
+		$(elem)
+			.find(`.${reservedNames.businessEntity.location.country}`)
+			.html() ?? "";
+
+	/* generate 2d code */
+	const countryCode2D: string = getCode(countryInnerText) as string;
+	return {
+		streetAddress: combinedStreet,
+		addressLocality: city,
+		addressRegion: state,
+		addressCountry: countryCode2D,
+		postalCode: parsedPincode,
+	};
+}
+
 function commonBusinessEntityThings(
 	businessEntityMeta: LocalBusinessOptions | RestaurantOptions,
 	id: string,
@@ -808,63 +870,7 @@ function commonBusinessEntityThings(
 	if (type === reservedNames.businessEntity.name) {
 		businessEntityMeta.businessName = $(elem).html()?.trim() as string;
 	} else if (type === reservedNames.businessEntity.location.wrapper) {
-		/* address */
-		//street
-		const streetList: string[] = new Array();
-		$(elem)
-			.find(`.${reservedNames.businessEntity.location.street}`)
-			.each((_index, streetElem) => {
-				streetList.push($(streetElem).html()?.trim() ?? "");
-			});
-
-		/* join multi line street address into one with comma seperation 
-		and remove unintended double comma to put one comma
-		*/
-		const combinedStreet: string = streetList
-			.join(", ")
-			.replace(",,", ",");
-
-		//city
-		const city: string = $(elem)
-			.find(`.${reservedNames.businessEntity.location.city}`)
-			.html() as string;
-
-		//state
-		const state: string = $(elem)
-			.find(`.${reservedNames.businessEntity.location.state}`)
-			.html() as string;
-
-		//pincode
-		const pincode: string = $(elem)
-			.find(`.${reservedNames.businessEntity.location.pincode}`)
-			.html()
-			?.replace("-", "")
-			.replace(" ", "") as string;
-
-		let parsedPincode: number;
-		try {
-			parsedPincode = parseInt(pincode);
-		} catch {
-			console.log("Pincode should be numbers");
-			process.exit(1);
-		}
-
-		//country
-		const countryInnerText: string =
-			$(elem)
-				.find(`.${reservedNames.businessEntity.location.country}`)
-				.html() ?? "";
-
-		/* generate 2d code */
-		const countryCode2D: string = getCode(countryInnerText) as string;
-
-		businessEntityMeta.address = {
-			streetAddress: combinedStreet,
-			addressLocality: city,
-			addressRegion: state,
-			addressCountry: countryCode2D,
-			postalCode: parsedPincode,
-		};
+		businessEntityMeta.address = commonLocationExtractor($, elem);
 	}
 
 	//image
@@ -1115,7 +1121,7 @@ export async function restaurant(
 	htmlString: string,
 	htmlPath: string,
 ): Promise<RestaurantOptions[]> {
-	const $ = load(htmlString);
+	const $: CheerioAPI = load(htmlString);
 
 	const restaurantMetas: Record<string, RestaurantOptions> = {};
 
@@ -1170,7 +1176,7 @@ export async function restaurant(
 }
 
 export function FAQ(htmlString: string): FAQMeta[] {
-	const $ = load(htmlString);
+	const $: CheerioAPI = load(htmlString);
 
 	const faqsMetaData: FAQMeta[] = [] as FAQMeta[];
 
@@ -1187,8 +1193,8 @@ export function FAQ(htmlString: string): FAQMeta[] {
 			.first()
 			.html() as string;
 
-		question = faqStripper(question);
-		answer = faqStripper(answer);
+		question = longTextStripper(question);
+		answer = longTextStripper(answer);
 
 		faqsMetaData.push({
 			question: question,
@@ -1200,7 +1206,7 @@ export function FAQ(htmlString: string): FAQMeta[] {
 }
 
 export function softwareApp(htmlString: string): SoftwareAppOptions[] {
-	const $ = load(htmlString);
+	const $: CheerioAPI = load(htmlString);
 
 	const softwareAppMetas: Record<string, SoftwareAppOptions> = {};
 
@@ -1273,7 +1279,7 @@ export function softwareApp(htmlString: string): SoftwareAppOptions[] {
 export async function video(
 	htmlString: string,
 ): Promise<videoObjectOptions[]> {
-	const $ = load(htmlString);
+	const $: CheerioAPI = load(htmlString);
 
 	const videoMetas: Record<string, videoObjectOptions> = {};
 
@@ -1337,7 +1343,7 @@ export async function localBusiness(
 	htmlString: string,
 	htmlPath: string,
 ): Promise<LocalBusinessOptions[]> {
-	const $ = load(htmlString);
+	const $: CheerioAPI = load(htmlString);
 
 	const localBusinessMetas: Record<string, LocalBusinessOptions> = {};
 
@@ -1421,4 +1427,90 @@ export async function localBusiness(
 		)) as LocalBusinessOptions[];
 
 	return localBusinessMetaData;
+}
+
+export function organisation(
+	htmlString: string,
+	htmlPath: string,
+): OrganisationOptions[] {
+	const $: CheerioAPI = load(htmlString);
+
+	const organisationMetas: Record<string, OrganisationOptions> = {};
+
+	$(`[class^="${organisationBaseID}-"]`).each(
+		(_index: number, elem: Element) => {
+			const [id, type] = elemTypeAndIDExtracter(
+				$,
+				elem,
+				organisationBaseID,
+			);
+
+			//basic initiation
+			if (!Object.keys(organisationMetas).includes(id)) {
+				//create object for it
+				organisationMetas[id] = {} as OrganisationOptions;
+				organisationMetas[id].image = [];
+				organisationMetas[id].sameAs = [];
+
+				//deeplink to organisation
+				const url: string = new URL(
+					`${relative(cwd(), htmlPath).replace(".html", "")}`,
+					httpsDomainBase,
+				).href;
+
+				organisationMetas[id].url = url;
+			}
+
+			const elemInnerText: string = $(elem).html()?.trim() as string;
+
+			/* name */
+			if (type === reservedNames.businessEntity.name) {
+				organisationMetas[id].name = elemInnerText;
+			} else if (type === reservedNames.businessEntity.location.wrapper) {
+				organisationMetas[id].address = commonLocationExtractor($, elem);
+			}
+			//image
+			else if (type === reservedNames.businessEntity.images) {
+				const imgLink: string = $(elem).attr("src") ?? "";
+
+				if (!imgLink) {
+					throw new Error("Img tag with no src\nReference ID: " + id);
+				}
+
+				organisationMetas[id].image.push(imgLink);
+			} else if (type === reservedNames.businessEntity.telephone) {
+				//telephone
+				organisationMetas[id].telephone = elemInnerText;
+			} else if (type === reservedNames.organisation.logo) {
+				const logoLink: string = $(elem).attr("src") ?? "";
+
+				if (!logoLink) {
+					throw new Error("Img tag with no src\nReference ID: " + id);
+				}
+
+				organisationMetas[id].logo = logoLink;
+			} else if (type === reservedNames.organisation.socialMediaLink) {
+				if (!$(elem).is("a")) {
+					throw new Error(
+						`${organisationBaseID}-${id}-${reservedNames.organisation.socialMediaLink} should be a tag`,
+					);
+				}
+
+				const socialMediaLink: string = $(elem).attr("href") as string;
+
+				organisationMetas[id].sameAs.push(socialMediaLink);
+			} else if (type === reservedNames.organisation.description) {
+				organisationMetas[id].description =
+					longTextStripper(elemInnerText);
+			} else if (type === reservedNames.organisation.email) {
+				organisationMetas[id].email = elemInnerText;
+			} else if (type === reservedNames.organisation.taxid) {
+				organisationMetas[id].taxID = elemInnerText;
+			} else if (type === reservedNames.organisation.foundingYear) {
+				organisationMetas[id].foundingDate = elemInnerText;
+			}
+		},
+	);
+
+	return Object.values(organisationMetas);
 }
