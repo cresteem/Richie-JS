@@ -25,6 +25,7 @@ import {
 	FAQMeta,
 	Weekdays,
 	PostalAddressOptions,
+	InteractionCounterOptions,
 } from "./options";
 
 import {
@@ -175,6 +176,22 @@ function addressSerializer(
 		postalCode: address.postalCode,
 		addressCountry: address.addressCountry,
 	};
+}
+
+function interactionStatisticSerializer(
+	interactionStatistics: InteractionCounterOptions[],
+): Record<string, any>[] {
+	const serializedInteractionCounters: Record<string, any>[] = [];
+
+	for (const interactionStatistic of interactionStatistics) {
+		const interactionCounterItem = {
+			"@type": "InteractionCounter",
+			interactionType: { "@type": interactionStatistic.interactionType },
+			userInteractionCount: interactionStatistic.interactionCount,
+		};
+		serializedInteractionCounters.push(interactionCounterItem);
+	}
+	return serializedInteractionCounters;
 }
 
 export function serializeArticle(
@@ -807,4 +824,56 @@ export function serializeOrganisation(
 	});
 
 	return serializedJsonLDList;
+}
+
+export function serializeProfilePage(
+	ProfilePageData: ProfilePageOptions,
+): Record<string, any> {
+	//remove non-alphanumeric characters except hyphen
+
+	const serializedJsonLD: Record<string, any> = {
+		"@context": "https://schema.org",
+		"@type": "ProfilePage",
+		dateCreated: ProfilePageData.dateCreated,
+		dateModified: ProfilePageData.dateModified,
+		mainEntity: {
+			"@type": "Person",
+			"@id": ProfilePageData.uid,
+			name: ProfilePageData.name,
+			alternateName: ProfilePageData.altname,
+			identifier: ProfilePageData.uid,
+			interactionStatistic: interactionStatisticSerializer(
+				ProfilePageData.interactionStatistic ?? [],
+			),
+			agentInteractionStatistic: interactionStatisticSerializer(
+				ProfilePageData.agentInteractionStatistic ?? [],
+			),
+			description: ProfilePageData.description,
+			image: ProfilePageData.image,
+			sameAs: ProfilePageData.sameAs,
+		},
+		hasPart: [],
+	};
+
+	//for haspart
+	for (const part of ProfilePageData.hasPart ?? []) {
+		const partItem = {
+			"@type": "Article",
+			image: part.image,
+
+			headline: part.headline,
+			url: part.url,
+			datePublished: part.datePublished,
+			author: {
+				"@id": ProfilePageData.uid,
+			},
+		};
+		serializedJsonLD.hasPart.push(partItem);
+	}
+
+	if (serializedJsonLD.hasPart?.length === 0) {
+		delete serializedJsonLD.hasPart;
+	}
+
+	return serializedJsonLD;
 }

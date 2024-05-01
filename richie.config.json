@@ -148,6 +148,34 @@
 			"email": "email",
 			"foundingYear": "found",
 			"taxid": "tid"
+		},
+		"profilePage": {
+			"name": "name",
+			"dateCreated": "dc",
+			"dateModified": "dm",
+			"altName": "altname",
+			"uniquePlatformID": "uid",
+			"images": "img",
+			"socialMediaLinks": "smlink",
+			"description": "desc",
+			"authorWorks": {
+				"wrapper": "awork",
+				"headline": "head",
+				"thumbnail": "timg",
+				"publishedOn": "pon",
+				"url": "url"
+			},
+			"authorActionCounts": {
+				"written": "aposts",
+				"liked": "aliked",
+				"follows": "afollows",
+				"shared": "ashared"
+			},
+			"audienceActionCounts": {
+				"followers": "followers",
+				"likes": "likes",
+				"mutualConnections": "bicon"
+			}
 		}
 	},
 	"aggregatorVariables": {
@@ -164,7 +192,7 @@
 		"videoBaseID": "rjs-video",
 		"localBusinessBaseID": "rjs-lb",
 		"organisationBaseID": "rjs-org",
-		"profileBaseID": "rpp",
+		"profileBaseID": "rjs-pp",
 		"eventBaseID": "revent",
 		"productBaseID": "rprod",
 		"productPriceValidUntilNext": "30",

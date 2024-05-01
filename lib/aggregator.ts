@@ -11,6 +11,7 @@ import {
 	OperatingSystem,
 	OrganisationOptions,
 	PostalAddressOptions,
+	ProfilePageOptions,
 	RecipeOptions,
 	RestaurantOptions,
 	SoftwareAppOptions,
@@ -1492,7 +1493,7 @@ export function organisation(
 			} else if (type === reservedNames.organisation.socialMediaLink) {
 				if (!$(elem).is("a")) {
 					throw new Error(
-						`${organisationBaseID}-${id}-${reservedNames.organisation.socialMediaLink} should be a tag`,
+						`${organisationBaseID}-${id}-${reservedNames.organisation.socialMediaLink} should be anchor tag`,
 					);
 				}
 
@@ -1513,4 +1514,150 @@ export function organisation(
 	);
 
 	return Object.values(organisationMetas);
+}
+
+export function profilePage(htmlString: string): ProfilePageOptions {
+	const $: CheerioAPI = load(htmlString);
+
+	const profilePageMeta: ProfilePageOptions = {} as ProfilePageOptions;
+	profilePageMeta.hasPart = [];
+	profilePageMeta.image = [];
+	profilePageMeta.sameAs = [];
+	profilePageMeta.agentInteractionStatistic = [];
+	profilePageMeta.interactionStatistic = [];
+
+	$(`[class^="${profileBaseID}-"]`).each(
+		(_index: number, elem: Element) => {
+			const type: string = elemTypeAndIDExtracter(
+				$,
+				elem,
+				productBaseID,
+			)[1];
+
+			const innerText: string = $(elem).html()?.trim() as string;
+
+			if (type === reservedNames.profilePage.name) {
+				profilePageMeta.name = innerText;
+			} else if (type === reservedNames.profilePage.altName) {
+				profilePageMeta.altname = innerText;
+			} else if (type === reservedNames.profilePage.uniquePlatformID) {
+				/* check if there is any special characters in UID */
+				if (!innerText.match(/[^a-zA-Z0-9\-]/g)) {
+					throw new Error(
+						`ID Should be alphanumeric | REF:${profileBaseID}-${reservedNames.profilePage.uniquePlatformID}`,
+					);
+				}
+
+				profilePageMeta.uid = innerText;
+			} else if (type === reservedNames.profilePage.images) {
+				const imgLink: string = $(elem).attr("src") ?? "";
+
+				if (!imgLink) {
+					throw new Error("Img tag with no src");
+				}
+
+				profilePageMeta.image.push(imgLink);
+			} else if (type === reservedNames.profilePage.dateCreated) {
+				profilePageMeta.dateCreated = parseDateString(innerText);
+			} else if (type === reservedNames.profilePage.dateModified) {
+				profilePageMeta.dateModified = parseDateString(innerText);
+			} else if (type === reservedNames.profilePage.socialMediaLinks) {
+				if (!$(elem).is("a")) {
+					throw new Error(
+						`${profileBaseID}-${reservedNames.profilePage.socialMediaLinks} should be a anchor tag`,
+					);
+				}
+
+				const socialMediaLink: string = $(elem).attr("href") as string;
+
+				profilePageMeta.sameAs.push(socialMediaLink);
+			} else if (type === reservedNames.profilePage.description) {
+				profilePageMeta.description = longTextStripper(innerText);
+			} else if (type === reservedNames.profilePage.authorWorks.wrapper) {
+				const thumbnail: string =
+					$(elem)
+						.find(`.${reservedNames.profilePage.authorWorks.thumbnail}`)
+						.first()
+						?.attr("src") ?? "";
+
+				const headline: string =
+					$(elem)
+						.find(`.${reservedNames.profilePage.authorWorks.headline}`)
+						.first()
+						.html()
+						?.trim() ?? "";
+
+				const publishedDate: string = parseDateString(
+					$(elem)
+						.find(`.${reservedNames.profilePage.authorWorks.publishedOn}`)
+						.html()
+						?.trim() ?? "",
+				);
+
+				const url: string =
+					$(elem)
+						.find(`.${reservedNames.profilePage.authorWorks.url}`)
+						.attr("href") ?? "";
+
+				profilePageMeta.hasPart?.push({
+					headline: headline,
+					image: thumbnail,
+					datePublished: publishedDate,
+					url: url,
+				});
+			} else if (
+				type === reservedNames.profilePage.authorActionCounts.written
+			) {
+				profilePageMeta.agentInteractionStatistic?.push({
+					interactionType: "WriteAction",
+					interactionCount: parseInt(innerText),
+				});
+			} else if (
+				type === reservedNames.profilePage.authorActionCounts.liked
+			) {
+				profilePageMeta.agentInteractionStatistic?.push({
+					interactionType: "LikeAction",
+					interactionCount: parseInt(innerText),
+				});
+			} else if (
+				type === reservedNames.profilePage.authorActionCounts.follows
+			) {
+				profilePageMeta.agentInteractionStatistic?.push({
+					interactionType: "FollowAction",
+					interactionCount: parseInt(innerText),
+				});
+			} else if (
+				type === reservedNames.profilePage.authorActionCounts.shared
+			) {
+				profilePageMeta.agentInteractionStatistic?.push({
+					interactionType: "ShareAction",
+					interactionCount: parseInt(innerText),
+				});
+			} else if (
+				type === reservedNames.profilePage.audienceActionCounts.followers
+			) {
+				profilePageMeta.interactionStatistic?.push({
+					interactionType: "FollowAction",
+					interactionCount: parseInt(innerText),
+				});
+			} else if (
+				type === reservedNames.profilePage.audienceActionCounts.likes
+			) {
+				profilePageMeta.interactionStatistic?.push({
+					interactionType: "LikeAction",
+					interactionCount: parseInt(innerText),
+				});
+			} else if (
+				type ===
+				reservedNames.profilePage.audienceActionCounts.mutualConnections
+			) {
+				profilePageMeta.interactionStatistic?.push({
+					interactionType: "BefriendAction",
+					interactionCount: parseInt(innerText),
+				});
+			}
+		},
+	);
+
+	return profilePageMeta;
 }

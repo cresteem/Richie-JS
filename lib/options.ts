@@ -124,7 +124,7 @@ type interactionType =
 	| "LikeAction"
 	| "BefriendAction";
 
-interface InteractionCounterOptions {
+export interface InteractionCounterOptions {
 	interactionCount: number;
 	interactionType: interactionType;
 }
@@ -397,9 +397,6 @@ interface HasPartofProfilePicture {
 	headline: string;
 	url: string;
 	datePublished: string;
-	authorName: string;
-	authorProfileLink: string;
-	authorID: string;
 }
 /* Profile Author Post Segmants ended*/
 
@@ -407,15 +404,15 @@ interface HasPartofProfilePicture {
 export interface ProfilePageOptions {
 	name: string;
 	altname: string;
-	id: string;
+	uid: string;
 	dateCreated: string;
 	dateModified: string;
 	description: string;
-	image: string | string[];
-	sameAs: string | string[];
-	hasPart: HasPartofProfilePicture[];
-	interactionStatistic: InteractionCounterOptions[];
-	agentInteractionStatistic: InteractionCounterOptions[];
+	image: string[];
+	sameAs: string[];
+	hasPart?: HasPartofProfilePicture[];
+	interactionStatistic?: InteractionCounterOptions[];
+	agentInteractionStatistic?: InteractionCounterOptions[];
 }
 /* ProfilePage ended*/
 

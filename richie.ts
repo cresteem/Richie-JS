@@ -12,6 +12,7 @@ import {
 	serializeMovie,
 	serializeMovieCarousel,
 	serializeOrganisation,
+	serializeProfilePage,
 	serializeRecipe,
 	serializeRecipeCarousel,
 	serializeRestaurant,
@@ -318,8 +319,26 @@ export function makeOrganisation(
 	});
 }
 
+export function makeProfilePage(
+	source: string,
+	destinationFile: string,
+): Promise<void> {
+	const aggregatedData = aggregator.profilePage(source);
+	const serializedData = serializeProfilePage(aggregatedData);
+	const richResultSnippet = createJsonLD(serializedData);
+
+	return new Promise((resolve, reject) => {
+		writeOutput(source, destinationFile, richResultSnippet)
+			.then(() => {
+				resolve();
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+}
 async function richie(): Promise<void> {
-	const filepath = "test-sample/org.html";
+	const filepath = "test-sample/profilepage.html";
 	const destinationFile = join(
 		process.cwd(),
 		"outputs",
@@ -329,7 +348,7 @@ async function richie(): Promise<void> {
 	const source = await readFile(filepath, { encoding: "utf8" });
 
 	return new Promise((resolve, reject) => {
-		makeOrganisation(filepath, source, destinationFile)
+		makeProfilePage(source, destinationFile)
 			.then(() => {
 				resolve();
 			})
