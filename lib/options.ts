@@ -253,7 +253,7 @@ type ItemCondition =
 	| "UsedCondition"
 	| "RefurbishedCondition";
 
-type OfferCategoryChoices = "Fees" | "Digital" | "Membership";
+type OfferCategoryChoices = "Fees" | "Digital" | "Membership" | "Free";
 
 interface Offers {
 	price: number;
@@ -447,20 +447,24 @@ export interface PlaceLocation {
 
 export type EventLocationType = VirtualLocation | PlaceLocation;
 
+type EventsModes =
+	| "OnlineEventAttendanceMode"
+	| "OfflineEventAttendanceMode"
+	| "MixedEventAttendanceMode";
+
+type EventStatus =
+	| "EventCancelled"
+	| "EventMovedOnline"
+	| "EventPostponed"
+	| "EventRescheduled"
+	| "EventScheduled";
+
 export interface EventsPageOptions {
 	name: string;
 	startDate: string;
 	endDate: string;
-	mode:
-		| "OnlineEventAttendanceMode"
-		| "OfflineEventAttendanceMode"
-		| "MixedEventAttendanceMode";
-	status:
-		| "EventCancelled"
-		| "EventMovedOnline"
-		| "EventPostponed"
-		| "EventRescheduled"
-		| "EventScheduled";
+	mode: EventsModes;
+	status: EventStatus;
 	locations: EventLocationType[];
 	images: string[];
 	description: string;

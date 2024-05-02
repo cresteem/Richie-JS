@@ -7,6 +7,7 @@ import {
 	serializeBreadCrumb,
 	serializeCourse,
 	serializeCourseCarousel,
+	serializeEventsPage,
 	serializeFAQ,
 	serializeLocalBusiness,
 	serializeMovie,
@@ -337,8 +338,29 @@ export function makeProfilePage(
 			});
 	});
 }
+
+async function makeEvents(
+	htmlPath: string,
+	source: string,
+	destinationFile: string,
+): Promise<void> {
+	const aggregatedData = await aggregator.eventsPage(source, htmlPath);
+	const serializedData = serializeEventsPage(aggregatedData);
+	const richResultSnippet = createJsonLD(serializedData);
+
+	return new Promise((resolve, reject) => {
+		writeOutput(source, destinationFile, richResultSnippet)
+			.then(() => {
+				resolve();
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+}
+
 async function richie(): Promise<void> {
-	const filepath = "test-sample/profilepage.html";
+	const filepath = "test-sample/events.html";
 	const destinationFile = join(
 		process.cwd(),
 		"outputs",
@@ -348,7 +370,7 @@ async function richie(): Promise<void> {
 	const source = await readFile(filepath, { encoding: "utf8" });
 
 	return new Promise((resolve, reject) => {
-		makeProfilePage(source, destinationFile)
+		makeEvents(filepath, source, destinationFile)
 			.then(() => {
 				resolve();
 			})

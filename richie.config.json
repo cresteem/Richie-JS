@@ -98,6 +98,8 @@
 			"images": "img",
 			"location": {
 				"wrapper": "loc",
+				"physicalLocationName": "venue",
+				"virtualLocation": "vlurl",
 				"street": "stl",
 				"city": "ct",
 				"state": "st",
@@ -176,6 +178,24 @@
 				"likes": "likes",
 				"mutualConnections": "bicon"
 			}
+		},
+		"events": {
+			"name": "name",
+			"startFrom": "from",
+			"endAt": "end",
+			"mode": "mode",
+			"status": "sts",
+			"images": "img",
+			"description": "desc",
+			"price": "cost",
+			"currency": "currency",
+			"bookingLink": "blink",
+			"performerName": "perf",
+			"organizer": "org",
+			"organizerSuffix": {
+				"person": "P",
+				"organisation": "O"
+			}
 		}
 	},
 	"aggregatorVariables": {
@@ -193,7 +213,7 @@
 		"localBusinessBaseID": "rjs-lb",
 		"organisationBaseID": "rjs-org",
 		"profileBaseID": "rjs-pp",
-		"eventBaseID": "revent",
+		"eventBaseID": "rjs-event",
 		"productBaseID": "rprod",
 		"productPriceValidUntilNext": "30",
 		"productGroupIDHashLength": "128",

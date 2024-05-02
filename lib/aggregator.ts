@@ -4,6 +4,7 @@ import {
 	ApplicationCategory,
 	CourseInstanceOptions,
 	CourseOptions,
+	EventsPageOptions,
 	FAQMeta,
 	HowToStep,
 	LocalBusinessOptions,
@@ -1660,4 +1661,226 @@ export function profilePage(htmlString: string): ProfilePageOptions {
 	);
 
 	return profilePageMeta;
+}
+
+export async function eventsPage(
+	htmlString: string,
+	htmlPath: string,
+): Promise<EventsPageOptions[]> {
+	const $: CheerioAPI = load(htmlString);
+
+	const eventMetas: Record<string, EventsPageOptions> = {};
+
+	/* event offer valid from */
+	const validFrom: string = (
+		await stat(resolve(cwd(), htmlPath))
+	).mtime.toISOString();
+
+	$(`[class^="${eventBaseID}-"]`).each((_index: number, elem: Element) => {
+		const [id, type] = elemTypeAndIDExtracter($, elem, eventBaseID);
+
+		const innerText: string = $(elem).html()?.trim() as string;
+
+		//basic initiation
+		if (!Object.keys(eventMetas).includes(id)) {
+			//create object for it
+			eventMetas[id] = {} as EventsPageOptions;
+			eventMetas[id].images = [];
+			eventMetas[id].locations = [];
+			eventMetas[id].performers = [];
+		}
+
+		/* name of event */
+		if (type === reservedNames.events.name) {
+			eventMetas[id].name = innerText;
+		} /* starting start */ else if (
+			type === reservedNames.events.startFrom
+		) {
+			try {
+				eventMetas[id].startDate = parseDateString(innerText);
+			} catch {
+				console.log(
+					"Error While Parsing Data String\n DateTime format should follow this " +
+						aggregatorVariables.timeFormat,
+				);
+				process.exit(1);
+			}
+		} /* ending date */ else if (type === reservedNames.events.endAt) {
+			try {
+				eventMetas[id].endDate = parseDateString(innerText);
+			} catch {
+				console.log(
+					"Error While Parsing Data String\n DateTime format should follow this " +
+						aggregatorVariables.timeFormat,
+				);
+				process.exit(1);
+			}
+		} /* mode of event */ else if (type === reservedNames.events.mode) {
+			const mode: string = ($(elem).data(reservedNames.events.mode) ??
+				"") as string;
+			if (!mode) {
+				throw new Error(
+					`Mode of Event not found, It should be available in ${eventBaseID}-${id}-${reservedNames.events.mode}`,
+				);
+			}
+
+			switch (mode) {
+				case "mixed":
+					eventMetas[id].mode = "MixedEventAttendanceMode";
+					break;
+				case "online":
+					eventMetas[id].mode = "OnlineEventAttendanceMode";
+					break;
+				case "offline":
+					eventMetas[id].mode = "OfflineEventAttendanceMode";
+					break;
+				default:
+					throw new Error(
+						"Unexpected mode, only supported are\n1.mixed\n2.online\n3.offline",
+					);
+			}
+		} /* current status  */ else if (
+			type === reservedNames.events.status
+		) {
+			const status: string = ($(elem).data(reservedNames.events.status) ??
+				"") as string;
+
+			if (!status) {
+				throw new Error(
+					`Status of Event not found, It should be available in ${eventBaseID}-${id}-${reservedNames.events.status}`,
+				);
+			}
+
+			switch (status) {
+				case "cancelled":
+					eventMetas[id].status = "EventCancelled";
+					break;
+				case "postponed":
+					eventMetas[id].status = "EventPostponed";
+					break;
+				case "toonline":
+					eventMetas[id].status = "EventMovedOnline";
+					break;
+				case "rescheduled":
+					eventMetas[id].status = "EventRescheduled";
+					break;
+				case "scheduled":
+					eventMetas[id].status = "EventScheduled";
+					break;
+				default:
+					throw new Error(
+						"Unexpected status, Supported statuses are \n1.cancelled\n2.postponed\n3.toonline\n4.rescheduled\n5.scheduled",
+					);
+			}
+		} /* location */ else if (
+			type === reservedNames.businessEntity.location.wrapper
+		) {
+			const isVirtual: boolean =
+				$(elem).find(
+					"." + reservedNames.businessEntity.location.virtualLocation,
+				).length > 0;
+
+			const isPhysical: boolean =
+				$(elem).find(
+					"." + reservedNames.businessEntity.location.physicalLocationName,
+				).length > 0;
+
+			if (!isVirtual && !isPhysical) {
+				throw new Error("Platform or Event Place Not available in HTML");
+			}
+
+			if (isVirtual) {
+				//possible to have multiple online platform so
+				const VirtualLocations: string[] = $(elem)
+					.find(
+						"." + reservedNames.businessEntity.location.virtualLocation,
+					)
+					.map((_index: number, elem: Element): string => {
+						return $(elem).attr("href") ?? "empty";
+					})
+					.toArray();
+
+				VirtualLocations.filter((loc) => loc !== "empty").forEach(
+					(virtualLocation) => {
+						eventMetas[id].locations.push({
+							url: virtualLocation,
+						});
+					},
+				);
+			}
+
+			if (isPhysical) {
+				//venue
+				const venue: string = $(elem)
+					.find(
+						"." +
+							reservedNames.businessEntity.location.physicalLocationName,
+					)
+					.html()
+					?.trim() as string;
+
+				eventMetas[id].locations.push({
+					name: venue,
+					address: commonLocationExtractor($, elem),
+				});
+			}
+		} /* images */ else if (type === reservedNames.events.images) {
+			const imgLink: string = $(elem).attr("src") ?? "";
+
+			if (!imgLink) {
+				throw new Error("Src not found in image tag, ID: " + id);
+			}
+
+			eventMetas[id].images.push(imgLink);
+		} /* description */ else if (
+			type === reservedNames.events.description
+		) {
+			eventMetas[id].description = longTextStripper(innerText);
+		} /* cost/offfer */ else if (type === reservedNames.events.price) {
+			let currency: string = ($(elem).data(
+				reservedNames.events.currency,
+			) ?? "") as string;
+
+			let price: string;
+			if (currency.toLowerCase() === "free") {
+				price = "0";
+				currency = "";
+			} else {
+				price = innerText.match(
+					/\d+/g /* remove non digits take first digit group*/,
+				)?.[0] as string;
+			}
+
+			const link: string = $(
+				`.${eventBaseID}-${id}-${reservedNames.events.bookingLink}`,
+			).attr("href") as string;
+
+			eventMetas[id].offers = {
+				price: parseFloat(price),
+				priceCurrency: currency?.toUpperCase(),
+				link: link,
+				validFrom: validFrom,
+			};
+		} /* performers */ else if (
+			type === reservedNames.events.performerName
+		) {
+			eventMetas[id].performers.push(innerText);
+		} /* hoster*/ else if (
+			type.slice(0, -1) === reservedNames.events.organizer
+		) {
+			eventMetas[id].organizer = {
+				type:
+					(
+						type.at(-1) ===
+						reservedNames.events.organizerSuffix.organisation?.toLowerCase()
+					) ?
+						"Organization"
+					:	"Person",
+				name: innerText,
+				url: $(elem).attr("href") ?? "no url found",
+			};
+		}
+	});
+
+	return Object.values(eventMetas);
 }
