@@ -6,12 +6,18 @@ import {
 	CourseOptions,
 	EventsPageOptions,
 	FAQMeta,
+	Gender,
 	HowToStep,
 	LocalBusinessOptions,
+	MerchantReturnPolicy,
 	NutritionInfoOptions,
+	OfferShippingDetails,
+	Offers,
 	OperatingSystem,
 	OrganisationOptions,
 	PostalAddressOptions,
+	ProductOptions,
+	ProductPageReturns,
 	ProfilePageOptions,
 	RecipeOptions,
 	RestaurantOptions,
@@ -27,6 +33,7 @@ import {
 	movieOptions,
 	repeatFrequencyChoices,
 	reviewOptions,
+	sizeAvailable,
 	videoObjectOptions,
 } from "./options";
 
@@ -888,62 +895,12 @@ function commonBusinessEntityThings(
 
 	//review
 	else if (type === reservedNames.reviews.parentWrapper) {
-		const userReviews = $(elem).find(
-			`.${reservedNames.reviews.childWrapper}`,
+		businessEntityMeta.review = commonReviewsExtractor(
+			$,
+			elem,
+			businessEntityMeta.review,
+			id,
 		);
-
-		userReviews.each((_index, userReview) => {
-			//rating value
-			const ratingValue: number = parseFloat(
-				$(userReview)
-					.find(`.${reservedNames.reviews.ratedValue}`)
-					.html() as string,
-			);
-
-			//max rating possible
-			const possibleMaxRate: number = parseFloat(
-				$(userReview)
-					.find(`.${reservedNames.reviews.maxRateRange}`)
-					.html() as string,
-			);
-
-			//author
-			let raterName: string = $(userReview)
-				.find(
-					`.${reservedNames.reviews.raterName}${reservedNames.reviews.authorTypeSuffix.person}`,
-				)
-				.html() as string;
-			let authorIsOrg: boolean = false;
-
-			/* Assumming rater as organisation*/
-			if (!raterName) {
-				raterName = $(userReview)
-					.find(
-						`.${reservedNames.reviews.raterName}${reservedNames.reviews.authorTypeSuffix.organisation}`,
-					)
-					.html() as string;
-				if (!raterName) {
-					throw new Error(
-						"Something wrong with reviewer name or element | ID:" + id,
-					);
-				}
-				authorIsOrg = true;
-			}
-
-			//publisher
-			const publisher: string =
-				$(userReview)
-					.find(`.${reservedNames.reviews.reviewPublishedOn}`)
-					.html() ?? "";
-
-			businessEntityMeta.review.push({
-				raterName: raterName,
-				raterType: authorIsOrg ? "Organization" : "Person",
-				ratingValue: ratingValue,
-				maxRateRange: possibleMaxRate,
-				publisherName: publisher ?? null,
-			});
-		});
 	} else if (type === reservedNames.businessEntity.telephone) {
 		//telephone
 		businessEntityMeta.telephone = $(elem).html() as string;
@@ -1087,25 +1044,10 @@ function commonBusinessEntityThings(
 	} else if (type === reservedNames.businessEntity.menuLink) {
 		businessEntityMeta.menu = $(elem).attr("href") as string;
 	} else if (type === reservedNames.aggregateRating.wrapper) {
-		businessEntityMeta.aggregateRating.ratingValue = parseFloat(
-			$(elem)
-				.find(`.${reservedNames.aggregateRating.aggregatedRatingValue}`)
-				.first()
-				.html() as string,
-		);
-
-		businessEntityMeta.aggregateRating.numberOfRatings = parseFloat(
-			$(elem)
-				.find(`.${reservedNames.aggregateRating.numberOfRatings}`)
-				.first()
-				.html() as string,
-		);
-
-		businessEntityMeta.aggregateRating.maxRateRange = parseFloat(
-			$(elem)
-				.find(`.${reservedNames.aggregateRating.maxRangeOfRating}`)
-				.first()
-				.html() as string,
+		businessEntityMeta.aggregateRating = commonAggregateRatingExtractor(
+			$,
+			elem,
+			businessEntityMeta.aggregateRating,
 		);
 	} else if (type === reservedNames.businessEntity.mapFrame) {
 		const frameSrc: string = $(elem).attr("src") as string;
@@ -1117,6 +1059,99 @@ function commonBusinessEntityThings(
 		};
 	}
 	return businessEntityMeta;
+}
+
+function commonReviewsExtractor(
+	$: CheerioAPI,
+	reviewWrapperElem: Element,
+	reviewList: reviewOptions[],
+	id: string,
+): reviewOptions[] {
+	const userReviews = $(reviewWrapperElem).find(
+		`.${reservedNames.reviews.childWrapper}`,
+	);
+
+	userReviews.each((_index, userReview) => {
+		//rating value
+		const ratingValue: number = parseFloat(
+			$(userReview)
+				.find(`.${reservedNames.reviews.ratedValue}`)
+				.html() as string,
+		);
+
+		//max rating possible
+		const possibleMaxRate: number = parseFloat(
+			$(userReview)
+				.find(`.${reservedNames.reviews.maxRateRange}`)
+				.html() as string,
+		);
+
+		//author
+		let raterName: string = $(userReview)
+			.find(
+				`.${reservedNames.reviews.raterName}${reservedNames.reviews.authorTypeSuffix.person}`,
+			)
+			.html() as string;
+		let authorIsOrg: boolean = false;
+
+		/* Assumming rater as organisation*/
+		if (!raterName) {
+			raterName = $(userReview)
+				.find(
+					`.${reservedNames.reviews.raterName}${reservedNames.reviews.authorTypeSuffix.organisation}`,
+				)
+				.html() as string;
+			if (!raterName) {
+				throw new Error(
+					"Something wrong with reviewer name or element | ID:" + id,
+				);
+			}
+			authorIsOrg = true;
+		}
+
+		//publisher
+		const publisher: string =
+			$(userReview)
+				.find(`.${reservedNames.reviews.reviewPublishedOn}`)
+				.html() ?? "";
+
+		reviewList.push({
+			raterName: raterName,
+			raterType: authorIsOrg ? "Organization" : "Person",
+			ratingValue: ratingValue,
+			maxRateRange: possibleMaxRate,
+			publisherName: publisher ?? null,
+		});
+	});
+	return reviewList;
+}
+
+function commonAggregateRatingExtractor(
+	$: CheerioAPI,
+	ARWrapper: Element,
+	aggregateRating: aggregateRatingOptions,
+): aggregateRatingOptions {
+	aggregateRating.ratingValue = parseFloat(
+		$(ARWrapper)
+			.find(`.${reservedNames.aggregateRating.aggregatedRatingValue}`)
+			.first()
+			.html() as string,
+	);
+
+	aggregateRating.numberOfRatings = parseFloat(
+		$(ARWrapper)
+			.find(`.${reservedNames.aggregateRating.numberOfRatings}`)
+			.first()
+			.html() as string,
+	);
+
+	aggregateRating.maxRateRange = parseFloat(
+		$(ARWrapper)
+			.find(`.${reservedNames.aggregateRating.maxRangeOfRating}`)
+			.first()
+			.html() as string,
+	);
+	return aggregateRating;
 }
 
 export async function restaurant(
@@ -1883,4 +1918,247 @@ export async function eventsPage(
 	});
 
 	return Object.values(eventMetas);
+}
+
+export async function productPage(
+	htmlString: string,
+	htmlPath: string,
+): Promise<ProductPageReturns> {
+	const $: CheerioAPI = load(htmlString);
+
+	const productMetas: Record<string, ProductOptions> = {};
+	const variesBy: string[] = [];
+
+	const validitySecs: number = productPriceValidUntilNext * 24 * 60 * 60;
+
+	const validTill: string = new Date(
+		(await stat(resolve(htmlPath))).mtimeMs + validitySecs,
+	).toISOString();
+
+	$(`[class^="${productBaseID}-"]`).each(
+		(_index: number, elem: Element) => {
+			const [id, type] = elemTypeAndIDExtracter($, elem, productBaseID);
+
+			const innerText: string = $(elem).html()?.trim() as string;
+
+			//basic initiation
+			if (!Object.keys(productMetas).includes(id)) {
+				//create object for it
+				productMetas[id] = {} as ProductOptions;
+				productMetas[id].images = [];
+				productMetas[id].offer = {} as Offers;
+
+				productMetas[id].offer.shippingDetails =
+					{} as OfferShippingDetails;
+
+				productMetas[id].offer.hasMerchantReturnPolicy =
+					{} as MerchantReturnPolicy;
+
+				productMetas[id].offer.validTill = validTill;
+			}
+
+			/* name of product */
+			if (type === reservedNames.product.name) {
+				const productLongname: string[] = innerText
+					.split(producrVariableDelimiter)
+					.map((item) => item.trim());
+
+				productMetas[id].productName = productLongname[0];
+
+				const varyMeta: string[] = (
+					$(elem).data(reservedNames.product.variesByDataVar) as string
+				)?.split("-");
+
+				if (!!varyMeta) {
+					const varies = varyMeta
+						.map((vary: string, index: number): string => {
+							if (vary === "color") {
+								productMetas[id].color = productLongname[index + 1];
+								return "color";
+							} else if (vary === "audage") {
+								productMetas[id].suggestedAge = parseFloat(
+									productLongname[index + 1].replace(/[^\d]/g, ""),
+								);
+								return "suggestedAge";
+							} else if (vary === "gender") {
+								const rawGender = productLongname[index + 1].toLowerCase();
+
+								const gender: Gender =
+									rawGender === "male" ? "MALE"
+									: rawGender === "female" ? "FEMALE"
+									: "UNISEX";
+
+								productMetas[id].suggestedGender = gender;
+								return "suggestedGender";
+							} else if (vary === "material") {
+								productMetas[id].material = productLongname[index + 1];
+								return "material";
+							} else if (vary === "pattern") {
+								productMetas[id].pattern = productLongname[index + 1];
+								return "pattern";
+							} else if (vary === "size") {
+								const size = productLongname[index + 1];
+								productMetas[id].size = Object.values(
+									sizeAvailable,
+								).filter(
+									(elem) =>
+										typeof elem === "string" &&
+										elem.toString().includes(size),
+								) as sizeAvailable[];
+
+								return "size";
+							} else {
+								return "empty";
+							}
+						})
+						.filter((elem: string) => elem !== "empty");
+
+					variesBy.push(...varies);
+				}
+			} else if (type === reservedNames.product.images) {
+				const imgLink: string = $(elem).attr("src") ?? "";
+
+				if (!imgLink) {
+					throw new Error("Src not found in image tag, ID: " + id);
+				}
+				productMetas[id].images.push(imgLink);
+			} else if (type === reservedNames.product.description) {
+				productMetas[id].description = longTextStripper(innerText);
+			} else if (type === reservedNames.product.skuID) {
+				productMetas[id].skuid = innerText;
+			} else if (type === reservedNames.product.mpnCode) {
+				productMetas[id].mpncode = innerText;
+			} else if (type === reservedNames.product.brand) {
+				productMetas[id].brandName = innerText;
+			} else if (type === reservedNames.reviews.parentWrapper) {
+				productMetas[id].reviews = commonReviewsExtractor($, elem, [], id);
+			} else if (type === reservedNames.aggregateRating.wrapper) {
+				productMetas[id].aggregateRating = commonAggregateRatingExtractor(
+					$,
+					elem,
+					{} as aggregateRatingOptions,
+				);
+			} else if (type === reservedNames.product.offer.price) {
+				productMetas[id].offer.price = parseFloat(innerText);
+				productMetas[id].offer.priceCurrency = (
+					$(elem).data(reservedNames.product.offer.currency) as string
+				).toUpperCase();
+			} else if (type === reservedNames.product.offer.availability) {
+				const availability: boolean = $(elem).data(
+					reservedNames.product.offer.availability,
+				) as boolean;
+
+				productMetas[id].offer.availability =
+					availability ? "InStock" : "OutOfStock";
+			} else if (type === reservedNames.product.offer.itemCondition) {
+				const itemCondition: string = (
+					$(elem).data(reservedNames.product.offer.itemCondition) as string
+				)?.toLowerCase();
+
+				productMetas[id].offer.itemCondition =
+					itemCondition === "new" ? "NewCondition"
+					: itemCondition === "used" ? "UsedCondition"
+					: itemCondition === "refurb" ? "RefurbishedCondition"
+					: "Not Mentioned";
+			} else if (
+				type === reservedNames.product.offer.shippingDetails.deliveryCost
+			) {
+				productMetas[id].offer.shippingDetails = {
+					...productMetas[id].offer.shippingDetails,
+					shippingCost: parseFloat(innerText),
+					shippingDestination: getCode(
+						($(elem).data(
+							reservedNames.product.offer.shippingDetails.deliveryOver,
+						) as string) ?? reservedNames.product.fallbacks.deliveryOver,
+					),
+				} as OfferShippingDetails;
+
+				productMetas[id].offer.hasMerchantReturnPolicy = {
+					...productMetas[id].offer.hasMerchantReturnPolicy,
+					applicableCountry:
+						productMetas[id].offer.shippingDetails?.shippingDestination ??
+						"Not Mentioned",
+				} as MerchantReturnPolicy;
+			} else if (
+				type === reservedNames.product.offer.returnPolicy.returnWithin
+			) {
+				const returnWithin = parseFloat(innerText.replace(/\D/g, "")); //only digits
+
+				const returnFees: string = $(
+					`.${productBaseID}-${id}-${reservedNames.product.offer.returnPolicy.returnFees}`,
+				)
+					.html()
+					?.toLowerCase() as string;
+
+				productMetas[id].offer.hasMerchantReturnPolicy = {
+					...productMetas[id].offer.hasMerchantReturnPolicy,
+					returnWithin: returnWithin,
+					returnPolicyCategory:
+						returnWithin > 0 ?
+							"MerchantReturnFiniteReturnWindow"
+						:	"MerchantReturnNotPermitted",
+					returnFees:
+						returnFees === "0" || returnFees === "free" ?
+							"FreeReturn"
+						:	"ReturnFeesCustomerResponsibility",
+				} as MerchantReturnPolicy;
+			} else if (
+				type === reservedNames.product.offer.shippingDetails.processingTime
+			) {
+				const [min, max] = (
+					$(elem).data(
+						reservedNames.product.offer.shippingDetails.rangeDataVar,
+					) as string
+				)
+					.split("-")
+					.slice(0, 2)
+					.map((elem) => parseFloat(elem));
+
+				productMetas[id].offer.shippingDetails = {
+					...productMetas[id].offer.shippingDetails,
+					processingTime: [min, max],
+				} as OfferShippingDetails;
+			} else if (
+				type === reservedNames.product.offer.shippingDetails.transitTime
+			) {
+				const [min, max] = (
+					$(elem).data(
+						reservedNames.product.offer.shippingDetails.rangeDataVar,
+					) as string
+				)
+					.split("-")
+					.slice(0, 2)
+					.map((elem) => parseFloat(elem));
+
+				productMetas[id].offer.shippingDetails = {
+					...productMetas[id].offer.shippingDetails,
+					deliveryTime: [min, max],
+				} as OfferShippingDetails;
+			}
+		},
+	);
+
+	//make url for each different items
+	const productMetaData = Object.values(productMetas).map(
+		(meta: ProductOptions): ProductOptions => {
+			const relativeUrl: string = join(
+				dirname(relative(cwd(), htmlPath)),
+				basename(htmlPath, ".html"),
+			).replace("\\", "/");
+
+			const params: string = `?${reservedNames.product.varientParameterName}=${variesBy.join("_")}`;
+
+			meta.offer.link = new URL(
+				encodeURI(relativeUrl + params),
+				httpsDomainBase,
+			).href;
+
+			return meta;
+		},
+	);
+
+	return {
+		product: productMetaData,
+		variesBy: Array.from(new Set(variesBy)),
+	};
 }

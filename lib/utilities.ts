@@ -213,7 +213,7 @@ export function generateProductGroupID(
 }
 
 export function combineAggregateRatings(
-	aggregateRatings: aggregateRatingOptions[],
+	aggregateRatings: Record<string, any>,
 ): aggregateRatingOptions {
 	/* skip if it's count is below 2 */
 	if (aggregateRatings.length < 2) {
@@ -222,14 +222,14 @@ export function combineAggregateRatings(
 
 	let totalReviewCount: number = 0;
 	// Calculate total review count
-	aggregateRatings.forEach((rating: aggregateRatingOptions) => {
-		totalReviewCount += rating.numberOfRatings;
+	aggregateRatings.forEach((rating: Record<string, any>) => {
+		totalReviewCount += rating.reviewCount;
 	});
 
 	let weightedSum: number = 0;
 	// Calculate weighted sum
-	aggregateRatings.forEach((rating: aggregateRatingOptions) => {
-		const weight = rating.numberOfRatings / totalReviewCount;
+	aggregateRatings.forEach((rating: Record<string, any>) => {
+		const weight = rating.reviewCount / totalReviewCount;
 		weightedSum += rating.ratingValue * weight;
 	});
 
@@ -237,11 +237,13 @@ export function combineAggregateRatings(
 	const combinedRatingValue: number = parseFloat(weightedSum.toFixed(2)); // Round to 2 decimal places
 
 	// Return combined aggregate rating
-	return {
+	const aggregateRating: aggregateRatingOptions = {
 		ratingValue: combinedRatingValue,
-		maxRateRange: aggregateRatings[0].maxRateRange,
+		maxRateRange: aggregateRatings[0].bestRating,
 		numberOfRatings: totalReviewCount,
 	};
+
+	return aggregateRating;
 }
 
 export function createJsonLD(

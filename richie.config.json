@@ -196,6 +196,36 @@
 				"person": "P",
 				"organisation": "O"
 			}
+		},
+		"product": {
+			"name": "name",
+			"images": "img",
+			"description": "desc",
+			"skuID": "sku",
+			"mpnCode": "mpn",
+			"brand": "brand",
+			"variesByDataVar": "var",
+			"offer": {
+				"shippingDetails": {
+					"deliveryCost": "delcost",
+					"deliveryOver": "delover",
+					"processingTime": "ptime",
+					"transitTime": "ttime",
+					"rangeDataVar": "range"
+				},
+				"returnPolicy": {
+					"returnWithin": "returnin",
+					"returnFees": "returnfee"
+				},
+				"price": "cost",
+				"currency": "currency",
+				"availability": "avail",
+				"itemCondition": "cond"
+			},
+			"varientParameterName": "var",
+			"fallbacks": {
+				"deliveryOver": "india"
+			}
 		}
 	},
 	"aggregatorVariables": {
@@ -214,8 +244,8 @@
 		"organisationBaseID": "rjs-org",
 		"profileBaseID": "rjs-pp",
 		"eventBaseID": "rjs-event",
-		"productBaseID": "rprod",
-		"productPriceValidUntilNext": "30",
+		"productBaseID": "rjs-prod",
+		"productPriceValidUntilNext": 30,
 		"productGroupIDHashLength": "128",
 		"producrVariableDelimiter": "|"
 	}

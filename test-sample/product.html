@@ -2,179 +2,181 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Page</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Product Page</title>
 </head>
 
 <body>
-    <div class="product">
+	<!-- product instance 1 -->
+	<div class="product">
 
-        <!-- name -->
-        <h1 class="rprod-1-name" data-var="color">Denim Jacket | Black</h1>
+		<!-- name -->
+		<h1 class="rjs-prod-1-name" data-var="color">Denim Jacket | Black</h1>
 
-        <!-- images -->
-        <img class="rprod-1-img" src="https://example.com/image1.jpg" alt="Product Image 1">
-        <img class="rprod-1-img" src="https://example.com/image2.jpg" alt="Product Image 2">
+		<!-- images -->
+		<img class="rjs-prod-1-img" src="https://example.com/image1.jpg" alt="Product Image 1">
+		<img class="rjs-prod-1-img" src="https://example.com/image2.jpg" alt="Product Image 2">
 
-        <!-- description -->
-        <p class="rprod-1-desc">Product Description Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+		<!-- description -->
+		<p class="rjs-prod-1-desc">Product Description Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
 
-        <!-- skuid -->
-        <p>SKU ID: <span class="rprod-1-sku">123456789</span></p>
+		<!-- skuid -->
+		<p>SKU ID: <span class="rjs-prod-1-sku">123456789</span></p>
 
-        <!--mpn code  -->
-        <p>MPN Code: <span class="rprod-1-mpn">ABC123</span></p>
+		<!--mpn code  -->
+		<p>MPN Code: <span class="rjs-prod-1-mpn">ABC123</span></p>
 
-        <!-- brand name -->
-        <p>Brand: <span class="rprod-1-brand">XYZ Brand</span></p>
-
-
-        <p>Price: <span class="rprod-1-price" data-currency="inr">990</span></p>
-
-        <p>Availability: <span class="rprod-1-availability" data-stock="true">In Stock</span></p>
+		<!-- brand name -->
+		<p>Brand: <span class="rjs-prod-1-brand">XYZ Brand</span></p>
 
 
-        <p>Item Condition: <span class="rprod-1-condition" data-new="true">New</span></p>
+		<p>Price: <span class="rjs-prod-1-cost" data-currency="inr">990</span></p>
+
+		<p>Availability: <span class="rjs-prod-1-avail" data-avail="true">In Stock</span></p>
 
 
-        <p>Return Policy: <span class="rprod-1-returnin">30 days</span></p>
-
-        <p>Return Fees: <span class="rprod-1-returnFees">Free</span></p>
-
-        <!-- delivery across and return policy applicable country -->
-        <p>Shipping Cost: <span class="rprod-1-shippingCost" data-dacountry="india">80</span></p>
-
-        <p class="rprod-1-processingTime" data-prange="1-3">Processing Time: 1-3 business days</p>
-
-        <p class="rprod-1-deliveryTime" data-drange="3-5">Estimated Delivery Time: 3-5 business days</p>
+		<p>Item Condition: <span class="rjs-prod-1-cond" data-cond="new">New</span></p>
 
 
-        <!-- review -->
-        <section class="rprod-1-review">
-            <div class="urating">
-                <!-- rating value -->
-                <p class="rv">4.5</p>
+		<p>Return Policy: <span class="rjs-prod-1-returnin">30 days</span></p>
 
-                <!-- max rate -->
-                <p class="mr">5</p>
+		<p>Return Fees: <span class="rjs-prod-1-returnfee">Free</span></p>
 
-                <!-- authorO is Organisation class - pub class prop not req-->
-                <!-- authorP is Person class - pub class prop req-->
-                <p class="authorP">John</p>
-            </div>
+		<!-- delivery across and return policy applicable country -->
+		<p>Shipping Cost: <span class="rjs-prod-1-delcost" data-delover="india">80</span></p>
 
-            <div class="urating">
-                <!-- rating value -->
-                <p class="rv">4.5</p>
+		<p class="rjs-prod-1-ptime" data-range="1-3">Processing Time: 1-3 business days</p>
 
-                <!-- max rate -->
-                <p class="mr">5</p>
-
-                <!-- authorO is Organisation class - pub class prop not req-->
-                <!-- authorP is Person class - pub class prop req-->
-                <p class="authorO">Foogle</p>
-            </div>
-        </section>
-
-        <!-- aggregate review -->
-        <div class="rprod-1-agg">
-            <!-- aggregate rate that got -->
-            <p class="rv">100</p>
-
-            <!-- max possibly rate -->
-            <p class="rl">100</p>
-
-            <!-- total user rate count -->
-            <p class="rc">1000</p>
-        </div>
+		<p class="rjs-prod-1-ttime" data-range="3-5">Estimated Delivery Time: 3-5 business days</p>
 
 
-    </div>
+		<!-- review -->
+		<section class="rjs-prod-1-reviews">
+			<div class="urate">
+				<!-- rating value -->
+				<p class="rv">4.5</p>
 
-    <div class="product">
+				<!-- max rate -->
+				<p class="mr">5</p>
 
-        <!-- name -->
-        <h1 class="rprod-2-name" data-var="color">Denim Jacket | Blue</h1>
+				<!-- authorO is Organisation class - pub class prop not req-->
+				<!-- authorP is Person class - pub class prop req-->
+				<p class="raterP">John</p>
+			</div>
 
-        <!-- images -->
-        <img class="rprod-2-img" src="https://example.com/image1.jpg" alt="Product Image 1">
-        <img class="rprod-2-img" src="https://example.com/image2.jpg" alt="Product Image 2">
+			<div class="urate">
+				<!-- rating value -->
+				<p class="rv">4.5</p>
 
-        <!-- description -->
-        <p class="rprod-2-desc">Product Description Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+				<!-- max rate -->
+				<p class="mr">5</p>
 
-        <!-- skuid -->
-        <p>SKU ID: <span class="rprod-2-sku">123456789</span></p>
+				<!-- authorO is Organisation class - pub class prop not req-->
+				<!-- authorP is Person class - pub class prop req-->
+				<p class="raterO">Foogle</p>
+			</div>
+		</section>
 
-        <!--mpn code  -->
-        <p>MPN Code: <span class="rprod-2-mpn">ABC123</span></p>
+		<!-- aggregate review -->
+		<div class="rjs-prod-1-aggrate">
+			<!-- aggregate rate that got -->
+			<p class="arv">100</p>
 
-        <!-- brand name -->
-        <p>Brand: <span class="rprod-2-brand">XYZ Brand</span></p>
+			<!-- max possibly rate -->
+			<p class="mr">100</p>
 
-
-        <p>Price: <span class="rprod-2-price" data-currency="inr">990</span></p>
-
-        <p>Availability: <span class="rprod-2-availability" data-stock="true">In Stock</span></p>
-
-
-        <p>Item Condition: <span class="rprod-2-condition" data-new="true">New</span></p>
-
-
-        <p>Return Policy: <span class="rprod-2-returnin">30 days</span></p>
-
-        <p>Return Fees: <span class="rprod-2-returnFees">Free</span></p>
-
-        <!-- delivery across and return policy applicable country -->
-        <p>Shipping Cost: <span class="rprod-2-shippingCost" data-dacountry="india">80</span></p>
-
-        <p class="rprod-2-processingTime" data-prange="1-3">Processing Time: 1-3 business days</p>
-
-        <p class="rprod-2-deliveryTime" data-drange="3-5">Estimated Delivery Time: 3-5 business days</p>
+			<!-- total user rate count -->
+			<p class="rc">1000</p>
+		</div>
 
 
-        <!-- review -->
-        <section class="rprod-2-review">
-            <div class="urating">
-                <!-- rating value -->
-                <p class="rv">4.5</p>
+	</div>
 
-                <!-- max rate -->
-                <p class="mr">5</p>
+	<!-- product instance 2 -->
+	<div class="product">
 
-                <!-- authorO is Organisation class - pub class prop not req-->
-                <!-- authorP is Person class - pub class prop req-->
-                <p class="authorP">John</p>
-            </div>
+		<!-- name -->
+		<h1 class="rjs-prod-2-name" data-var="color">Denim Jacket | Blue</h1>
 
-            <div class="urating">
-                <!-- rating value -->
-                <p class="rv">4.5</p>
+		<!-- images -->
+		<img class="rjs-prod-2-img" src="https://example.com/image1.jpg" alt="Product Image 1">
+		<img class="rjs-prod-2-img" src="https://example.com/image2.jpg" alt="Product Image 2">
 
-                <!-- max rate -->
-                <p class="mr">5</p>
+		<!-- description -->
+		<p class="rjs-prod-2-desc">Product Description Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
 
-                <!-- authorO is Organisation class - pub class prop not req-->
-                <!-- authorP is Person class - pub class prop req-->
-                <p class="authorO">Foogle</p>
-            </div>
-        </section>
+		<!-- skuid -->
+		<p>SKU ID: <span class="rjs-prod-2-sku">123456789</span></p>
 
-        <!-- aggregate review -->
-        <div class="rprod-2-agg">
-            <!-- aggregate rate that got -->
-            <p class="rv">100</p>
+		<!--mpn code  -->
+		<p>MPN Code: <span class="rjs-prod-2-mpn">ABC123</span></p>
 
-            <!-- max possibly rate -->
-            <p class="rl">100</p>
-
-            <!-- total user rate count -->
-            <p class="rc">1000</p>
-        </div>
+		<!-- brand name -->
+		<p>Brand: <span class="rjs-prod-2-brand">XYZ Brand</span></p>
 
 
-    </div>
+		<p>Price: <span class="rjs-prod-2-cost" data-currency="inr">990</span></p>
+
+		<p>Availability: <span class="rjs-prod-2-avail" data-avail="true">In Stock</span></p>
+
+
+		<p>Item Condition: <span class="rjs-prod-2-cond" data-cond="used">New</span></p>
+
+
+		<p>Return Policy: <span class="rjs-prod-2-returnin">30 days</span></p>
+
+		<p>Return Fees: <span class="rjs-prod-2-returnfee">Free</span></p>
+
+		<!-- delivery across and return policy applicable country -->
+		<p>Shipping Cost: <span class="rjs-prod-2-delcost" data-delover="india">80</span></p>
+
+		<p class="rjs-prod-2-ptime" data-range="1-3">Processing Time: 1-3 business days</p>
+
+		<p class="rjs-prod-2-ttime" data-range="3-5">Estimated Delivery Time: 3-5 business days</p>
+
+
+		<!-- review -->
+		<section class="rjs-prod-2-reviews">
+			<div class="urate">
+				<!-- rating value -->
+				<p class="rv">4.5</p>
+
+				<!-- max rate -->
+				<p class="mr">5</p>
+
+				<!-- authorO is Organisation class - pub class prop not req-->
+				<!-- authorP is Person class - pub class prop req-->
+				<p class="raterP">John</p>
+			</div>
+
+			<div class="urate">
+				<!-- rating value -->
+				<p class="rv">4.5</p>
+
+				<!-- max rate -->
+				<p class="mr">5</p>
+
+				<!-- authorO is Organisation class - pub class prop not req-->
+				<!-- authorP is Person class - pub class prop req-->
+				<p class="raterO">Foogle</p>
+			</div>
+		</section>
+
+		<!-- aggregate review -->
+		<div class="rjs-prod-2-aggrate">
+			<!-- aggregate rate that got -->
+			<p class="arv">100</p>
+
+			<!-- max possibly rate -->
+			<p class="mr">100</p>
+
+			<!-- total user rate count -->
+			<p class="rc">1000</p>
+		</div>
+
+
+	</div>
 
 </body>
 

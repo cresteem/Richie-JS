@@ -15,7 +15,6 @@ import {
 	VirtualLocation,
 	EventLocationType,
 	PlaceLocation,
-	ProductVarientOptions,
 	reviewOptions,
 	aggregateRatingOptions,
 	HowToStep,
@@ -26,6 +25,9 @@ import {
 	Weekdays,
 	PostalAddressOptions,
 	InteractionCounterOptions,
+	OfferShippingDetails,
+	MerchantReturnPolicy,
+	Offers,
 } from "./options";
 
 import {
@@ -960,4 +962,232 @@ export function serializeEventsPage(
 	}
 
 	return serializedJsonLDList;
+}
+
+function shippingDetailsSerializer(
+	shippingMetaData: OfferShippingDetails,
+	currency: string,
+): Record<string, any> {
+	const serializedShippingMetaData: Record<string, any> = {
+		"@type": "OfferShippingDetails",
+		shippingRate: {
+			"@type": "MonetaryAmount",
+			value: shippingMetaData.shippingCost,
+			currency: shippingMetaData.currency ?? currency,
+		},
+		shippingDestination: {
+			"@type": "DefinedRegion",
+			addressCountry: shippingMetaData.shippingDestination,
+		},
+		deliveryTime: {
+			"@type": "ShippingDeliveryTime",
+			handlingTime: {
+				"@type": "QuantitativeValue",
+				minValue: shippingMetaData.processingTime[0],
+				maxValue: shippingMetaData.processingTime[1],
+				unitCode: "DAY",
+			},
+			transitTime: {
+				"@type": "QuantitativeValue",
+				minValue: shippingMetaData.deliveryTime[0],
+				maxValue: shippingMetaData.deliveryTime[1],
+				unitCode: "DAY",
+			},
+		},
+	};
+	return serializedShippingMetaData;
+}
+
+function returnPolicySerializer(
+	returnPolicyMetaData: MerchantReturnPolicy,
+): Record<string, any> {
+	const serializedReturnPolicy: Record<string, any> = {
+		"@type": "MerchantReturnPolicy",
+		applicableCountry: returnPolicyMetaData.applicableCountry,
+		returnPolicyCategory: returnPolicyMetaData.returnPolicyCategory,
+		merchantReturnDays: returnPolicyMetaData.returnWithin,
+		returnMethod: "ReturnByMail",
+		returnFees: returnPolicyMetaData.returnFees,
+	};
+	return serializedReturnPolicy;
+}
+
+function offerSerializer(offerMetaData: Offers): Record<string, any> {
+	const serializedOffer: Record<string, any> = {
+		"@type": "Offer",
+		category: offerMetaData.category ?? "Fees",
+		price: offerMetaData.price,
+		priceCurrency: offerMetaData.priceCurrency,
+		url: offerMetaData.link,
+		priceValidUntil: offerMetaData.validTill,
+		availability: offerMetaData.availability,
+		itemCondition: offerMetaData.itemCondition,
+		hasMerchantReturnPolicy: returnPolicySerializer(
+			offerMetaData.hasMerchantReturnPolicy ??
+				({} as MerchantReturnPolicy),
+		),
+		shippingDetails: shippingDetailsSerializer(
+			offerMetaData.shippingDetails ?? ({} as OfferShippingDetails),
+			offerMetaData.priceCurrency,
+		),
+	};
+	return serializedOffer;
+}
+
+function commonProductSerializer(
+	instance: ProductOptions,
+): Record<string, any> {
+	const serializedJsonLD: Record<string, any> = {
+		"@context": "https://schema.org/",
+		"@type": "Product",
+		name: instance.productName,
+		image: instance.images,
+		description: instance.description,
+		sku: instance.skuid,
+		mpn: instance.mpncode,
+		brand: {
+			"@type": "Brand",
+			name: instance.brandName,
+		},
+		review: reviewsSerializer(instance.reviews),
+		aggregateRating: aggregateRatingSerializer(instance.aggregateRating),
+		offers: offerSerializer(instance.offer),
+	};
+
+	//optional props
+	if (instance.suggestedGender && instance.suggestedAge) {
+		serializedJsonLD.audience = {
+			"@type": "PeopleAudience",
+			suggestedGender: instance.suggestedGender,
+			suggestedAge: {
+				"@type": "QuantitativeValue",
+				minValue: instance.suggestedAge,
+			},
+		};
+	} else if (instance.suggestedGender) {
+		serializedJsonLD.audience = {
+			"@type": "PeopleAudience",
+			suggestedGender: instance.suggestedGender,
+		};
+	} else if (instance.suggestedAge) {
+		serializedJsonLD.audience = {
+			"@type": "PeopleAudience",
+			suggestedAge: {
+				"@type": "QuantitativeValue",
+				minValue: instance.suggestedAge,
+			},
+		};
+	}
+
+	if (instance.size) {
+		serializedJsonLD.size = instance.size;
+	}
+	if (instance.color) {
+		serializedJsonLD.color = instance.color;
+	}
+	if (instance.material) {
+		serializedJsonLD.material = instance.material;
+	}
+	if (instance.pattern) {
+		serializedJsonLD.pattern = instance.pattern;
+	}
+	return serializedJsonLD;
+}
+
+export function serializeProductPage(
+	productPageData: ProductOptions[],
+): Record<string, any> {
+	const serializedJsonLDList: Record<string, any>[] = new Array();
+
+	for (const instance of productPageData) {
+		serializedJsonLDList.push(commonProductSerializer(instance));
+	}
+
+	return serializedJsonLDList;
+}
+
+export function serializeproductWithVarientPage(
+	productPageData: ProductOptions[],
+	variesBy: string[],
+): Record<string, any> {
+	const serializedJsonLD: Record<string, any> = new Array();
+
+	const productGroup = {
+		"@context": "https://schema.org/",
+		"@type": "ProductGroup",
+		name: productPageData[0].productName,
+		description: productPageData[0].description,
+		url: (() => {
+			const linkWithoutParams =
+				productPageData[0].offer.link?.split("?")[0];
+			return linkWithoutParams;
+		})(),
+		brand: {
+			"@type": "Brand",
+			name: productPageData[0].brandName,
+		},
+		productGroupID: generateProductGroupID(
+			productPageData[0].skuid ?? productPageData[0].mpncode ?? "no id",
+			productPageData[1]?.skuid ?? productPageData[1]?.mpncode ?? "no id",
+		),
+		variesBy: variesBy,
+		hasVariant: serializeProductPage(productPageData),
+		aggregateRating: {},
+		review: [] as reviewOptions[],
+	};
+
+	//OfferShippingDetails
+	const OfferShippingDetails = {
+		"@context": "https://schema.org/",
+		"@id": "#shipping_policy",
+		...productGroup.hasVariant[0].offers.shippingDetails,
+	};
+
+	//MerchantReturnPolicy
+	const MerchantReturnPolicy = {
+		"@context": "https://schema.org/",
+		"@id": "#return_policy",
+		...productGroup.hasVariant[0].offers.hasMerchantReturnPolicy,
+	};
+
+	const aggregateRatings: any[] = [];
+	const reviews: reviewOptions[] = [];
+
+	//remapping shippingDetails and hasMerchantReturnPolicy with id
+	productGroup.hasVariant = productGroup.hasVariant.map((product: any) => {
+		//extract aggregate rating and review
+		aggregateRatings.push(product.aggregateRating);
+		delete product.aggregateRating;
+
+		reviews.push(...product.review);
+		delete product.review;
+
+		product.offers.hasMerchantReturnPolicy = {
+			"@id": MerchantReturnPolicy["@id"],
+		};
+		product.offers.shippingDetails = {
+			"@id": OfferShippingDetails["@id"],
+		};
+
+		//delete duplicates
+		delete product.brand;
+
+		return product;
+	});
+
+	//calculate cumulative aggregate rating
+	const combinedAggregateRating: aggregateRatingOptions =
+		combineAggregateRatings(aggregateRatings);
+
+	productGroup.aggregateRating = aggregateRatingSerializer(
+		combinedAggregateRating,
+	);
+
+	productGroup.review = reviews;
+
+	serializedJsonLD.push(productGroup);
+	serializedJsonLD.push(OfferShippingDetails);
+	serializedJsonLD.push(MerchantReturnPolicy);
+
+	return serializedJsonLD;
 }

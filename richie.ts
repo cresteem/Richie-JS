@@ -13,6 +13,7 @@ import {
 	serializeMovie,
 	serializeMovieCarousel,
 	serializeOrganisation,
+	serializeProductPage,
 	serializeProfilePage,
 	serializeRecipe,
 	serializeRecipeCarousel,
@@ -20,6 +21,7 @@ import {
 	serializeRestaurantCarousel,
 	serializeSoftwareApp,
 	serializeVideo,
+	serializeproductWithVarientPage,
 } from "./lib/serializer";
 
 import { createJsonLD, writeOutput } from "./lib/utilities";
@@ -339,7 +341,7 @@ export function makeProfilePage(
 	});
 }
 
-async function makeEvents(
+export async function makeEvents(
 	htmlPath: string,
 	source: string,
 	destinationFile: string,
@@ -359,8 +361,54 @@ async function makeEvents(
 	});
 }
 
+export async function makeProduct(
+	htmlPath: string,
+	source: string,
+	destinationFile: string,
+	_isProductsWithVar: boolean = false,
+): Promise<void> {
+	const aggregatedData = await aggregator.productPage(source, htmlPath);
+
+	const serializedData =
+		_isProductsWithVar ?
+			serializeproductWithVarientPage(
+				aggregatedData.product,
+				aggregatedData.variesBy,
+			)
+		:	serializeProductPage(aggregatedData.product);
+
+	const richResultSnippet = createJsonLD(serializedData);
+
+	return new Promise((resolve, reject) => {
+		writeOutput(source, destinationFile, richResultSnippet)
+			.then(() => {
+				resolve();
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+}
+
+export function makeProductWithVar(
+	htmlPath: string,
+	source: string,
+	destinationFile: string,
+): Promise<void> {
+	const isProductsWithVar: boolean = true;
+	return new Promise((resolve, reject) => {
+		makeProduct(htmlPath, source, destinationFile, isProductsWithVar)
+			.then(() => {
+				resolve();
+			})
+			.catch((err) => {
+				reject(err);
+			});
+	});
+}
+
 async function richie(): Promise<void> {
-	const filepath = "test-sample/events.html";
+	const filepath = "test-sample/product.html";
 	const destinationFile = join(
 		process.cwd(),
 		"outputs",
@@ -370,7 +418,7 @@ async function richie(): Promise<void> {
 	const source = await readFile(filepath, { encoding: "utf8" });
 
 	return new Promise((resolve, reject) => {
-		makeEvents(filepath, source, destinationFile)
+		makeProductWithVar(filepath, source, destinationFile)
 			.then(() => {
 				resolve();
 			})

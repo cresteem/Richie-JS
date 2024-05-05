@@ -230,7 +230,7 @@ export interface CourseOptions {
 
 /* Offer */
 
-interface OfferShippingDetails {
+export interface OfferShippingDetails {
 	shippingCost: number;
 	currency: Currency;
 	shippingDestination: CountryCode2D;
@@ -238,7 +238,7 @@ interface OfferShippingDetails {
 	deliveryTime: [number, number]; // [min,max]
 }
 
-interface MerchantReturnPolicy {
+export interface MerchantReturnPolicy {
 	applicableCountry: CountryCode2D; //alpha country code
 	returnWithin?: number;
 	returnPolicyCategory?:
@@ -251,11 +251,12 @@ type Availability = "InStock" | "OutOfStock";
 type ItemCondition =
 	| "NewCondition"
 	| "UsedCondition"
-	| "RefurbishedCondition";
+	| "RefurbishedCondition"
+	| "Not Mentioned";
 
 type OfferCategoryChoices = "Fees" | "Digital" | "Membership" | "Free";
 
-interface Offers {
+export interface Offers {
 	price: number;
 	priceCurrency: Currency;
 	category?: OfferCategoryChoices;
@@ -476,8 +477,29 @@ export interface EventsPageOptions {
 /* events ended*/
 
 /* productPage */
+export type Gender = "MALE" | "FEMALE" | "UNISEX";
+
+export enum sizeAvailable {
+	"SMALL",
+	"MEDIUM",
+	"LARGE",
+	"EXTRA LARGE",
+	"DOUBLE EXTRA LARGE",
+	"TRIPLE EXTRA LARGE",
+}
+
+export enum VariesBy {
+	"color",
+	"suggestedAge",
+	"suggestedGender",
+	"material",
+	"pattern",
+	"size",
+}
+
 export interface ProductOptions {
 	productName: string;
+	variesBy?: VariesBy[];
 	images: string[];
 	description: string;
 	skuid: string;
@@ -487,27 +509,16 @@ export interface ProductOptions {
 	aggregateRating: aggregateRatingOptions;
 
 	offer: Offers;
-	returnDetails: MerchantReturnPolicy;
-	shippingDetails: OfferShippingDetails;
 	suggestedAge?: number;
-	suggestedGender?: "MALE" | "FEMALE" | "UNISEX";
-	size?:
-		| "SMALL"
-		| "MEDIUM"
-		| "LARGE"
-		| "EXTRA LARGE"
-		| "DOUBLE EXTRA LARGE"
-		| "TRIPLE EXTRA LARGE";
+	suggestedGender?: Gender;
+	size?: sizeAvailable[];
+
 	color?: string;
 	material?: string;
 	pattern?: string;
 }
 /* productPage ended*/
-
-/* ProductVarient */
-export interface ProductVarientOptions {
-	productGrproductGroupID: string;
+export interface ProductPageReturns {
+	product: ProductOptions[];
 	variesBy: string[];
-	hasVariant: ProductOptions[];
 }
-/* ProductVarient ended*/

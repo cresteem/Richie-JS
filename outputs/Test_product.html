@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Page</title>
+    <script type="application/ld+json">
+      [
+        {
+          "@context": "https://schema.org/",
+          "@type": "ProductGroup",
+          "name": "Denim Jacket",
+          "description": "Product Description Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+          "url": "https://www.cresteem.com/test-sample/product",
+          "brand": { "@type": "Brand", "name": "XYZ Brand" },
+          "productGroupID": "bdfa19223cf662ea69861214ee0b7df9",
+          "variesBy": ["color"],
+          "hasVariant": [
+            {
+              "@context": "https://schema.org/",
+              "@type": "Product",
+              "name": "Denim Jacket",
+              "image": [
+                "https://example.com/image1.jpg",
+                "https://example.com/image2.jpg"
+              ],
+              "description": "Product Description Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+              "sku": "123456789",
+              "mpn": "ABC123",
+              "offers": {
+                "@type": "Offer",
+                "category": "Fees",
+                "price": 990,
+                "priceCurrency": "INR",
+                "url": "https://www.cresteem.com/test-sample/product?var=color_color",
+                "priceValidUntil": "2024-05-04T15:12:12.131Z",
+                "availability": "InStock",
+                "itemCondition": "NewCondition",
+                "hasMerchantReturnPolicy": { "@id": "#return_policy" },
+                "shippingDetails": { "@id": "#shipping_policy" }
+              },
+              "color": "Black"
+            },
+            {
+              "@context": "https://schema.org/",
+              "@type": "Product",
+              "name": "Denim Jacket",
+              "image": [
+                "https://example.com/image1.jpg",
+                "https://example.com/image2.jpg"
+              ],
+              "description": "Product Description Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+              "sku": "123456789",
+              "mpn": "ABC123",
+              "offers": {
+                "@type": "Offer",
+                "category": "Fees",
+                "price": 990,
+                "priceCurrency": "INR",
+                "url": "https://www.cresteem.com/test-sample/product?var=color_color",
+                "priceValidUntil": "2024-05-04T15:12:12.131Z",
+                "availability": "InStock",
+                "itemCondition": "UsedCondition",
+                "hasMerchantReturnPolicy": { "@id": "#return_policy" },
+                "shippingDetails": { "@id": "#shipping_policy" }
+              },
+              "color": "Blue"
+            }
+          ],
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": 100,
+            "bestRating": 100,
+            "ratingCount": 2000
+          },
+          "review": [
+            {
+              "@type": "Review",
+              "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": 4.5,
+                "bestRating": 5
+              },
+              "author": { "@type": "Person", "name": "John" }
+            },
+            {
+              "@type": "Review",
+              "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": 4.5,
+                "bestRating": 5
+              },
+              "author": { "@type": "Organization", "name": "Foogle" }
+            },
+            {
+              "@type": "Review",
+              "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": 4.5,
+                "bestRating": 5
+              },
+              "author": { "@type": "Person", "name": "John" }
+            },
+            {
+              "@type": "Review",
+              "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": 4.5,
+                "bestRating": 5
+              },
+              "author": { "@type": "Organization", "name": "Foogle" }
+            }
+          ]
+        },
+        {
+          "@context": "https://schema.org/",
+          "@id": "#shipping_policy",
+          "@type": "OfferShippingDetails",
+          "shippingRate": {
+            "@type": "MonetaryAmount",
+            "value": 80,
+            "currency": "INR"
+          },
+          "shippingDestination": {
+            "@type": "DefinedRegion",
+            "addressCountry": "IN"
+          },
+          "deliveryTime": {
+            "@type": "ShippingDeliveryTime",
+            "handlingTime": {
+              "@type": "QuantitativeValue",
+              "minValue": 1,
+              "maxValue": 3,
+              "unitCode": "DAY"
+            },
+            "transitTime": {
+              "@type": "QuantitativeValue",
+              "minValue": 3,
+              "maxValue": 5,
+              "unitCode": "DAY"
+            }
+          }
+        },
+        {
+          "@context": "https://schema.org/",
+          "@id": "#return_policy",
+          "@type": "MerchantReturnPolicy",
+          "applicableCountry": "IN",
+          "returnPolicyCategory": "MerchantReturnFiniteReturnWindow",
+          "merchantReturnDays": 30,
+          "returnMethod": "ReturnByMail",
+          "returnFees": "FreeReturn"
+        }
+      ]
+    </script>
+  </head>
+
+  <body>
+    <!-- product instance 1 -->
+    <div class="product">
+      <!-- name -->
+      <h1 class="rjs-prod-1-name" data-var="color">Denim Jacket | Black</h1>
+
+      <!-- images -->
+      <img
+        class="rjs-prod-1-img"
+        src="https://example.com/image1.jpg"
+        alt="Product Image 1"
+      />
+      <img
+        class="rjs-prod-1-img"
+        src="https://example.com/image2.jpg"
+        alt="Product Image 2"
+      />
+
+      <!-- description -->
+      <p class="rjs-prod-1-desc">
+        Product Description Lorem ipsum dolor sit amet, consectetur adipiscing
+        elit.
+      </p>
+
+      <!-- skuid -->
+      <p>SKU ID: <span class="rjs-prod-1-sku">123456789</span></p>
+
+      <!--mpn code  -->
+      <p>MPN Code: <span class="rjs-prod-1-mpn">ABC123</span></p>
+
+      <!-- brand name -->
+      <p>Brand: <span class="rjs-prod-1-brand">XYZ Brand</span></p>
+
+      <p>Price: <span class="rjs-prod-1-cost" data-currency="inr">990</span></p>
+
+      <p>
+        Availability:
+        <span class="rjs-prod-1-avail" data-avail="true">In Stock</span>
+      </p>
+
+      <p>
+        Item Condition: <span class="rjs-prod-1-cond" data-cond="new">New</span>
+      </p>
+
+      <p>Return Policy: <span class="rjs-prod-1-returnin">30 days</span></p>
+
+      <p>Return Fees: <span class="rjs-prod-1-returnfee">Free</span></p>
+
+      <!-- delivery across and return policy applicable country -->
+      <p>
+        Shipping Cost:
+        <span class="rjs-prod-1-delcost" data-delover="india">80</span>
+      </p>
+
+      <p class="rjs-prod-1-ptime" data-range="1-3">
+        Processing Time: 1-3 business days
+      </p>
+
+      <p class="rjs-prod-1-ttime" data-range="3-5">
+        Estimated Delivery Time: 3-5 business days
+      </p>
+
+      <!-- review -->
+      <section class="rjs-prod-1-reviews">
+        <div class="urate">
+          <!-- rating value -->
+          <p class="rv">4.5</p>
+
+          <!-- max rate -->
+          <p class="mr">5</p>
+
+          <!-- authorO is Organisation class - pub class prop not req-->
+          <!-- authorP is Person class - pub class prop req-->
+          <p class="raterP">John</p>
+        </div>
+
+        <div class="urate">
+          <!-- rating value -->
+          <p class="rv">4.5</p>
+
+          <!-- max rate -->
+          <p class="mr">5</p>
+
+          <!-- authorO is Organisation class - pub class prop not req-->
+          <!-- authorP is Person class - pub class prop req-->
+          <p class="raterO">Foogle</p>
+        </div>
+      </section>
+
+      <!-- aggregate review -->
+      <div class="rjs-prod-1-aggrate">
+        <!-- aggregate rate that got -->
+        <p class="arv">100</p>
+
+        <!-- max possibly rate -->
+        <p class="mr">100</p>
+
+        <!-- total user rate count -->
+        <p class="rc">1000</p>
+      </div>
+    </div>
+
+    <!-- product instance 2 -->
+    <div class="product">
+      <!-- name -->
+      <h1 class="rjs-prod-2-name" data-var="color">Denim Jacket | Blue</h1>
+
+      <!-- images -->
+      <img
+        class="rjs-prod-2-img"
+        src="https://example.com/image1.jpg"
+        alt="Product Image 1"
+      />
+      <img
+        class="rjs-prod-2-img"
+        src="https://example.com/image2.jpg"
+        alt="Product Image 2"
+      />
+
+      <!-- description -->
+      <p class="rjs-prod-2-desc">
+        Product Description Lorem ipsum dolor sit amet, consectetur adipiscing
+        elit.
+      </p>
+
+      <!-- skuid -->
+      <p>SKU ID: <span class="rjs-prod-2-sku">123456789</span></p>
+
+      <!--mpn code  -->
+      <p>MPN Code: <span class="rjs-prod-2-mpn">ABC123</span></p>
+
+      <!-- brand name -->
+      <p>Brand: <span class="rjs-prod-2-brand">XYZ Brand</span></p>
+
+      <p>Price: <span class="rjs-prod-2-cost" data-currency="inr">990</span></p>
+
+      <p>
+        Availability:
+        <span class="rjs-prod-2-avail" data-avail="true">In Stock</span>
+      </p>
+
+      <p>
+        Item Condition:
+        <span class="rjs-prod-2-cond" data-cond="used">New</span>
+      </p>
+
+      <p>Return Policy: <span class="rjs-prod-2-returnin">30 days</span></p>
+
+      <p>Return Fees: <span class="rjs-prod-2-returnfee">Free</span></p>
+
+      <!-- delivery across and return policy applicable country -->
+      <p>
+        Shipping Cost:
+        <span class="rjs-prod-2-delcost" data-delover="india">80</span>
+      </p>
+
+      <p class="rjs-prod-2-ptime" data-range="1-3">
+        Processing Time: 1-3 business days
+      </p>
+
+      <p class="rjs-prod-2-ttime" data-range="3-5">
+        Estimated Delivery Time: 3-5 business days
+      </p>
+
+      <!-- review -->
+      <section class="rjs-prod-2-reviews">
+        <div class="urate">
+          <!-- rating value -->
+          <p class="rv">4.5</p>
+
+          <!-- max rate -->
+          <p class="mr">5</p>
+
+          <!-- authorO is Organisation class - pub class prop not req-->
+          <!-- authorP is Person class - pub class prop req-->
+          <p class="raterP">John</p>
+        </div>
+
+        <div class="urate">
+          <!-- rating value -->
+          <p class="rv">4.5</p>
+
+          <!-- max rate -->
+          <p class="mr">5</p>
+
+          <!-- authorO is Organisation class - pub class prop not req-->
+          <!-- authorP is Person class - pub class prop req-->
+          <p class="raterO">Foogle</p>
+        </div>
+      </section>
+
+      <!-- aggregate review -->
+      <div class="rjs-prod-2-aggrate">
+        <!-- aggregate rate that got -->
+        <p class="arv">100</p>
+
+        <!-- max possibly rate -->
+        <p class="mr">100</p>
+
+        <!-- total user rate count -->
+        <p class="rc">1000</p>
+      </div>
+    </div>
+  </body>
+</html>
