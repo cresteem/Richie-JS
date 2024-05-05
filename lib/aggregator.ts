@@ -1927,7 +1927,6 @@ export async function productPage(
 	const $: CheerioAPI = load(htmlString);
 
 	const productMetas: Record<string, ProductOptions> = {};
-	let variesBy: string[] = [];
 
 	const validitySecs: number = productPriceValidUntilNext * 24 * 60 * 60;
 
@@ -1970,50 +1969,65 @@ export async function productPage(
 				)?.split("-");
 
 				if (!!varyMeta) {
-					const varies = varyMeta
-						.map((vary: string, index: number): string => {
-							if (vary === "color") {
-								productMetas[id].color = productLongname[index + 1];
-								return "color";
-							} else if (vary === "audage") {
-								productMetas[id].suggestedAge = parseFloat(
-									productLongname[index + 1].replace(/[^\d]/g, ""),
-								);
-								return "suggestedAge";
-							} else if (vary === "gender") {
-								const rawGender = productLongname[index + 1].toLowerCase();
+					varyMeta.forEach((vary: string, index: number): void => {
+						if (vary === "color") {
+							productMetas[id].color = productLongname[index + 1];
 
-								const gender: Gender =
-									rawGender === "male" ? "MALE"
-									: rawGender === "female" ? "FEMALE"
-									: "UNISEX";
+							productMetas[id].variesBy = {
+								...productMetas[id].variesBy,
+								color: productMetas[id].color,
+							};
+						} else if (vary === "audage") {
+							productMetas[id].suggestedAge = parseFloat(
+								productLongname[index + 1].replace(/[^\d]/g, ""),
+							);
 
-								productMetas[id].suggestedGender = gender;
-								return "suggestedGender";
-							} else if (vary === "material") {
-								productMetas[id].material = productLongname[index + 1];
-								return "material";
-							} else if (vary === "pattern") {
-								productMetas[id].pattern = productLongname[index + 1];
-								return "pattern";
-							} else if (vary === "size") {
-								const size = productLongname[index + 1];
-								productMetas[id].size = Object.values(
-									sizeAvailable,
-								).filter(
-									(elem) =>
-										typeof elem === "string" &&
-										elem.toString().includes(size),
-								) as sizeAvailable[];
+							productMetas[id].variesBy = {
+								...productMetas[id].variesBy,
+								suggestedAge: productMetas[id].suggestedAge,
+							};
+						} else if (vary === "gender") {
+							const rawGender = productLongname[index + 1].toLowerCase();
 
-								return "size";
-							} else {
-								return "empty";
-							}
-						})
-						.filter((elem: string) => elem !== "empty");
+							const gender: Gender =
+								rawGender === "male" ? "MALE"
+								: rawGender === "female" ? "FEMALE"
+								: "UNISEX";
 
-					variesBy.push(...varies);
+							productMetas[id].suggestedGender = gender;
+
+							productMetas[id].variesBy = {
+								...productMetas[id].variesBy,
+								suggestedGender: productMetas[id].suggestedGender,
+							};
+						} else if (vary === "material") {
+							productMetas[id].material = productLongname[index + 1];
+
+							productMetas[id].variesBy = {
+								...productMetas[id].variesBy,
+								material: productMetas[id].material,
+							};
+						} else if (vary === "pattern") {
+							productMetas[id].pattern = productLongname[index + 1];
+
+							productMetas[id].variesBy = {
+								...productMetas[id].variesBy,
+								pattern: productMetas[id].pattern,
+							};
+						} else if (vary === "size") {
+							const size = productLongname[index + 1];
+							productMetas[id].size = Object.values(sizeAvailable).filter(
+								(elem) =>
+									typeof elem === "string" &&
+									elem.toString().includes(size),
+							) as sizeAvailable[];
+
+							productMetas[id].variesBy = {
+								...productMetas[id].variesBy,
+								size: productMetas[id].size?.join(", "),
+							};
+						}
+					});
 				}
 			} else if (type === reservedNames.product.images) {
 				const imgLink: string = $(elem).attr("src") ?? "";
@@ -2138,25 +2152,40 @@ export async function productPage(
 		},
 	);
 
-	variesBy = Array.from(new Set(variesBy));
-
 	//make url for each different items
-	const productMetaData = Object.values(productMetas).map(
-		(meta: ProductOptions): ProductOptions => {
-			const relativeUrl: string = join(
-				dirname(relative(cwd(), htmlPath)),
-				basename(htmlPath, ".html"),
-			).replace(/\\/g, "/");
+	const productMetaData: ProductOptions[] = Object.values(
+		productMetas,
+	).map((meta: ProductOptions): ProductOptions => {
+		const relativeUrl: string = join(
+			dirname(relative(cwd(), htmlPath)),
+			basename(htmlPath, ".html"),
+		).replace(/\\/g, "/");
 
-			const params: string = `?${reservedNames.product.varientParameterName}=${variesBy.join("_")}`;
+		const paramValues = Object.values(meta.variesBy ?? {});
 
-			meta.offer.link = new URL(
-				encodeURI(relativeUrl + params),
-				httpsDomainBase,
-			).href;
+		let params: string;
 
-			return meta;
-		},
+		if (paramValues.length !== 0) {
+			params = `?${reservedNames.product.varientParameterName}=${paramValues
+				?.join("_")
+				.toLowerCase()}`;
+		} else {
+			params = "";
+		}
+
+		meta.offer.link = new URL(
+			encodeURI(relativeUrl + params),
+			httpsDomainBase,
+		).href;
+
+		return meta;
+	});
+
+	//variesby
+	const variesBy: string[] = Array.from(
+		new Set(
+			...productMetaData.map((elem) => Object.keys(elem.variesBy ?? {})),
+		),
 	);
 
 	return {

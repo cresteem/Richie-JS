@@ -488,18 +488,17 @@ export enum sizeAvailable {
 	"TRIPLE EXTRA LARGE",
 }
 
-export enum VariesBy {
-	"color",
-	"suggestedAge",
-	"suggestedGender",
-	"material",
-	"pattern",
-	"size",
-}
+export type VariesBy =
+	| "color"
+	| "suggestedAge"
+	| "suggestedGender"
+	| "material"
+	| "pattern"
+	| "size";
 
 export interface ProductOptions {
 	productName: string;
-	variesBy?: VariesBy[];
+	variesBy?: Partial<Record<VariesBy, string | number>>;
 	images: string[];
 	description: string;
 	skuid: string;
