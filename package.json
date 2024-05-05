@@ -5,7 +5,7 @@
 		".": "./dist/richie.js"
 	},
 	"description": "Rich Result Generator",
-	"version": "0.1a",
+	"version": "0.9b",
 	"main": "./dist/richie.js",
 	"types": "./dist/types/",
 	"files": [
@@ -40,16 +40,16 @@
 		"Result",
 		"Generator"
 	],
-	"author": "@cresteem",
-	"license": "UNLICENCED",
+	"author": "CRESTEEM <connect@cresteem.com>",
+	"license": "CC BY-SA 4.0",
 	"maintainers": [
-		"@cresteem",
-		"@iamspdarsan"
+		"CRESTEEM <connect@cresteem.com>",
+		"DARSAN <darsan@cresteem.com>"
 	],
 	"bugs": {
 		"url": "https://github.com/cresteem/Richie-JS/issues"
 	},
-	"homepage": "https://github.com/cresteem/Richie-JS#readme",
+	"homepage": "https://cresteem.com/opensource/richie-js",
 	"dependencies": {
 		"@prettier/sync": "^0.5.1",
 		"axios": "^1.6.7",
@@ -57,11 +57,11 @@
 		"country-list": "^2.3.0",
 		"luxon": "^3.4.4",
 		"prettier": "^3.2.5",
-		"puppeteer": "^22.3.0",
-		"rimraf": "^5.0.5",
-		"typescript": "^5.4.5"
+		"puppeteer": "^22.3.0"
 	},
 	"devDependencies": {
+		"rimraf": "^5.0.5",
+		"typescript": "^5.4.5",
 		"@types/country-list": "^2.1.4",
 		"@types/luxon": "^3.4.2",
 		"@typescript-eslint/eslint-plugin": "^7.7.0"
