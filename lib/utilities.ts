@@ -212,24 +212,35 @@ export function generateProductGroupID(
 	return hashHex;
 }
 
+interface googleAggregateRatingOptions {
+	"@type": "AggregateRating";
+	ratingValue: number;
+	bestRating: number;
+	ratingCount: number;
+}
+
 export function combineAggregateRatings(
-	aggregateRatings: Record<string, any>,
+	aggregateRatings: googleAggregateRatingOptions[],
 ): aggregateRatingOptions {
 	/* skip if it's count is below 2 */
 	if (aggregateRatings.length < 2) {
-		return aggregateRatings[0];
+		return {
+			ratingValue: aggregateRatings[0].ratingValue,
+			maxRateRange: aggregateRatings[0].bestRating,
+			numberOfRatings: aggregateRatings[0].ratingCount,
+		};
 	}
 
 	let totalReviewCount: number = 0;
 	// Calculate total review count
-	aggregateRatings.forEach((rating: Record<string, any>) => {
-		totalReviewCount += rating.reviewCount;
+	aggregateRatings.forEach((rating: googleAggregateRatingOptions) => {
+		totalReviewCount += rating.ratingCount;
 	});
 
 	let weightedSum: number = 0;
 	// Calculate weighted sum
-	aggregateRatings.forEach((rating: Record<string, any>) => {
-		const weight = rating.reviewCount / totalReviewCount;
+	aggregateRatings.forEach((rating: googleAggregateRatingOptions) => {
+		const weight = rating.ratingCount / totalReviewCount;
 		weightedSum += rating.ratingValue * weight;
 	});
 

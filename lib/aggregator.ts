@@ -1927,7 +1927,7 @@ export async function productPage(
 	const $: CheerioAPI = load(htmlString);
 
 	const productMetas: Record<string, ProductOptions> = {};
-	const variesBy: string[] = [];
+	let variesBy: string[] = [];
 
 	const validitySecs: number = productPriceValidUntilNext * 24 * 60 * 60;
 
@@ -2138,13 +2138,15 @@ export async function productPage(
 		},
 	);
 
+	variesBy = Array.from(new Set(variesBy));
+
 	//make url for each different items
 	const productMetaData = Object.values(productMetas).map(
 		(meta: ProductOptions): ProductOptions => {
 			const relativeUrl: string = join(
 				dirname(relative(cwd(), htmlPath)),
 				basename(htmlPath, ".html"),
-			).replace("\\", "/");
+			).replace(/\\/g, "/");
 
 			const params: string = `?${reservedNames.product.varientParameterName}=${variesBy.join("_")}`;
 
@@ -2159,6 +2161,6 @@ export async function productPage(
 
 	return {
 		product: productMetaData,
-		variesBy: Array.from(new Set(variesBy)),
+		variesBy: variesBy,
 	};
 }

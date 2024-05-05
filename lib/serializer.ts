@@ -75,8 +75,12 @@ function reviewsSerializer(
 				"@type": "Organization",
 				name: review.publisherName,
 			};
+
+			serializedReviews.push(reviewItem);
+		} else {
+			const { publisher, ...exceptPublisher } = reviewItem;
+			serializedReviews.push(exceptPublisher);
 		}
-		serializedReviews.push(reviewItem);
 	}
 
 	return serializedReviews;

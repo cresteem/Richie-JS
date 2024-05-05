@@ -408,7 +408,7 @@ export function makeProductWithVar(
 }
 
 async function richie(): Promise<void> {
-	const filepath = "test-sample/product.html";
+	const filepath = "test-sample/productVarient/productAge.html";
 	const destinationFile = join(
 		process.cwd(),
 		"outputs",
