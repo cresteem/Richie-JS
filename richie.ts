@@ -19,6 +19,7 @@ import {
 	serializeRecipeCarousel,
 	serializeRestaurant,
 	serializeRestaurantCarousel,
+	serializeSiteSearchBox,
 	serializeSoftwareApp,
 	serializeVideo,
 	serializeproductWithVarientPage,
@@ -407,8 +408,28 @@ export function makeProductWithVar(
 	});
 }
 
+export function makeSiteSearchBox(
+	htmlPath: string,
+	source: string,
+	destinationFile: string,
+): Promise<void> {
+	const serializedData = serializeSiteSearchBox(htmlPath);
+
+	const richResultSnippet = createJsonLD(serializedData);
+
+	return new Promise((resolve, reject) => {
+		writeOutput(source, destinationFile, richResultSnippet)
+			.then(() => {
+				resolve();
+			})
+			.catch((error) => {
+				reject(error);
+			});
+	});
+}
+
 async function richie(): Promise<void> {
-	const filepath = "test-sample/productVarient/productCombined.html";
+	const filepath = "test-sample/Sitesearch/searchpage.html";
 	const destinationFile = join(
 		process.cwd(),
 		"outputs",
@@ -418,7 +439,7 @@ async function richie(): Promise<void> {
 	const source = await readFile(filepath, { encoding: "utf8" });
 
 	return new Promise((resolve, reject) => {
-		makeProductWithVar(filepath, source, destinationFile)
+		makeSiteSearchBox(filepath, source, destinationFile)
 			.then(() => {
 				resolve();
 			})

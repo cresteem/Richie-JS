@@ -1,43 +1,43 @@
 import {
+	CourseOptions,
+	EventLocationType,
+	EventsPageOptions,
+	FAQMeta,
+	HowToStep,
+	InteractionCounterOptions,
+	LocalBusinessOptions,
+	MerchantReturnPolicy,
+	NutritionInfoOptions,
+	OfferShippingDetails,
+	Offers,
+	OpeningHoursSpecificationOptions,
+	OrganisationOptions,
+	PlaceLocation,
+	PostalAddressOptions,
+	ProductOptions,
+	ProfilePageOptions,
+	RecipeOptions,
+	RestaurantOptions,
+	SoftwareAppOptions,
+	VirtualLocation,
+	aggregateRatingOptions,
 	articleOptions,
 	breadCrumbListOptions,
 	movieOptions,
-	RecipeOptions,
-	CourseOptions,
-	SoftwareAppOptions,
-	videoObjectOptions,
-	RestaurantOptions,
-	LocalBusinessOptions,
-	OrganisationOptions,
-	ProfilePageOptions,
-	EventsPageOptions,
-	ProductOptions,
-	VirtualLocation,
-	EventLocationType,
-	PlaceLocation,
 	reviewOptions,
-	aggregateRatingOptions,
-	HowToStep,
-	ClipOffset,
-	NutritionInfoOptions,
-	OpeningHoursSpecificationOptions,
-	FAQMeta,
-	Weekdays,
-	PostalAddressOptions,
-	InteractionCounterOptions,
-	OfferShippingDetails,
-	MerchantReturnPolicy,
-	Offers,
+	videoObjectOptions,
 } from "./options";
 
 import {
-	httpsDomainBase,
-	generateProductGroupID,
 	combineAggregateRatings,
+	generateProductGroupID,
+	httpsDomainBase,
 } from "./utilities";
 
 import { aggregatorVariables } from "../richie.config.json";
 const { siteSearchBoxFieldName } = aggregatorVariables;
+
+import { relative, basename, join, dirname } from "path";
 
 function aggregateRatingSerializer(
 	aggregateRating: aggregateRatingOptions,
@@ -1192,6 +1192,35 @@ export function serializeproductWithVarientPage(
 	serializedJsonLD.push(productGroup);
 	serializedJsonLD.push(OfferShippingDetails);
 	serializedJsonLD.push(MerchantReturnPolicy);
+
+	return serializedJsonLD;
+}
+
+export function serializeSiteSearchBox(
+	htmlPath: string,
+): Record<string, any> {
+	const serializedJsonLD: Record<string, any> = {
+		"@context": "https://schema.org",
+		"@type": "WebSite",
+		url: httpsDomainBase,
+		potentialAction: {
+			"@type": "SearchAction",
+			target: {
+				"@type": "EntryPoint",
+				urlTemplate: ((): string => {
+					const relativePath = relative(process.cwd(), htmlPath);
+
+					const searchPath = new URL(
+						join(dirname(relativePath), basename(relativePath, ".html")),
+						httpsDomainBase,
+					);
+
+					return `${searchPath}?q={${siteSearchBoxFieldName}}`;
+				})(),
+			},
+			"query-input": `required name=${siteSearchBoxFieldName}`,
+		},
+	};
 
 	return serializedJsonLD;
 }

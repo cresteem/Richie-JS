@@ -237,7 +237,7 @@
 		"courseBaseID": "rjs-course",
 		"restaurantBaseID": "rjs-restaurant",
 		"faqBaseID": "rjs-faq",
-		"siteSearchBoxFieldName": "query_str",
+		"siteSearchBoxFieldName": "searchTerm",
 		"softwareAppBaseID": "rjs-sapp",
 		"videoBaseID": "rjs-video",
 		"localBusinessBaseID": "rjs-lb",

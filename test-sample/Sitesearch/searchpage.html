@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Search Form</title>
+
+	<script src="./client.js" type="text/javascript" defer></script>
+
+</head>
+
+<body>
+	<h1>Search Form</h1>
+	<form onsubmit="return search()">
+		<label for="searchInput">Search:</label>
+		<input type="text" id="searchTerm" name="searchTerm">
+		<button type="submit">Search</button>
+	</form>
+	<div id="result"></div>
+</body>
+
+</html>
