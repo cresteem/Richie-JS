@@ -58,7 +58,7 @@ import {
 import { relative, dirname, basename, join, resolve } from "node:path";
 import { cwd } from "node:process";
 
-import { aggregatorVariables, reservedNames } from "../richie.config.json";
+import { aggregatorVariables, reservedNames } from "../rjsconfig.json";
 const {
 	articleBaseID,
 	movieBaseID,
@@ -149,7 +149,7 @@ export function article(htmlString: string): articleOptions {
 		const value =
 			type === reservedNames.article.authorUrl ?
 				$(elem).attr("href")
-			:	$(elem).html();
+				: $(elem).html();
 
 		if (type.startsWith(reservedNames.article.authorName)) {
 			authorMetaData[id].name = value;
@@ -187,7 +187,7 @@ export function article(htmlString: string): articleOptions {
 		const value =
 			type === reservedNames.article.publisherUrl ?
 				$(elem).attr("href")
-			:	$(elem).html();
+				: $(elem).html();
 		if (type === reservedNames.article.publisherName) {
 			publisherMetaData[id].name = value;
 		} else if (type === reservedNames.article.publisherUrl) {
@@ -303,7 +303,7 @@ export function movie(
 			//adding url deeplink
 			movieMetas[id].url = new URL(
 				relative(cwd(), htmlPath).replace(".html", "") +
-					`#${movieBaseID}-${id}`,
+				`#${movieBaseID}-${id}`,
 				httpsDomainBase,
 			).href;
 
@@ -624,7 +624,7 @@ export async function recipe(
 		//videoObject
 		else if (type === reservedNames.recipe.video) {
 			videoMetaPromises.push(
-				(async () => {
+				(async (): Promise<void> => {
 					recipeMetas[id].videoObject = await ytVideoMeta(
 						$(elem).attr("src") as string,
 					);
@@ -753,8 +753,8 @@ export function course(
 			if (!availableModeType.includes(mode)) {
 				throw new Error(
 					"given mode in HTML is not supported.\nOnly these are supported by Richie JS\n[ " +
-						availableModeType.join(", ") +
-						" ]",
+					availableModeType.join(", ") +
+					" ]",
 				);
 			}
 
@@ -875,7 +875,7 @@ function commonBusinessEntityThings(
 	type: string,
 	elem: Element,
 	$: CheerioAPI,
-) {
+): LocalBusinessOptions | RestaurantOptions {
 	if (type === reservedNames.businessEntity.name) {
 		businessEntityMeta.businessName = $(elem).html()?.trim() as string;
 	} else if (type === reservedNames.businessEntity.location.wrapper) {
@@ -1736,7 +1736,7 @@ export async function eventsPage(
 			} catch {
 				console.log(
 					"Error While Parsing Data String\n DateTime format should follow this " +
-						aggregatorVariables.timeFormat,
+					aggregatorVariables.timeFormat,
 				);
 				process.exit(1);
 			}
@@ -1746,7 +1746,7 @@ export async function eventsPage(
 			} catch {
 				console.log(
 					"Error While Parsing Data String\n DateTime format should follow this " +
-						aggregatorVariables.timeFormat,
+					aggregatorVariables.timeFormat,
 				);
 				process.exit(1);
 			}
@@ -1849,7 +1849,7 @@ export async function eventsPage(
 				const venue: string = $(elem)
 					.find(
 						"." +
-							reservedNames.businessEntity.location.physicalLocationName,
+						reservedNames.businessEntity.location.physicalLocationName,
 					)
 					.html()
 					?.trim() as string;
@@ -1910,7 +1910,7 @@ export async function eventsPage(
 						reservedNames.events.organizerSuffix.organisation?.toLowerCase()
 					) ?
 						"Organization"
-					:	"Person",
+						: "Person",
 				name: innerText,
 				url: $(elem).attr("href") ?? "no url found",
 			};
@@ -1991,8 +1991,8 @@ export async function productPage(
 
 							const gender: Gender =
 								rawGender === "male" ? "MALE"
-								: rawGender === "female" ? "FEMALE"
-								: "UNISEX";
+									: rawGender === "female" ? "FEMALE"
+										: "UNISEX";
 
 							productMetas[id].suggestedGender = gender;
 
@@ -2071,9 +2071,9 @@ export async function productPage(
 
 				productMetas[id].offer.itemCondition =
 					itemCondition === "new" ? "NewCondition"
-					: itemCondition === "used" ? "UsedCondition"
-					: itemCondition === "refurb" ? "RefurbishedCondition"
-					: "Not Mentioned";
+						: itemCondition === "used" ? "UsedCondition"
+							: itemCondition === "refurb" ? "RefurbishedCondition"
+								: "Not Mentioned";
 			} else if (
 				type === reservedNames.product.offer.shippingDetails.deliveryCost
 			) {
@@ -2110,11 +2110,11 @@ export async function productPage(
 					returnPolicyCategory:
 						returnWithin > 0 ?
 							"MerchantReturnFiniteReturnWindow"
-						:	"MerchantReturnNotPermitted",
+							: "MerchantReturnNotPermitted",
 					returnFees:
 						returnFees === "0" || returnFees === "free" ?
 							"FreeReturn"
-						:	"ReturnFeesCustomerResponsibility",
+							: "ReturnFeesCustomerResponsibility",
 				} as MerchantReturnPolicy;
 			} else if (
 				type === reservedNames.product.offer.shippingDetails.processingTime

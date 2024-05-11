@@ -3,7 +3,7 @@ import axios from "axios";
 import { CheerioAPI, Element, load } from "cheerio";
 import puppeteer from "puppeteer";
 import { createHash, randomBytes } from "node:crypto";
-import { aggregatorVariables, reservedNames } from "../richie.config.json";
+import { aggregatorVariables, reservedNames } from "../rjsconfig.json";
 import {
 	ApplicationCategory,
 	GeoOptions,
@@ -168,9 +168,9 @@ export function extractTime(timeRange: string, is24: boolean): string[] {
 				isAM ?
 					hh === "12" ?
 						"00"
-					:	hh
-				: hh !== "12" ? `${12 + Number(hh)}`
-				: hh;
+						: hh
+					: hh !== "12" ? `${12 + Number(hh)}`
+						: hh;
 
 			time = `${hh}:${mm}`;
 			return time;
@@ -313,7 +313,7 @@ export function generateMeta(
 	listItem.item = new URL(
 		preserveBasename ?
 			currentUrl.replace("html", "")
-		:	dirname(currentUrl),
+			: dirname(currentUrl),
 		httpsDomainBase,
 	).href;
 
@@ -424,12 +424,11 @@ export function periodTextToHours(durationAndPeriodType: string): string {
 		.match(/[a-zA-Z]+/)?.[0]
 		.toLowerCase() as string;
 
-	let duration = `PT${
-		durationPeriodType.includes("month") ? parsedDurationInDigit * 30 * 24
-		: durationPeriodType.includes("week") ? parsedDurationInDigit * 7 * 24
-		: durationPeriodType.includes("day") ? parsedDurationInDigit * 1 * 24
-		: parsedDurationInDigit
-	}H`;
+	let duration = `PT${durationPeriodType.includes("month") ? parsedDurationInDigit * 30 * 24
+			: durationPeriodType.includes("week") ? parsedDurationInDigit * 7 * 24
+				: durationPeriodType.includes("day") ? parsedDurationInDigit * 1 * 24
+					: parsedDurationInDigit
+		}H`;
 
 	return duration;
 }

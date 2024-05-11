@@ -142,7 +142,7 @@ function writeSettings(
 
 
 		const schemaConfigSnippet: Record<string, any> = {
-			fileMatch: ["richie.config.json"],
+			fileMatch: ["rjsconfig.json"],
 			/* schema file url */ url: schemaPath
 		};
 

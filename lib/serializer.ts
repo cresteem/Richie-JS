@@ -34,7 +34,7 @@ import {
 	httpsDomainBase,
 } from "./utilities";
 
-import { aggregatorVariables } from "../richie.config.json";
+import { aggregatorVariables } from "../rjsconfig.json";
 const { siteSearchBoxFieldName } = aggregatorVariables;
 
 import { relative, basename, join, dirname } from "path";
@@ -146,7 +146,7 @@ function videoObjectSerializer(
 	return serializedVideoObject;
 }
 
-function nutritionalInfoSerializer(nutritionalInfo: NutritionInfoOptions) {
+function nutritionalInfoSerializer(nutritionalInfo: NutritionInfoOptions): Record<string, any> {
 	const serializedNutritionalInfo = {
 		"@type": "NutritionInformation",
 		calories: nutritionalInfo.calories,
@@ -915,7 +915,7 @@ export function serializeEventsPage(
 						"@type": "PerformingGroup",
 						name: `${instance.performers.slice(0, -1).join(", ")} and ${instance.performers.at(-1)}`,
 					}
-				:	{
+					: {
 						"@type": "Person",
 						name: instance.performers[0],
 					},
@@ -1028,7 +1028,7 @@ function offerSerializer(offerMetaData: Offers): Record<string, any> {
 		itemCondition: offerMetaData.itemCondition,
 		hasMerchantReturnPolicy: returnPolicySerializer(
 			offerMetaData.hasMerchantReturnPolicy ??
-				({} as MerchantReturnPolicy),
+			({} as MerchantReturnPolicy),
 		),
 		shippingDetails: shippingDetailsSerializer(
 			offerMetaData.shippingDetails ?? ({} as OfferShippingDetails),
@@ -1121,10 +1121,10 @@ export function serializeproductWithVarientPage(
 		"@type": "ProductGroup",
 		name: productPageData[0].productName,
 		description: productPageData[0].description,
-		url: (() => {
+		url: ((): string => {
 			const linkWithoutParams =
 				productPageData[0].offer.link?.split("?")[0];
-			return linkWithoutParams;
+			return linkWithoutParams as string;
 		})(),
 		brand: {
 			"@type": "Brand",
