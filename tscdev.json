@@ -6,8 +6,6 @@
 		"baseUrl": ".",
 		"rootDir": ".",
 		"outDir": "dist",
-		"declaration": true,
-		"declarationDir": "dist/types",
 		"noImplicitAny": true,
 		"noImplicitReturns": true,
 		"noImplicitThis": true,
@@ -34,6 +32,5 @@
 	},
 	"exclude": [
 		"node_modules"
-		
 	]
 }

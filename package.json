@@ -2,10 +2,11 @@
 	"name": "@cresteem/richie-js",
 	"displayName": "Richie JS",
 	"exports": {
-		".": "./dist/richie.js"
+		"import": "./dist/richie.js",
+		"require": "./dist/richie.js"
 	},
 	"description": "Rich Result Generator",
-	"version": "0.9b",
+	"version": "0.9.0",
 	"main": "./dist/richie.js",
 	"types": "./dist/types/",
 	"files": [
@@ -20,14 +21,18 @@
 	"icon": "not added",
 	"engines": {
 		"node": ">=21.7.3",
-		"npm": ">=10.50.0"
+		"npm": ">=10.5.0"
 	},
 	"engineStrict": false,
 	"preferGlobal": true,
+	"bin": {
+		"rjs": "./dist/lib/schemaWriter.js"
+	},
 	"scripts": {
-		"build": "rimraf dist && npx tsc -b",
-		"watch": "npx tsc --watch",
-		"br": "cls && rimraf dist && npx tsc -b && node ./dist/richie.js",
+		"dev": "rimraf dist && tsc -p tscdev.json",
+		"build": "rimraf dist && tsc -b",
+		"watch": "tsc --watch",
+		"br": "cls && yarn dev && node ./dist/richie.js",
 		"rp": "node ./dist/richie.js",
 		"clean": "cls && rimraf dist"
 	},
@@ -56,14 +61,15 @@
 		"cheerio": "^1.0.0-rc.12",
 		"country-list": "^2.3.0",
 		"luxon": "^3.4.4",
+		"mkdirp": "^3.0.1",
 		"prettier": "^3.2.5",
 		"puppeteer": "^22.3.0"
 	},
 	"devDependencies": {
-		"rimraf": "^5.0.5",
-		"typescript": "^5.4.5",
 		"@types/country-list": "^2.1.4",
 		"@types/luxon": "^3.4.2",
-		"@typescript-eslint/eslint-plugin": "^7.7.0"
+		"@typescript-eslint/eslint-plugin": "^7.7.0",
+		"rimraf": "^5.0.5",
+		"typescript": "^5.4.5"
 	}
 }
