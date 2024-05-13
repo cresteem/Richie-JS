@@ -2,7 +2,7 @@
 	"domainAddress": "cresteem.com",
 	"timeFormat": "yyyy-MM-dd hh:mm a",
 	"siteSearchBoxFieldName": "searchTerm",
-	
+	//
 	"reservedNames": {
 		"aggregateRating": {
 			"wrapper": "aggrate",
@@ -10,7 +10,7 @@
 			"maxRangeOfRating": "mr",
 			"numberOfRatings": "rc"
 		},
-		
+		//
 		"reviews": {
 			"parentWrapper": "reviews",
 			"childWrapper": "urate",
@@ -19,48 +19,48 @@
 			"maxRateRange": "mr",
 			"reviewPublishedOn": "rpOn"
 		},
-		
+		//
 		"common": {
-			"publishedDate": "pdt", 
-			"modifiedDate": "mdt", 
+			"publishedDate": "pdt", //for article,recipe | "datecreated" - profilepage , Movie
+			"modifiedDate": "mdt", //for article,profilepage
 			"heroImage": "img",
-			
-			"author": { 
-				"name": "aname", 
+			//"thumbnails" - article,movie,recipe, | "images" - businessentity,profilepage,events,product
+			"author": { //article,reviews,recipe
+				"name": "aname", //events(performerName)
 				"url": "aurl",
 				"jobTitle": "ajob"
 			},
-			"publisher": { 
-				"name": "pname", 
+			"publisher": { //article,course
+				"name": "pname", // events(organiser)
 				"url": "purl"
 			},
-			"authorAndPubPrefix": { 
+			"authorAndPubPrefix": { //article,reviews,recipe possibly, but sure in events
 				"person": "P",
 				"organisation": "O"
 			},
-			"heroName": "name", 
-			"entityDescription": "desc", 
-			"keywords": "kw", 
-			"MO": "mode", 
-			"currencyDataVar": "currency", 
-			"heroCost": "cost", 
-			"cuisineType": "csnt", 
-			"heroLinkRef": "rlink", 
-			"frame": "fr" 
+			"heroName": "name", //for name- movie,recipe,businessEntity,softwareApp,profilePage,events,product | course(courseName)
+			"entityDescription": "desc", // for description - recipe,course,organisation,profilePage,events,product
+			"keywords": "kw", // for recipe,localBusiness
+			"MO": "mode", // for mode - course, events
+			"currencyDataVar": "currency", // course(feesCurrency),softwareApp(priceCurrencyDataVar) | currency - product.offer,events
+			"heroCost": "cost", // course(fees) | price - events,product.offer,softwareapp | businessEntity(priceRange)
+			"cuisineType": "csnt", // restaurant,recipe(recipeCuisine)
+			"heroLinkRef": "rlink", //event(bookingLink),org(socialMediaLink),profilePage(socialMediaLinks)
+			"frame": "fr" //video,recipe(video)
 		},
-		
+		//
 		"article": {
 			"baseID": "rjs-article",
 			"articleType": "articletype",
-			"authorNameStartwith": "a", 
-			"publisherNameStartwith": "p" 
+			"authorNameStartwith": "a", //it dep on common.author.name's 0 index
+			"publisherNameStartwith": "p" //it dep on common.publisher.name's 0 index
 		},
-		
+		//carousal
 		"movie": {
 			"baseID": "rjs-movie",
 			"director": "dir"
 		},
-		
+		//
 		"recipe": {
 			"baseID": "rjs-recipe",
 			"preptime": {
@@ -73,9 +73,9 @@
 				"minutes": "ctm",
 				"hoursAndMinutes": "cthm"
 			},
-			"durationID": { 
-				"hours": "h", 
-				"minutes": "m" 
+			"durationID": { //validator vars
+				"hours": "h", //dependant to recipe.preptime.hours[-1] and recipe.cooktime.hours[-1]
+				"minutes": "m" //dependant to recipe.preptime.minutes[-1] and recipe.cooktime.minutes[-1]
 			},
 			"serveCount": "serves",
 			"recipeCategory": "cat",
@@ -92,7 +92,7 @@
 				"image": "simg"
 			}
 		},
-		
+		//
 		"course": {
 			"baseID": "rjs-course",
 			"language": "lang",
@@ -101,35 +101,35 @@
 			"courseFrequency": "freq",
 			"courseRepeatation": "rep"
 		},
-		
+		//
 		"restaurant": {
 			"baseID": "rjs-restaurant"
 		},
-		
+		//
 		"events": {
 			"baseID": "rjs-event",
 			"startFrom": "from",
 			"endAt": "end",
 			"status": "sts"
 		},
-		
+		//
 		"faqPage": {
 			"baseID": "rjs-faq",
 			"question": "question",
 			"answer": "answer"
 		},
-		
+		//
 		"video": {
 			"baseID": "rjs-video",
 			"segmentsWrapper": "index",
 			"startOffsetDataVar": "offset"
 		},
-		
+		//
 		"localBusiness": {
 			"baseID": "rjs-lb",
 			"areaAvailablity": "areaserves"
 		},
-		
+		//
 		"organisation": {
 			"baseID": "rjs-org",
 			"logo": "logo",
@@ -137,7 +137,7 @@
 			"foundingYear": "found",
 			"taxid": "tid"
 		},
-		
+		//
 		"product": {
 			"baseID": "rjs-prod",
 			"productPriceValidUntilNext": 30,
@@ -167,7 +167,7 @@
 				"deliveryOver": "india"
 			}
 		},
-		
+		//
 		"profilePage": {
 			"baseID": "rjs-pp",
 			"altName": "altname",
@@ -191,14 +191,14 @@
 				"mutualConnections": "bicon"
 			}
 		},
-		
+		//
 		"softwareApp": {
 			"baseID": "rjs-sapp",
 			"operatingSystem": "os",
 			"OSSeperator": ",",
 			"category": "cat"
 		},
-		
+		//
 		"businessEntity": {
 			"location": {
 				"wrapper": "loc",

@@ -1,0 +1,252 @@
+{
+	"reservedNames": {
+		"article": {
+			"articleType": "articletype",
+			"publishedDate": "pdt",
+			"modifiedDate": "mdt",
+			"thumbnails": "img",
+			"authorNameStartwith": "a",
+			"authorName": "aname",
+			"authorTypeSuffix": {
+				"person": "P",
+				"organisation": "O"
+			},
+			"authorUrl": "aurl",
+			"authorJobTitle": "ajob",
+			"publisherNameStartwith": "p",
+			"publisherName": "pname",
+			"publisherUrl": "purl"
+		},
+		"movie": {
+			"name": "name",
+			"thumbnails": "img",
+			"dateCreated": "unveilon",
+			"director": "dir"
+		},
+		"aggregateRating": {
+			"wrapper": "aggrate",
+			"aggregatedRatingValue": "arv",
+			"maxRangeOfRating": "mr",
+			"numberOfRatings": "rc"
+		},
+		"reviews": {
+			"parentWrapper": "reviews",
+			"childWrapper": "urate",
+			"raterName": "rater",
+			"ratedValue": "rv",
+			"maxRateRange": "mr",
+			"reviewPublishedOn": "rpOn",
+			"authorTypeSuffix": {
+				"person": "P",
+				"organisation": "O"
+			}
+		},
+		"recipe": {
+			"name": "name",
+			"thumbnails": "img",
+			"authorName": "aname",
+			"publishedDate": "pdt",
+			"description": "desc",
+			"recipeCuisine": "cuisine",
+			"preptime": {
+				"hours": "pth",
+				"minutes": "ptm",
+				"hoursAndMinutes": "pthm"
+			},
+			"cooktime": {
+				"hours": "cth",
+				"minutes": "ctm",
+				"hoursAndMinutes": "cthm"
+			},
+			"keywords": "kw",
+			"serveCount": "serves",
+			"recipeCategory": "cat",
+			"nutritionInformations": {
+				"wrapper": "nutrition",
+				"calories": "cal"
+			},
+			"ingredients": "ingredient",
+			"instructions": {
+				"wrapper": "instructions",
+				"childwrapper": "step",
+				"shortInstruction": "short",
+				"longInstruction": "long",
+				"image": "simg"
+			},
+			"video": "vframe"
+		},
+		"durationID": {
+			"hours": "h",
+			"minutes": "m"
+		},
+		"course": {
+			"courseName": "name",
+			"language": "lang",
+			"mode": "mode",
+			"instructor": "ins",
+			"description": "desc",
+			"duration": "period",
+			"courseFrequency": "freq",
+			"courseRepeatation": "rep",
+			"fees": "fee",
+			"feesCurrency": "currency",
+			"publisherName": "pname",
+			"publisherUrl": "purl"
+		},
+		"businessEntity": {
+			"name": "name",
+			"images": "img",
+			"location": {
+				"wrapper": "loc",
+				"physicalLocationName": "venue",
+				"virtualLocation": "vlurl",
+				"street": "stl",
+				"city": "ct",
+				"state": "st",
+				"country": "ctry",
+				"pincode": "pc"
+			},
+			"telephone": "tel",
+			"reservationDataVar": "reserve",
+			"priceRange": "price",
+			"workHours": {
+				"wrapper": "workhours",
+				"dayRange": "wdr",
+				"dayAlone": "wd",
+				"timein24": "HR",
+				"timein12": "hr"
+			},
+			"menuLink": "menu",
+			"mapFrame": "map"
+		},
+		"restaurant": {
+			"cuisineType": "csnt"
+		},
+		"localBusiness": {
+			"keywords": "kw",
+			"areaAvailablity": "areaserves"
+		},
+		"faqPage": {
+			"question": "question",
+			"answer": "answer"
+		},
+		"softwareApp": {
+			"name": "name",
+			"operatingSystem": "os",
+			"OSSeperator": ",",
+			"category": "cat",
+			"price": "price",
+			"priceCurrencyDataVar": "currency"
+		},
+		"video": {
+			"frame": "fr",
+			"segmentsWrapper": "index",
+			"startOffsetDataVar": "offset"
+		},
+		"organisation": {
+			"logo": "logo",
+			"socialMediaLink": "smlink",
+			"description": "desc",
+			"email": "email",
+			"foundingYear": "found",
+			"taxid": "tid"
+		},
+		"profilePage": {
+			"name": "name",
+			"dateCreated": "dc",
+			"dateModified": "dm",
+			"altName": "altname",
+			"uniquePlatformID": "uid",
+			"images": "img",
+			"socialMediaLinks": "smlink",
+			"description": "desc",
+			"authorWorks": {
+				"wrapper": "awork",
+				"headline": "head",
+				"thumbnail": "timg",
+				"publishedOn": "pon",
+				"url": "url"
+			},
+			"authorActionCounts": {
+				"written": "aposts",
+				"liked": "aliked",
+				"follows": "afollows",
+				"shared": "ashared"
+			},
+			"audienceActionCounts": {
+				"followers": "followers",
+				"likes": "likes",
+				"mutualConnections": "bicon"
+			}
+		},
+		"events": {
+			"name": "name",
+			"startFrom": "from",
+			"endAt": "end",
+			"mode": "mode",
+			"status": "sts",
+			"images": "img",
+			"description": "desc",
+			"price": "cost",
+			"currency": "currency",
+			"bookingLink": "blink",
+			"performerName": "perf",
+			"organizer": "org",
+			"organizerSuffix": {
+				"person": "P",
+				"organisation": "O"
+			}
+		},
+		"product": {
+			"name": "name",
+			"images": "img",
+			"description": "desc",
+			"skuID": "sku",
+			"mpnCode": "mpn",
+			"brand": "brand",
+			"variesByDataVar": "var",
+			"offer": {
+				"shippingDetails": {
+					"deliveryCost": "delcost",
+					"deliveryOver": "delover",
+					"processingTime": "ptime",
+					"transitTime": "ttime",
+					"rangeDataVar": "range"
+				},
+				"returnPolicy": {
+					"returnWithin": "returnin",
+					"returnFees": "returnfee"
+				},
+				"price": "cost",
+				"currency": "currency",
+				"availability": "avail",
+				"itemCondition": "cond"
+			},
+			"varientParameterName": "var",
+			"fallbacks": {
+				"deliveryOver": "india"
+			}
+		}
+	},
+	"aggregatorVariables": {
+		"articleBaseID": "rjs-article",
+		"timeFormat": "yyyy-MM-dd hh:mm a",
+		"movieBaseID": "rjs-movie",
+		"domainAddress": "cresteem.com",
+		"recipeBaseID": "rjs-recipe",
+		"courseBaseID": "rjs-course",
+		"restaurantBaseID": "rjs-restaurant",
+		"faqBaseID": "rjs-faq",
+		"siteSearchBoxFieldName": "searchTerm",
+		"softwareAppBaseID": "rjs-sapp",
+		"videoBaseID": "rjs-video",
+		"localBusinessBaseID": "rjs-lb",
+		"organisationBaseID": "rjs-org",
+		"profileBaseID": "rjs-pp",
+		"eventBaseID": "rjs-event",
+		"productBaseID": "rjs-prod",
+		"productPriceValidUntilNext": 30,
+		"productGroupIDHashLength": "128",
+		"producrVariableDelimiter": "|"
+	}
+}
