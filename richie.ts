@@ -376,7 +376,7 @@ export async function makeProduct(
 				aggregatedData.product,
 				aggregatedData.variesBy,
 			)
-		:	serializeProductPage(aggregatedData.product);
+			: serializeProductPage(aggregatedData.product);
 
 	const richResultSnippet = createJsonLD(serializedData);
 

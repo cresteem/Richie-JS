@@ -34,8 +34,8 @@ import {
 	httpsDomainBase,
 } from "./utilities";
 
-import { aggregatorVariables } from "../rjsconfig.json";
-const { siteSearchBoxFieldName } = aggregatorVariables;
+import { siteSearchBoxFieldName } from "../rjsconfig.json";
+
 
 import { relative, basename, join, dirname } from "path";
 
@@ -480,9 +480,9 @@ export function serializeCourseCarousel(
 			},
 			offers: {
 				"@type": "Offer",
-				category: courseCarouselData[i].offer.category,
-				price: courseCarouselData[i].offer.price,
-				priceCurrency: courseCarouselData[i].offer.priceCurrency,
+				category: courseCarouselData[i].offer?.category,
+				price: courseCarouselData[i]?.offer?.price,
+				priceCurrency: courseCarouselData[i]?.offer?.priceCurrency,
 			},
 			hasCourseInstance: {
 				"@type": "CourseInstance",
@@ -531,9 +531,9 @@ export function serializeCourse(
 			},
 			offers: {
 				"@type": "Offer",
-				category: instance.offer.category,
-				price: instance.offer.price,
-				priceCurrency: instance.offer.priceCurrency,
+				category: instance.offer?.category,
+				price: instance.offer?.price,
+				priceCurrency: instance.offer?.priceCurrency,
 			},
 			hasCourseInstance: {
 				"@type": "CourseInstance",
@@ -835,7 +835,8 @@ export function serializeOrganisation(
 export function serializeProfilePage(
 	ProfilePageData: ProfilePageOptions,
 ): Record<string, any> {
-	//remove non-alphanumeric characters except hyphen
+	//remove non-alphanumeric characters except hyphen and underscore
+	ProfilePageData.uid = ProfilePageData.uid.replace(/[^a-zA-Z0-9-_]/g, '')
 
 	const serializedJsonLD: Record<string, any> = {
 		"@context": "https://schema.org",

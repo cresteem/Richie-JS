@@ -21,6 +21,7 @@
 		},
 		//
 		"common": {
+			"fallbackCurrency": "INR",
 			"publishedDate": "pdt", //for article,recipe | "datecreated" - profilepage , Movie
 			"modifiedDate": "mdt", //for article,profilepage
 			"heroImage": "img",
@@ -46,7 +47,7 @@
 			"heroCost": "cost", // course(fees) | price - events,product.offer,softwareapp | businessEntity(priceRange)
 			"cuisineType": "csnt", // restaurant,recipe(recipeCuisine)
 			"heroLinkRef": "rlink", //event(bookingLink),org(socialMediaLink),profilePage(socialMediaLinks)
-			"frame": "fr" //video,recipe(video)
+			"videoFrame": "vframe" //video,recipe(video)
 		},
 		//
 		"article": {

@@ -2,7 +2,6 @@
 	"domainAddress": "cresteem.com",
 	"timeFormat": "yyyy-MM-dd hh:mm a",
 	"siteSearchBoxFieldName": "searchTerm",
-	
 	"reservedNames": {
 		"aggregateRating": {
 			"wrapper": "aggrate",
@@ -10,7 +9,6 @@
 			"maxRangeOfRating": "mr",
 			"numberOfRatings": "rc"
 		},
-		
 		"reviews": {
 			"parentWrapper": "reviews",
 			"childWrapper": "urate",
@@ -19,48 +17,44 @@
 			"maxRateRange": "mr",
 			"reviewPublishedOn": "rpOn"
 		},
-		
 		"common": {
-			"publishedDate": "pdt", 
-			"modifiedDate": "mdt", 
+			"fallbackCurrency": "INR",
+			"publishedDate": "pdt",
+			"modifiedDate": "mdt",
 			"heroImage": "img",
-			
-			"author": { 
-				"name": "aname", 
+			"author": {
+				"name": "aname",
 				"url": "aurl",
 				"jobTitle": "ajob"
 			},
-			"publisher": { 
-				"name": "pname", 
+			"publisher": {
+				"name": "pname",
 				"url": "purl"
 			},
-			"authorAndPubPrefix": { 
+			"authorAndPubPrefix": {
 				"person": "P",
 				"organisation": "O"
 			},
-			"heroName": "name", 
-			"entityDescription": "desc", 
-			"keywords": "kw", 
-			"MO": "mode", 
-			"currencyDataVar": "currency", 
-			"heroCost": "cost", 
-			"cuisineType": "csnt", 
-			"heroLinkRef": "rlink", 
-			"frame": "fr" 
+			"heroName": "name",
+			"entityDescription": "desc",
+			"keywords": "kw",
+			"MO": "mode",
+			"currencyDataVar": "currency",
+			"heroCost": "cost",
+			"cuisineType": "csnt",
+			"heroLinkRef": "rlink",
+			"videoFrame": "vframe"
 		},
-		
 		"article": {
 			"baseID": "rjs-article",
 			"articleType": "articletype",
-			"authorNameStartwith": "a", 
-			"publisherNameStartwith": "p" 
+			"authorNameStartwith": "a",
+			"publisherNameStartwith": "p"
 		},
-		
 		"movie": {
 			"baseID": "rjs-movie",
 			"director": "dir"
 		},
-		
 		"recipe": {
 			"baseID": "rjs-recipe",
 			"preptime": {
@@ -73,9 +67,9 @@
 				"minutes": "ctm",
 				"hoursAndMinutes": "cthm"
 			},
-			"durationID": { 
-				"hours": "h", 
-				"minutes": "m" 
+			"durationID": {
+				"hours": "h",
+				"minutes": "m"
 			},
 			"serveCount": "serves",
 			"recipeCategory": "cat",
@@ -92,7 +86,6 @@
 				"image": "simg"
 			}
 		},
-		
 		"course": {
 			"baseID": "rjs-course",
 			"language": "lang",
@@ -101,35 +94,29 @@
 			"courseFrequency": "freq",
 			"courseRepeatation": "rep"
 		},
-		
 		"restaurant": {
 			"baseID": "rjs-restaurant"
 		},
-		
 		"events": {
 			"baseID": "rjs-event",
 			"startFrom": "from",
 			"endAt": "end",
 			"status": "sts"
 		},
-		
 		"faqPage": {
 			"baseID": "rjs-faq",
 			"question": "question",
 			"answer": "answer"
 		},
-		
 		"video": {
 			"baseID": "rjs-video",
 			"segmentsWrapper": "index",
 			"startOffsetDataVar": "offset"
 		},
-		
 		"localBusiness": {
 			"baseID": "rjs-lb",
 			"areaAvailablity": "areaserves"
 		},
-		
 		"organisation": {
 			"baseID": "rjs-org",
 			"logo": "logo",
@@ -137,7 +124,6 @@
 			"foundingYear": "found",
 			"taxid": "tid"
 		},
-		
 		"product": {
 			"baseID": "rjs-prod",
 			"productPriceValidUntilNext": 30,
@@ -167,7 +153,6 @@
 				"deliveryOver": "india"
 			}
 		},
-		
 		"profilePage": {
 			"baseID": "rjs-pp",
 			"altName": "altname",
@@ -191,14 +176,12 @@
 				"mutualConnections": "bicon"
 			}
 		},
-		
 		"softwareApp": {
 			"baseID": "rjs-sapp",
 			"operatingSystem": "os",
 			"OSSeperator": ",",
 			"category": "cat"
 		},
-		
 		"businessEntity": {
 			"location": {
 				"wrapper": "loc",

@@ -57,24 +57,8 @@ import {
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { cwd } from "node:process";
 
-import { aggregatorVariables, reservedNames } from "../rjsconfig.json";
-const {
-	articleBaseID,
-	movieBaseID,
-	recipeBaseID,
-	courseBaseID,
-	restaurantBaseID,
-	faqBaseID,
-	softwareAppBaseID,
-	videoBaseID,
-	localBusinessBaseID,
-	organisationBaseID,
-	profileBaseID,
-	eventBaseID,
-	productBaseID,
-	productPriceValidUntilNext,
-	producrVariableDelimiter,
-} = aggregatorVariables;
+import { reservedNames, timeFormat } from "../rjsconfig.json";
+
 
 import { getCode } from "country-list";
 import { stat } from "node:fs/promises";
@@ -82,6 +66,7 @@ import { stat } from "node:fs/promises";
 /* function definitions */
 export function article(htmlString: string): articleOptions {
 	const $: CheerioAPI = load(htmlString);
+	const articleBaseID = reservedNames.article.baseID;
 
 	//default is Article
 	const articleType: articleTypeChoices = ($("body").data(
@@ -96,7 +81,7 @@ export function article(htmlString: string): articleOptions {
 
 	/* published date */
 	const pdt: string = $(
-		`.${articleBaseID}-${reservedNames.article.publishedDate}`,
+		`.${articleBaseID}-${reservedNames.common.publishedDate}`,
 	).html() as string;
 	let publishedDate: string;
 	if (pdt) {
@@ -107,7 +92,7 @@ export function article(htmlString: string): articleOptions {
 
 	/* modified date */
 	const mdt: string = $(
-		`.${articleBaseID}-${reservedNames.article.modifiedDate}`,
+		`.${articleBaseID}-${reservedNames.common.modifiedDate}`,
 	).html() as string;
 	let modifiedDate: string;
 	if (mdt) {
@@ -118,7 +103,7 @@ export function article(htmlString: string): articleOptions {
 
 	/* thumbnail images */
 	const images: string[] = new Array();
-	$(`.${articleBaseID}-${reservedNames.article.thumbnails}`).each(
+	$(`.${articleBaseID}-${reservedNames.common.heroImage}`).each(
 		(_index, img) => {
 			const imgurl: string = $(img).attr("src") as string;
 			if (imgurl) {
@@ -145,25 +130,25 @@ export function article(htmlString: string): articleOptions {
 		}
 
 		const value =
-			type === reservedNames.article.authorUrl ?
+			type === reservedNames.common.author.url ?
 				$(elem).attr("href")
 				: $(elem).html();
 
-		if (type.startsWith(reservedNames.article.authorName)) {
+		if (type.startsWith(reservedNames.common.author.name)) {
 			authorMetaData[id].name = value;
 
 			if (
 				type.endsWith(
-					reservedNames.article.authorTypeSuffix.person.toLowerCase(),
+					reservedNames.common.authorAndPubPrefix.person.toLowerCase(),
 				)
 			) {
 				authorMetaData[id].type = "Person";
 			} else {
 				authorMetaData[id].type = "Organization";
 			}
-		} else if (type === reservedNames.article.authorUrl) {
+		} else if (type === reservedNames.common.author.url) {
 			authorMetaData[id].url = value;
-		} else if (type === reservedNames.article.authorJobTitle) {
+		} else if (type === reservedNames.common.author.jobTitle) {
 			authorMetaData[id].jobTitle = value;
 		}
 	});
@@ -171,7 +156,7 @@ export function article(htmlString: string): articleOptions {
 	/* publisher meta extraction */
 	const publisherMetaData: Record<string, any> = {};
 
-	const pdtselctor = `[class="${articleBaseID}-${reservedNames.article.publishedDate}"]`;
+	const pdtselctor = `[class="${articleBaseID}-${reservedNames.common.publishedDate}"]`;
 	$(
 		`[class^="${articleBaseID}-${reservedNames.article.publisherNameStartwith}"]:not(${pdtselctor})`,
 	).each((_index, elem) => {
@@ -183,12 +168,12 @@ export function article(htmlString: string): articleOptions {
 			publisherMetaData[id] = {};
 		}
 		const value =
-			type === reservedNames.article.publisherUrl ?
+			type === reservedNames.common.publisher.url ?
 				$(elem).attr("href")
 				: $(elem).html();
-		if (type === reservedNames.article.publisherName) {
+		if (type === reservedNames.common.publisher.name) {
 			publisherMetaData[id].name = value;
-		} else if (type === reservedNames.article.publisherUrl) {
+		} else if (type === reservedNames.common.publisher.url) {
 			publisherMetaData[id].url = value;
 		}
 	});
@@ -282,12 +267,164 @@ export function breadCrumb(htmlPath: string): breadCrumbListOptions {
 	return { breadCrumbMetas: breadCrumbMetaList.reverse() };
 }
 
+export function course(
+	htmlString: string,
+	htmlPath: string,
+): CourseOptions[] {
+	const $: CheerioAPI = load(htmlString);
+	const courseBaseID = reservedNames.course.baseID;
+	const courseMetas: Record<string, CourseOptions> = {};
+
+	$(`[class^="${courseBaseID}-"]`).each((_index, elem) => {
+		const [id, type] = elemTypeAndIDExtracter($, elem, courseBaseID);
+
+		//basic initiation
+		if (!Object.keys(courseMetas).includes(id)) {
+			//create object for it
+			courseMetas[id] = {} as CourseOptions;
+			courseMetas[id].hasCourseInstance = {} as CourseInstanceOptions;
+			courseMetas[id].hasCourseInstance.language = [];
+
+			//deeplink to course
+			const url: string = new URL(
+				`${relative(cwd(), htmlPath).replace(".html", "")}#${courseBaseID}-${id}`,
+				httpsDomainBase,
+			).href;
+
+			courseMetas[id].url = url;
+		}
+
+		//getting metas
+		if (type === reservedNames.common.heroName) {
+			courseMetas[id].courseName = $(elem).html() as string;
+
+			const courseLanguage = $(elem).data(
+				reservedNames.course.language,
+			) as string;
+
+			if (courseLanguage) {
+				courseMetas[id].hasCourseInstance.language.push(
+					...courseLanguage.split(","),
+				);
+			}
+		} else if (type === reservedNames.course.language) {
+			const courseLanguage: string = $(elem).html() as string;
+
+			courseMetas[id].hasCourseInstance.language.push(
+				...courseLanguage.split(","),
+			);
+		} else if (type === reservedNames.common.entityDescription) {
+			let description: string = $(elem).html() as string;
+
+			courseMetas[id].description = description
+				.replace(/\t/g, "")
+				.replace(/\n/g, " ")
+				.trim();
+		} else if (type === reservedNames.common.publisher.url) {
+			/* if element is not <a> tag throw error */
+			if (!$(elem).is("a")) {
+				throw new Error(
+					`Publisher url(${reservedNames.common.publisher.url}) element should be a <a> tag`,
+				);
+			}
+
+			const providerUrl: string = $(elem).attr("href") as string;
+
+			let providerName: string;
+			/* find if it has child elem as provider name */
+			if ($(elem).children().length > 0) {
+				providerName = $(elem)
+					.find(`.${reservedNames.common.publisher.name}`)
+					.html()
+					?.trim() as string;
+
+				if (!providerName) {
+					/* extract elem without class name */
+					providerName = $(elem).children(":first-child").html() as string;
+				}
+			} else {
+				providerName = $(elem).html() as string;
+			}
+
+			courseMetas[id].provider = {
+				isOrg: true,
+				name: providerName,
+				sameAs: providerUrl,
+			};
+		} else if (type === reservedNames.common.MO) {
+			const mode: string = $(elem).html()?.toLowerCase() as string;
+
+			const availableModeType: courseModeChoices[] & string[] = [
+				"onsite",
+				"online",
+				"blended",
+			];
+
+			if (!availableModeType.includes(mode)) {
+				throw new Error(
+					"given mode in HTML is not supported.\nOnly these are supported by Richie JS\n[ " +
+					availableModeType.join(", ") +
+					" ]",
+				);
+			}
+
+			courseMetas[id].hasCourseInstance.mode = mode as courseModeChoices;
+		} else if (type === reservedNames.course.instructor) {
+			/* replace by<space> or BY<space> or By<space> */
+			let instructor: string = $(elem)
+				.html()
+				?.replace(/by /gi, "") as string;
+
+			courseMetas[id].hasCourseInstance.instructor = instructor;
+		} else if (type === reservedNames.course.duration) {
+			/* extract digit only from inner text */
+			/* EX: 24 Hours / 15 Days / 2Months / 2Weeks*/
+			const durationAndPeriodType: string = $(elem).html() as string;
+
+			const durationPeriod: string = periodTextToHours(
+				durationAndPeriodType,
+			);
+
+			const repeatFrequency: string = (
+				$(elem).data(reservedNames.course.courseFrequency) as string
+			).toLowerCase();
+
+			const repeatCount: number = parseInt(
+				$(elem).data(reservedNames.course.courseRepeatation) as string,
+			);
+
+			courseMetas[id].hasCourseInstance.schedule = {
+				duration: durationPeriod,
+				repeatFrequency: repeatFrequency as repeatFrequencyChoices,
+				repeatCount: repeatCount,
+			};
+		} else if (type === reservedNames.common.heroCost) {
+			/* extract digit alone */
+			const price: number = parseFloat(
+				$(elem).html()?.replace(/\D+/g, "") as string,
+			);
+
+			const currency: string = (
+				$(elem).data(reservedNames.common.currencyDataVar) as string
+			).toUpperCase();
+
+			courseMetas[id].offer = {
+				category: "Fees",
+				price: price,
+				priceCurrency: currency,
+			};
+		}
+	});
+
+	return Object.values(courseMetas);
+}
+
 export function movie(
 	htmlString: string,
 	htmlPath: string,
 ): movieOptions[] {
 	const $: CheerioAPI = load(htmlString);
-
+	const movieBaseID = reservedNames.movie.baseID;
 	const movieMetas: Record<string, movieOptions> = {};
 
 	$(`[class^="${movieBaseID}-"]`).each((_index, elem) => {
@@ -310,10 +447,10 @@ export function movie(
 			movieMetas[id].director = [] as string[];
 		}
 
-		if (type === reservedNames.movie.name) {
+		if (type === reservedNames.common.heroName) {
 			/* movie name */
 			movieMetas[id].name = $(elem).html() as string;
-		} else if (type === reservedNames.movie.thumbnails) {
+		} else if (type === reservedNames.common.heroImage) {
 			/* images */
 			const imgUrl: string = $(elem).attr("src") as string;
 
@@ -322,7 +459,7 @@ export function movie(
 			}
 
 			movieMetas[id].images.push(imgUrl);
-		} else if (type === reservedNames.movie.dateCreated) {
+		} else if (type === reservedNames.common.publishedDate) {
 			/* date created */
 			movieMetas[id].dateCreated = $(elem).html() as string;
 		} else if (type === reservedNames.movie.director) {
@@ -340,7 +477,7 @@ export function movie(
 					try {
 						let raterName: string = $(childWrapper)
 							.find(
-								`.${reservedNames.reviews.raterName}${reservedNames.reviews.authorTypeSuffix.person}`,
+								`.${reservedNames.reviews.raterName}${reservedNames.common.authorAndPubPrefix.person}`,
 							)
 							.html() as string;
 						let raterType: authorTypeChoices;
@@ -348,7 +485,7 @@ export function movie(
 						if (!raterName) {
 							raterName = $(childWrapper)
 								.find(
-									`.${reservedNames.reviews.raterName}${reservedNames.reviews.authorTypeSuffix.organisation}`,
+									`.${reservedNames.reviews.raterName}${reservedNames.common.authorAndPubPrefix.organisation}`,
 								)
 								.html() as string;
 							raterType = "Organization";
@@ -455,7 +592,7 @@ export async function recipe(
 	htmlPath: string,
 ): Promise<RecipeOptions[]> {
 	const $: CheerioAPI = load(htmlString);
-
+	const recipeBaseID = reservedNames.recipe.baseID;
 	const recipeMetas: Record<string, RecipeOptions> = {};
 
 	const videoMetaPromises: Promise<void>[] = new Array();
@@ -484,9 +621,9 @@ export async function recipe(
 			recipeMetas[id].nutrition = {} as NutritionInfoOptions;
 		}
 
-		if (type === reservedNames.recipe.name) {
+		if (type === reservedNames.common.heroName) {
 			recipeMetas[id].nameOfRecipe = $(elem).html() as string;
-		} else if (type === reservedNames.recipe.thumbnails) {
+		} else if (type === reservedNames.common.heroImage) {
 			const imgurl: string = $(elem).attr("src") as string;
 
 			if (!imgurl) {
@@ -494,11 +631,11 @@ export async function recipe(
 			}
 
 			recipeMetas[id].imageUrls.push(imgurl);
-		} else if (type === reservedNames.recipe.authorName) {
+		} else if (type === reservedNames.common.author.name) {
 			recipeMetas[id].author = $(elem).html() as string;
-		} else if (type === reservedNames.recipe.publishedDate) {
+		} else if (type === reservedNames.common.publishedDate) {
 			recipeMetas[id].datePublished = $(elem).html() as string;
-		} else if (type === reservedNames.recipe.description) {
+		} else if (type === reservedNames.common.entityDescription) {
 			let description = $(elem).html() as string;
 
 			/* replace \n with space */
@@ -536,7 +673,7 @@ export async function recipe(
 			recipeMetas[id].recipeCategory = $(elem).html() as string;
 		}
 		//cuisine
-		else if (type === reservedNames.recipe.recipeCuisine) {
+		else if (type === reservedNames.common.cuisineType) {
 			recipeMetas[id].recipeCuisine = $(elem).html() as string;
 		}
 		//nutritions
@@ -620,7 +757,7 @@ export async function recipe(
 			);
 		}
 		//videoObject
-		else if (type === reservedNames.recipe.video) {
+		else if (type === reservedNames.common.videoFrame) {
 			videoMetaPromises.push(
 				(async (): Promise<void> => {
 					recipeMetas[id].videoObject = await ytVideoMeta(
@@ -630,7 +767,7 @@ export async function recipe(
 			);
 		}
 		//keywords
-		else if (type === reservedNames.recipe.keywords) {
+		else if (type === reservedNames.common.keywords) {
 			const kwlist: string[] = new Array();
 
 			$(elem)
@@ -655,156 +792,97 @@ export async function recipe(
 	return recipeMetaData;
 }
 
-export function course(
-	htmlString: string,
-	htmlPath: string,
-): CourseOptions[] {
-	const $: CheerioAPI = load(htmlString);
+function commonReviewsExtractor(
+	$: CheerioAPI,
+	reviewWrapperElem: Element,
+	reviewList: reviewOptions[],
+	id: string,
+): reviewOptions[] {
+	const userReviews = $(reviewWrapperElem).find(
+		`.${reservedNames.reviews.childWrapper}`,
+	);
 
-	const courseMetas: Record<string, CourseOptions> = {};
+	userReviews.each((_index, userReview) => {
+		//rating value
+		const ratingValue: number = parseFloat(
+			$(userReview)
+				.find(`.${reservedNames.reviews.ratedValue}`)
+				.html() as string,
+		);
 
-	$(`[class^="${courseBaseID}-"]`).each((_index, elem) => {
-		const [id, type] = elemTypeAndIDExtracter($, elem, courseBaseID);
+		//max rating possible
+		const possibleMaxRate: number = parseFloat(
+			$(userReview)
+				.find(`.${reservedNames.reviews.maxRateRange}`)
+				.html() as string,
+		);
 
-		//basic initiation
-		if (!Object.keys(courseMetas).includes(id)) {
-			//create object for it
-			courseMetas[id] = {} as CourseOptions;
-			courseMetas[id].hasCourseInstance = {} as CourseInstanceOptions;
-			courseMetas[id].hasCourseInstance.language = [];
+		//author
+		let raterName: string = $(userReview)
+			.find(
+				`.${reservedNames.reviews.raterName}${reservedNames.common.authorAndPubPrefix.person}`,
+			)
+			.html() as string;
+		let authorIsOrg: boolean = false;
 
-			//deeplink to course
-			const url: string = new URL(
-				`${relative(cwd(), htmlPath).replace(".html", "")}#${courseBaseID}-${id}`,
-				httpsDomainBase,
-			).href;
-
-			courseMetas[id].url = url;
+		/* Assumming rater as organisation*/
+		if (!raterName) {
+			raterName = $(userReview)
+				.find(
+					`.${reservedNames.reviews.raterName}${reservedNames.common.authorAndPubPrefix.organisation}`,
+				)
+				.html() as string;
+			if (!raterName) {
+				throw new Error(
+					"Something wrong with reviewer name or element | ID:" + id,
+				);
+			}
+			authorIsOrg = true;
 		}
 
-		//getting metas
-		if (type === reservedNames.course.courseName) {
-			courseMetas[id].courseName = $(elem).html() as string;
+		//publisher
+		const publisher: string =
+			$(userReview)
+				.find(`.${reservedNames.reviews.reviewPublishedOn}`)
+				.html() ?? "";
 
-			const courseLanguage = $(elem).data(
-				reservedNames.course.language,
-			) as string;
-
-			if (courseLanguage) {
-				courseMetas[id].hasCourseInstance.language.push(
-					...courseLanguage.split(","),
-				);
-			}
-		} else if (type === reservedNames.course.language) {
-			const courseLanguage: string = $(elem).html() as string;
-
-			courseMetas[id].hasCourseInstance.language.push(
-				...courseLanguage.split(","),
-			);
-		} else if (type === reservedNames.course.description) {
-			let description: string = $(elem).html() as string;
-
-			courseMetas[id].description = description
-				.replace(/\t/g, "")
-				.replace(/\n/g, " ")
-				.trim();
-		} else if (type === reservedNames.course.publisherUrl) {
-			/* if element is not <a> tag throw error */
-			if (!$(elem).is("a")) {
-				throw new Error(
-					`Publisher url(${reservedNames.course.publisherUrl}) element should be a <a> tag`,
-				);
-			}
-
-			const providerUrl: string = $(elem).attr("href") as string;
-
-			let providerName: string;
-			/* find if it has child elem as provider name */
-			if ($(elem).children().length > 0) {
-				providerName = $(elem)
-					.find(`.${reservedNames.course.publisherName}`)
-					.html()
-					?.trim() as string;
-
-				if (!providerName) {
-					/* extract elem without class name */
-					providerName = $(elem).children(":first-child").html() as string;
-				}
-			} else {
-				providerName = $(elem).html() as string;
-			}
-
-			courseMetas[id].provider = {
-				isOrg: true,
-				name: providerName,
-				sameAs: providerUrl,
-			};
-		} else if (type === reservedNames.course.mode) {
-			const mode: string = $(elem).html()?.toLowerCase() as string;
-
-			const availableModeType: courseModeChoices[] & string[] = [
-				"onsite",
-				"online",
-				"blended",
-			];
-
-			if (!availableModeType.includes(mode)) {
-				throw new Error(
-					"given mode in HTML is not supported.\nOnly these are supported by Richie JS\n[ " +
-					availableModeType.join(", ") +
-					" ]",
-				);
-			}
-
-			courseMetas[id].hasCourseInstance.mode = mode as courseModeChoices;
-		} else if (type === reservedNames.course.instructor) {
-			/* replace by<space> or BY<space> or By<space> */
-			let instructor: string = $(elem)
-				.html()
-				?.replace(/by /gi, "") as string;
-
-			courseMetas[id].hasCourseInstance.instructor = instructor;
-		} else if (type === reservedNames.course.duration) {
-			/* extract digit only from inner text */
-			/* EX: 24 Hours / 15 Days / 2Months / 2Weeks*/
-			const durationAndPeriodType: string = $(elem).html() as string;
-
-			const durationPeriod: string = periodTextToHours(
-				durationAndPeriodType,
-			);
-
-			const repeatFrequency: string = (
-				$(elem).data(reservedNames.course.courseFrequency) as string
-			).toLowerCase();
-
-			const repeatCount: number = parseInt(
-				$(elem).data(reservedNames.course.courseRepeatation) as string,
-			);
-
-			courseMetas[id].hasCourseInstance.schedule = {
-				duration: durationPeriod,
-				repeatFrequency: repeatFrequency as repeatFrequencyChoices,
-				repeatCount: repeatCount,
-			};
-		} else if (type === reservedNames.course.fees) {
-			/* extract digit alone */
-			const price: number = parseFloat(
-				$(elem).html()?.replace(/\D+/g, "") as string,
-			);
-
-			const currency: string = (
-				$(elem).data(reservedNames.course.feesCurrency) as string
-			).toUpperCase();
-
-			courseMetas[id].offer = {
-				category: "Fees",
-				price: price,
-				priceCurrency: currency,
-			};
-		}
+		reviewList.push({
+			raterName: raterName,
+			raterType: authorIsOrg ? "Organization" : "Person",
+			ratingValue: ratingValue,
+			maxRateRange: possibleMaxRate,
+			publisherName: publisher ?? null,
+		});
 	});
+	return reviewList;
+}
 
-	return Object.values(courseMetas);
+function commonAggregateRatingExtractor(
+	$: CheerioAPI,
+	ARWrapper: Element,
+	aggregateRating: aggregateRatingOptions,
+): aggregateRatingOptions {
+	aggregateRating.ratingValue = parseFloat(
+		$(ARWrapper)
+			.find(`.${reservedNames.aggregateRating.aggregatedRatingValue}`)
+			.first()
+			.html() as string,
+	);
+
+	aggregateRating.numberOfRatings = parseFloat(
+		$(ARWrapper)
+			.find(`.${reservedNames.aggregateRating.numberOfRatings}`)
+			.first()
+			.html() as string,
+	);
+
+	aggregateRating.maxRateRange = parseFloat(
+		$(ARWrapper)
+			.find(`.${reservedNames.aggregateRating.maxRangeOfRating}`)
+			.first()
+			.html() as string,
+	);
+	return aggregateRating;
 }
 
 function commonLocationExtractor(
@@ -874,14 +952,14 @@ function commonBusinessEntityThings(
 	elem: Element,
 	$: CheerioAPI,
 ): LocalBusinessOptions | RestaurantOptions {
-	if (type === reservedNames.businessEntity.name) {
+	if (type === reservedNames.common.heroName) {
 		businessEntityMeta.businessName = $(elem).html()?.trim() as string;
 	} else if (type === reservedNames.businessEntity.location.wrapper) {
 		businessEntityMeta.address = commonLocationExtractor($, elem);
 	}
 
 	//image
-	else if (type === reservedNames.businessEntity.images) {
+	else if (type === reservedNames.common.heroImage) {
 		const imgLink: string = $(elem).attr("src") ?? "";
 
 		if (!imgLink) {
@@ -912,7 +990,7 @@ function commonBusinessEntityThings(
 	}
 
 	//priceRange
-	else if (type === reservedNames.businessEntity.priceRange) {
+	else if (type === reservedNames.common.heroCost) {
 		businessEntityMeta.priceRange = $(elem).html()?.trim() as string;
 	}
 	//opening Hours specifications
@@ -1059,105 +1137,12 @@ function commonBusinessEntityThings(
 	return businessEntityMeta;
 }
 
-function commonReviewsExtractor(
-	$: CheerioAPI,
-	reviewWrapperElem: Element,
-	reviewList: reviewOptions[],
-	id: string,
-): reviewOptions[] {
-	const userReviews = $(reviewWrapperElem).find(
-		`.${reservedNames.reviews.childWrapper}`,
-	);
-
-	userReviews.each((_index, userReview) => {
-		//rating value
-		const ratingValue: number = parseFloat(
-			$(userReview)
-				.find(`.${reservedNames.reviews.ratedValue}`)
-				.html() as string,
-		);
-
-		//max rating possible
-		const possibleMaxRate: number = parseFloat(
-			$(userReview)
-				.find(`.${reservedNames.reviews.maxRateRange}`)
-				.html() as string,
-		);
-
-		//author
-		let raterName: string = $(userReview)
-			.find(
-				`.${reservedNames.reviews.raterName}${reservedNames.reviews.authorTypeSuffix.person}`,
-			)
-			.html() as string;
-		let authorIsOrg: boolean = false;
-
-		/* Assumming rater as organisation*/
-		if (!raterName) {
-			raterName = $(userReview)
-				.find(
-					`.${reservedNames.reviews.raterName}${reservedNames.reviews.authorTypeSuffix.organisation}`,
-				)
-				.html() as string;
-			if (!raterName) {
-				throw new Error(
-					"Something wrong with reviewer name or element | ID:" + id,
-				);
-			}
-			authorIsOrg = true;
-		}
-
-		//publisher
-		const publisher: string =
-			$(userReview)
-				.find(`.${reservedNames.reviews.reviewPublishedOn}`)
-				.html() ?? "";
-
-		reviewList.push({
-			raterName: raterName,
-			raterType: authorIsOrg ? "Organization" : "Person",
-			ratingValue: ratingValue,
-			maxRateRange: possibleMaxRate,
-			publisherName: publisher ?? null,
-		});
-	});
-	return reviewList;
-}
-
-function commonAggregateRatingExtractor(
-	$: CheerioAPI,
-	ARWrapper: Element,
-	aggregateRating: aggregateRatingOptions,
-): aggregateRatingOptions {
-	aggregateRating.ratingValue = parseFloat(
-		$(ARWrapper)
-			.find(`.${reservedNames.aggregateRating.aggregatedRatingValue}`)
-			.first()
-			.html() as string,
-	);
-
-	aggregateRating.numberOfRatings = parseFloat(
-		$(ARWrapper)
-			.find(`.${reservedNames.aggregateRating.numberOfRatings}`)
-			.first()
-			.html() as string,
-	);
-
-	aggregateRating.maxRateRange = parseFloat(
-		$(ARWrapper)
-			.find(`.${reservedNames.aggregateRating.maxRangeOfRating}`)
-			.first()
-			.html() as string,
-	);
-	return aggregateRating;
-}
-
 export async function restaurant(
 	htmlString: string,
 	htmlPath: string,
 ): Promise<RestaurantOptions[]> {
 	const $: CheerioAPI = load(htmlString);
-
+	const restaurantBaseID = reservedNames.restaurant.baseID;
 	const restaurantMetas: Record<string, RestaurantOptions> = {};
 
 	$(`[class^="${restaurantBaseID}-"]`).each((_index, elem) => {
@@ -1186,7 +1171,7 @@ export async function restaurant(
 		}
 
 		//service Cuisine
-		if (type === reservedNames.restaurant.cuisineType) {
+		if (type === reservedNames.common.cuisineType) {
 			restaurantMetas[id].servesCuisine.push(
 				$(elem).html()?.trim() as string,
 			);
@@ -1210,498 +1195,12 @@ export async function restaurant(
 	return RestaurantMetaData;
 }
 
-export function FAQ(htmlString: string): FAQMeta[] {
-	const $: CheerioAPI = load(htmlString);
-
-	const faqsMetaData: FAQMeta[] = [] as FAQMeta[];
-
-	$(`.${faqBaseID}`).each((_index, elem) => {
-		/* question */
-		let question: string = $(elem)
-			.find(`.${reservedNames.faqPage.question}`)
-			.first()
-			.html() as string;
-
-		/* answer */
-		let answer: string = $(elem)
-			.find(`.${reservedNames.faqPage.answer}`)
-			.first()
-			.html() as string;
-
-		question = longTextStripper(question);
-		answer = longTextStripper(answer);
-
-		faqsMetaData.push({
-			question: question,
-			answer: answer,
-		});
-	});
-
-	return faqsMetaData;
-}
-
-export function softwareApp(htmlString: string): SoftwareAppOptions[] {
-	const $: CheerioAPI = load(htmlString);
-
-	const softwareAppMetas: Record<string, SoftwareAppOptions> = {};
-
-	$(`[class^="${softwareAppBaseID}-"]`).each((_index, elem) => {
-		const [id, type] = elemTypeAndIDExtracter($, elem, softwareAppBaseID);
-
-		//basic initiation
-		if (!Object.keys(softwareAppMetas).includes(id)) {
-			//create object for it
-			softwareAppMetas[id] = {} as SoftwareAppOptions;
-			softwareAppMetas[id].aggregateRating = {} as aggregateRatingOptions;
-			softwareAppMetas[id].operatingSystem = [];
-		}
-
-		const elemInner: string = $(elem).html()?.trim() as string;
-
-		if (type === reservedNames.softwareApp.name) {
-			softwareAppMetas[id].name = elemInner;
-		} else if (type === reservedNames.softwareApp.category) {
-			softwareAppMetas[id].category = partialCategoryMatch(
-				elemInner,
-			) as ApplicationCategory;
-		} else if (type === reservedNames.softwareApp.operatingSystem) {
-			const currentOSList: OperatingSystem[] = elemInner
-				.split(reservedNames.softwareApp.OSSeperator)
-				.map((elem) => elem.toUpperCase()) as OperatingSystem[];
-
-			const oldOSList: OperatingSystem[] =
-				softwareAppMetas[id].operatingSystem;
-
-			softwareAppMetas[id].operatingSystem =
-				oldOSList.concat(currentOSList);
-		} else if (type === reservedNames.aggregateRating.wrapper) {
-			softwareAppMetas[id].aggregateRating.ratingValue = parseFloat(
-				$(elem)
-					.find(`.${reservedNames.aggregateRating.aggregatedRatingValue}`)
-					.html() ?? "0",
-			);
-			softwareAppMetas[id].aggregateRating.maxRateRange = parseFloat(
-				$(elem)
-					.find(`.${reservedNames.aggregateRating.maxRangeOfRating}`)
-					.html() ?? "0",
-			);
-			softwareAppMetas[id].aggregateRating.numberOfRatings = parseInt(
-				$(elem)
-					.find(`.${reservedNames.aggregateRating.numberOfRatings}`)
-					.html() ?? "0",
-			);
-		} else if (type === reservedNames.softwareApp.price) {
-			const currency: string = $(elem).data(
-				reservedNames.softwareApp.priceCurrencyDataVar,
-			) as string;
-
-			if (!currency) {
-				throw new Error(
-					`Add data-${reservedNames.softwareApp.priceCurrencyDataVar} in price element \nReference ID: ${id}`,
-				);
-			}
-
-			softwareAppMetas[id].offer = {
-				price: parseFloat(elemInner),
-				priceCurrency: currency.toUpperCase(),
-			};
-		}
-	});
-
-	return Object.values(softwareAppMetas);
-}
-
-export async function video(
-	htmlString: string,
-): Promise<videoObjectOptions[]> {
-	const $: CheerioAPI = load(htmlString);
-
-	const videoMetas: Record<string, videoObjectOptions> = {};
-
-	const videoMetaPromises: Promise<void>[] = new Array();
-
-	$(`[class^="${videoBaseID}-"]`).each((_index, elem) => {
-		const [id, type] = elemTypeAndIDExtracter($, elem, videoBaseID);
-
-		//basic initiation
-		if (!Object.keys(videoMetas).includes(id)) {
-			//create object for it
-			videoMetas[id] = {} as videoObjectOptions;
-			videoMetas[id].hasPart = [];
-		}
-
-		if (type === reservedNames.video.frame) {
-			const embedUrl: string = $(elem).attr("src") as string;
-
-			videoMetaPromises.push(
-				(async (): Promise<void> => {
-					videoMetas[id] = {
-						...(await ytVideoMeta(embedUrl)),
-						...videoMetas[id],
-					};
-				})(),
-			);
-		} else if (type === reservedNames.video.segmentsWrapper) {
-			const clips: Cheerio<Element> = $(elem).children();
-
-			clips.each((index: number, clip: Element) => {
-				const name: string = $(clip).html() as string;
-
-				const start: number = parseFloat(
-					($(clip).data(
-						reservedNames.video.startOffsetDataVar,
-					) as string) ?? "0",
-				);
-
-				const approximatedEnd: number = 5;
-				const nextClipElem: Element = clips[index + 1];
-
-				const end: number = parseFloat(
-					($(nextClipElem).data(
-						reservedNames.video.startOffsetDataVar,
-					) as string) ?? start + approximatedEnd,
-				);
-
-				videoMetas[id].hasPart?.push({
-					name: name,
-					startOffset: start,
-					endOffset: end,
-				});
-			});
-		}
-	});
-	await Promise.all(videoMetaPromises);
-	return Object.values(videoMetas);
-}
-
-export async function localBusiness(
-	htmlString: string,
-	htmlPath: string,
-): Promise<LocalBusinessOptions[]> {
-	const $: CheerioAPI = load(htmlString);
-
-	const localBusinessMetas: Record<string, LocalBusinessOptions> = {};
-
-	$(`[class^="${localBusinessBaseID}-"]`).each((_index, elem) => {
-		const [id, type] = elemTypeAndIDExtracter(
-			$,
-			elem,
-			localBusinessBaseID,
-		);
-
-		//basic initiation
-		if (!Object.keys(localBusinessMetas).includes(id)) {
-			//create object for it
-			localBusinessMetas[id] = {} as LocalBusinessOptions;
-			localBusinessMetas[id].image = [];
-			localBusinessMetas[id].review = [];
-			localBusinessMetas[id].openingHoursSpecification = [];
-			localBusinessMetas[id].aggregateRating =
-				{} as aggregateRatingOptions;
-
-			localBusinessMetas[id].areaServed = [];
-			//deeplink to localBusiness
-			const url: string = new URL(
-				`${relative(cwd(), htmlPath).replace(
-					".html",
-					"",
-				)}#${localBusinessBaseID}-${id}`,
-				httpsDomainBase,
-			).href;
-
-			localBusinessMetas[id].url = url;
-		}
-
-		if (type === reservedNames.localBusiness.keywords) {
-			const keywords: string[] = new Array();
-			$(elem)
-				.children()
-				.each((_index: number, keyword: Element) => {
-					keywords.push($(keyword).html()?.trim() ?? "");
-				});
-
-			localBusinessMetas[id].keywords = keywords.join(", ");
-		} else if (type === reservedNames.localBusiness.areaAvailablity) {
-			const areaAvailablity: string[] = new Array();
-			const hasChild: boolean = $(elem).children().length > 0;
-
-			if (hasChild) {
-				$(elem)
-					.children()
-					.each((_index: number, areaElem: Element) => {
-						let availablearea: string = $(areaElem)
-							.html()
-							?.trim() as string;
-
-						//remove special chars to retain only alphanumeric text
-						availablearea = availablearea?.replace(/[^a-zA-Z0-9]/g, "");
-						areaAvailablity.push(availablearea);
-					});
-			} else {
-				let availablearea: string = $(elem).html()?.trim() as string;
-				//remove special chars to retain only alphanumeric text
-				availablearea = availablearea?.replace(/[^a-zA-Z0-9]/g, "");
-				areaAvailablity.push(availablearea);
-			}
-			localBusinessMetas[id].areaServed = areaAvailablity;
-		} else {
-			localBusinessMetas[id] = commonBusinessEntityThings(
-				localBusinessMetas[id],
-				id,
-				type,
-				elem,
-				$,
-			) as LocalBusinessOptions;
-		}
-	});
-
-	// Use Promise.all to await all asynchronous operations
-	const localBusinessMetaData: Awaited<LocalBusinessOptions[]> =
-		(await Promise.all(
-			Object.values(localBusinessMetas).map(fetchGeoLocation),
-		)) as LocalBusinessOptions[];
-
-	return localBusinessMetaData;
-}
-
-export function organisation(
-	htmlString: string,
-	htmlPath: string,
-): OrganisationOptions[] {
-	const $: CheerioAPI = load(htmlString);
-
-	const organisationMetas: Record<string, OrganisationOptions> = {};
-
-	$(`[class^="${organisationBaseID}-"]`).each(
-		(_index: number, elem: Element) => {
-			const [id, type] = elemTypeAndIDExtracter(
-				$,
-				elem,
-				organisationBaseID,
-			);
-
-			//basic initiation
-			if (!Object.keys(organisationMetas).includes(id)) {
-				//create object for it
-				organisationMetas[id] = {} as OrganisationOptions;
-				organisationMetas[id].image = [];
-				organisationMetas[id].sameAs = [];
-
-				//deeplink to organisation
-				const url: string = new URL(
-					`${relative(cwd(), htmlPath).replace(".html", "")}`,
-					httpsDomainBase,
-				).href;
-
-				organisationMetas[id].url = url;
-			}
-
-			const elemInnerText: string = $(elem).html()?.trim() as string;
-
-			/* name */
-			if (type === reservedNames.businessEntity.name) {
-				organisationMetas[id].name = elemInnerText;
-			} else if (type === reservedNames.businessEntity.location.wrapper) {
-				organisationMetas[id].address = commonLocationExtractor($, elem);
-			}
-			//image
-			else if (type === reservedNames.businessEntity.images) {
-				const imgLink: string = $(elem).attr("src") ?? "";
-
-				if (!imgLink) {
-					throw new Error("Img tag with no src\nReference ID: " + id);
-				}
-
-				organisationMetas[id].image.push(imgLink);
-			} else if (type === reservedNames.businessEntity.telephone) {
-				//telephone
-				organisationMetas[id].telephone = elemInnerText;
-			} else if (type === reservedNames.organisation.logo) {
-				const logoLink: string = $(elem).attr("src") ?? "";
-
-				if (!logoLink) {
-					throw new Error("Img tag with no src\nReference ID: " + id);
-				}
-
-				organisationMetas[id].logo = logoLink;
-			} else if (type === reservedNames.organisation.socialMediaLink) {
-				if (!$(elem).is("a")) {
-					throw new Error(
-						`${organisationBaseID}-${id}-${reservedNames.organisation.socialMediaLink} should be anchor tag`,
-					);
-				}
-
-				const socialMediaLink: string = $(elem).attr("href") as string;
-
-				organisationMetas[id].sameAs.push(socialMediaLink);
-			} else if (type === reservedNames.organisation.description) {
-				organisationMetas[id].description =
-					longTextStripper(elemInnerText);
-			} else if (type === reservedNames.organisation.email) {
-				organisationMetas[id].email = elemInnerText;
-			} else if (type === reservedNames.organisation.taxid) {
-				organisationMetas[id].taxID = elemInnerText;
-			} else if (type === reservedNames.organisation.foundingYear) {
-				organisationMetas[id].foundingDate = elemInnerText;
-			}
-		},
-	);
-
-	return Object.values(organisationMetas);
-}
-
-export function profilePage(htmlString: string): ProfilePageOptions {
-	const $: CheerioAPI = load(htmlString);
-
-	const profilePageMeta: ProfilePageOptions = {} as ProfilePageOptions;
-	profilePageMeta.hasPart = [];
-	profilePageMeta.image = [];
-	profilePageMeta.sameAs = [];
-	profilePageMeta.agentInteractionStatistic = [];
-	profilePageMeta.interactionStatistic = [];
-
-	$(`[class^="${profileBaseID}-"]`).each(
-		(_index: number, elem: Element) => {
-			const type: string = elemTypeAndIDExtracter(
-				$,
-				elem,
-				productBaseID,
-			)[1];
-
-			const innerText: string = $(elem).html()?.trim() as string;
-
-			if (type === reservedNames.profilePage.name) {
-				profilePageMeta.name = innerText;
-			} else if (type === reservedNames.profilePage.altName) {
-				profilePageMeta.altname = innerText;
-			} else if (type === reservedNames.profilePage.uniquePlatformID) {
-				/* check if there is any special characters in UID */
-				if (!innerText.match(/[^a-zA-Z0-9\-]/g)) {
-					throw new Error(
-						`ID Should be alphanumeric | REF:${profileBaseID}-${reservedNames.profilePage.uniquePlatformID}`,
-					);
-				}
-
-				profilePageMeta.uid = innerText;
-			} else if (type === reservedNames.profilePage.images) {
-				const imgLink: string = $(elem).attr("src") ?? "";
-
-				if (!imgLink) {
-					throw new Error("Img tag with no src");
-				}
-
-				profilePageMeta.image.push(imgLink);
-			} else if (type === reservedNames.profilePage.dateCreated) {
-				profilePageMeta.dateCreated = parseDateString(innerText);
-			} else if (type === reservedNames.profilePage.dateModified) {
-				profilePageMeta.dateModified = parseDateString(innerText);
-			} else if (type === reservedNames.profilePage.socialMediaLinks) {
-				if (!$(elem).is("a")) {
-					throw new Error(
-						`${profileBaseID}-${reservedNames.profilePage.socialMediaLinks} should be a anchor tag`,
-					);
-				}
-
-				const socialMediaLink: string = $(elem).attr("href") as string;
-
-				profilePageMeta.sameAs.push(socialMediaLink);
-			} else if (type === reservedNames.profilePage.description) {
-				profilePageMeta.description = longTextStripper(innerText);
-			} else if (type === reservedNames.profilePage.authorWorks.wrapper) {
-				const thumbnail: string =
-					$(elem)
-						.find(`.${reservedNames.profilePage.authorWorks.thumbnail}`)
-						.first()
-						?.attr("src") ?? "";
-
-				const headline: string =
-					$(elem)
-						.find(`.${reservedNames.profilePage.authorWorks.headline}`)
-						.first()
-						.html()
-						?.trim() ?? "";
-
-				const publishedDate: string = parseDateString(
-					$(elem)
-						.find(`.${reservedNames.profilePage.authorWorks.publishedOn}`)
-						.html()
-						?.trim() ?? "",
-				);
-
-				const url: string =
-					$(elem)
-						.find(`.${reservedNames.profilePage.authorWorks.url}`)
-						.attr("href") ?? "";
-
-				profilePageMeta.hasPart?.push({
-					headline: headline,
-					image: thumbnail,
-					datePublished: publishedDate,
-					url: url,
-				});
-			} else if (
-				type === reservedNames.profilePage.authorActionCounts.written
-			) {
-				profilePageMeta.agentInteractionStatistic?.push({
-					interactionType: "WriteAction",
-					interactionCount: parseInt(innerText),
-				});
-			} else if (
-				type === reservedNames.profilePage.authorActionCounts.liked
-			) {
-				profilePageMeta.agentInteractionStatistic?.push({
-					interactionType: "LikeAction",
-					interactionCount: parseInt(innerText),
-				});
-			} else if (
-				type === reservedNames.profilePage.authorActionCounts.follows
-			) {
-				profilePageMeta.agentInteractionStatistic?.push({
-					interactionType: "FollowAction",
-					interactionCount: parseInt(innerText),
-				});
-			} else if (
-				type === reservedNames.profilePage.authorActionCounts.shared
-			) {
-				profilePageMeta.agentInteractionStatistic?.push({
-					interactionType: "ShareAction",
-					interactionCount: parseInt(innerText),
-				});
-			} else if (
-				type === reservedNames.profilePage.audienceActionCounts.followers
-			) {
-				profilePageMeta.interactionStatistic?.push({
-					interactionType: "FollowAction",
-					interactionCount: parseInt(innerText),
-				});
-			} else if (
-				type === reservedNames.profilePage.audienceActionCounts.likes
-			) {
-				profilePageMeta.interactionStatistic?.push({
-					interactionType: "LikeAction",
-					interactionCount: parseInt(innerText),
-				});
-			} else if (
-				type ===
-				reservedNames.profilePage.audienceActionCounts.mutualConnections
-			) {
-				profilePageMeta.interactionStatistic?.push({
-					interactionType: "BefriendAction",
-					interactionCount: parseInt(innerText),
-				});
-			}
-		},
-	);
-
-	return profilePageMeta;
-}
-
 export async function eventsPage(
 	htmlString: string,
 	htmlPath: string,
 ): Promise<EventsPageOptions[]> {
 	const $: CheerioAPI = load(htmlString);
-
+	const eventBaseID = reservedNames.events.baseID;
 	const eventMetas: Record<string, EventsPageOptions> = {};
 
 	/* event offer valid from */
@@ -1724,7 +1223,7 @@ export async function eventsPage(
 		}
 
 		/* name of event */
-		if (type === reservedNames.events.name) {
+		if (type === reservedNames.common.heroName) {
 			eventMetas[id].name = innerText;
 		} /* starting start */ else if (
 			type === reservedNames.events.startFrom
@@ -1734,7 +1233,7 @@ export async function eventsPage(
 			} catch {
 				console.log(
 					"Error While Parsing Data String\n DateTime format should follow this " +
-					aggregatorVariables.timeFormat,
+					timeFormat,
 				);
 				process.exit(1);
 			}
@@ -1744,16 +1243,16 @@ export async function eventsPage(
 			} catch {
 				console.log(
 					"Error While Parsing Data String\n DateTime format should follow this " +
-					aggregatorVariables.timeFormat,
+					timeFormat,
 				);
 				process.exit(1);
 			}
-		} /* mode of event */ else if (type === reservedNames.events.mode) {
-			const mode: string = ($(elem).data(reservedNames.events.mode) ??
+		} /* mode of event */ else if (type === reservedNames.common.MO) {
+			const mode: string = ($(elem).data(reservedNames.common.MO) ??
 				"") as string;
 			if (!mode) {
 				throw new Error(
-					`Mode of Event not found, It should be available in ${eventBaseID}-${id}-${reservedNames.events.mode}`,
+					`Mode of Event not found, It should be available in ${eventBaseID}-${id}-${reservedNames.common.MO}`,
 				);
 			}
 
@@ -1857,7 +1356,7 @@ export async function eventsPage(
 					address: commonLocationExtractor($, elem),
 				});
 			}
-		} /* images */ else if (type === reservedNames.events.images) {
+		} /* images */ else if (type === reservedNames.common.heroImage) {
 			const imgLink: string = $(elem).attr("src") ?? "";
 
 			if (!imgLink) {
@@ -1866,18 +1365,18 @@ export async function eventsPage(
 
 			eventMetas[id].images.push(imgLink);
 		} /* description */ else if (
-			type === reservedNames.events.description
+			type === reservedNames.common.entityDescription
 		) {
 			eventMetas[id].description = longTextStripper(innerText);
-		} /* cost/offfer */ else if (type === reservedNames.events.price) {
+		} /* cost/offfer */ else if (type === reservedNames.common.heroCost) {
 			let currency: string = ($(elem).data(
-				reservedNames.events.currency,
+				reservedNames.common.currencyDataVar,
 			) ?? "") as string;
 
 			let price: string;
 			if (currency.toLowerCase() === "free") {
 				price = "0";
-				currency = "";
+				currency = reservedNames.common.fallbackCurrency;
 			} else {
 				price = innerText.match(
 					/\d+/g /* remove non digits take first digit group*/,
@@ -1885,7 +1384,7 @@ export async function eventsPage(
 			}
 
 			const link: string = $(
-				`.${eventBaseID}-${id}-${reservedNames.events.bookingLink}`,
+				`.${eventBaseID}-${id}-${reservedNames.common.heroLinkRef}`,
 			).attr("href") as string;
 
 			eventMetas[id].offers = {
@@ -1895,17 +1394,17 @@ export async function eventsPage(
 				validFrom: validFrom,
 			};
 		} /* performers */ else if (
-			type === reservedNames.events.performerName
+			type === reservedNames.common.author.name
 		) {
 			eventMetas[id].performers.push(innerText);
 		} /* hoster*/ else if (
-			type.slice(0, -1) === reservedNames.events.organizer
+			type.slice(0, -1) === reservedNames.common.publisher.name
 		) {
 			eventMetas[id].organizer = {
 				type:
 					(
 						type.at(-1) ===
-						reservedNames.events.organizerSuffix.organisation?.toLowerCase()
+						reservedNames.common.authorAndPubPrefix.organisation?.toLowerCase()
 					) ?
 						"Organization"
 						: "Person",
@@ -1918,15 +1417,286 @@ export async function eventsPage(
 	return Object.values(eventMetas);
 }
 
+export function FAQ(htmlString: string): FAQMeta[] {
+	const $: CheerioAPI = load(htmlString);
+
+	const faqsMetaData: FAQMeta[] = [] as FAQMeta[];
+
+	$(`.${reservedNames.faqPage.baseID}`).each((_index, elem) => {
+		/* question */
+		let question: string = $(elem)
+			.find(`.${reservedNames.faqPage.question}`)
+			.first()
+			.html() as string;
+
+		/* answer */
+		let answer: string = $(elem)
+			.find(`.${reservedNames.faqPage.answer}`)
+			.first()
+			.html() as string;
+
+		question = longTextStripper(question);
+		answer = longTextStripper(answer);
+
+		faqsMetaData.push({
+			question: question,
+			answer: answer,
+		});
+	});
+
+	return faqsMetaData;
+}
+
+
+export async function video(
+	htmlString: string,
+): Promise<videoObjectOptions[]> {
+	const $: CheerioAPI = load(htmlString);
+	const videoBaseID = reservedNames.video.baseID;
+	const videoMetas: Record<string, videoObjectOptions> = {};
+
+	const videoMetaPromises: Promise<void>[] = new Array();
+
+	$(`[class^="${videoBaseID}-"]`).each((_index, elem) => {
+		const [id, type] = elemTypeAndIDExtracter($, elem, videoBaseID);
+
+		//basic initiation
+		if (!Object.keys(videoMetas).includes(id)) {
+			//create object for it
+			videoMetas[id] = {} as videoObjectOptions;
+			videoMetas[id].hasPart = [];
+		}
+
+		if (type === reservedNames.common.videoFrame) {
+			const embedUrl: string = $(elem).attr("src") as string;
+
+			videoMetaPromises.push(
+				(async (): Promise<void> => {
+					videoMetas[id] = {
+						...(await ytVideoMeta(embedUrl)),
+						...videoMetas[id],
+					};
+				})(),
+			);
+		} else if (type === reservedNames.video.segmentsWrapper) {
+			const clips: Cheerio<Element> = $(elem).children();
+
+			clips.each((index: number, clip: Element) => {
+				const name: string = $(clip).html() as string;
+
+				const start: number = parseFloat(
+					($(clip).data(
+						reservedNames.video.startOffsetDataVar,
+					) as string) ?? "0",
+				);
+
+				const approximatedEnd: number = 5;
+				const nextClipElem: Element = clips[index + 1];
+
+				const end: number = parseFloat(
+					($(nextClipElem).data(
+						reservedNames.video.startOffsetDataVar,
+					) as string) ?? start + approximatedEnd,
+				);
+
+				videoMetas[id].hasPart?.push({
+					name: name,
+					startOffset: start,
+					endOffset: end,
+				});
+			});
+		}
+	});
+	await Promise.all(videoMetaPromises);
+	return Object.values(videoMetas);
+}
+
+export async function localBusiness(
+	htmlString: string,
+	htmlPath: string,
+): Promise<LocalBusinessOptions[]> {
+	const $: CheerioAPI = load(htmlString);
+	const localBusinessBaseID = reservedNames.localBusiness.baseID;
+	const localBusinessMetas: Record<string, LocalBusinessOptions> = {};
+
+	$(`[class^="${localBusinessBaseID}-"]`).each((_index, elem) => {
+		const [id, type] = elemTypeAndIDExtracter(
+			$,
+			elem,
+			localBusinessBaseID,
+		);
+
+		//basic initiation
+		if (!Object.keys(localBusinessMetas).includes(id)) {
+			//create object for it
+			localBusinessMetas[id] = {} as LocalBusinessOptions;
+			localBusinessMetas[id].image = [];
+			localBusinessMetas[id].review = [];
+			localBusinessMetas[id].openingHoursSpecification = [];
+			localBusinessMetas[id].aggregateRating =
+				{} as aggregateRatingOptions;
+
+			localBusinessMetas[id].areaServed = [];
+			//deeplink to localBusiness
+			const url: string = new URL(
+				`${relative(cwd(), htmlPath).replace(
+					".html",
+					"",
+				)}#${localBusinessBaseID}-${id}`,
+				httpsDomainBase,
+			).href;
+
+			localBusinessMetas[id].url = url;
+		}
+
+		if (type === reservedNames.common.keywords) {
+			const keywords: string[] = new Array();
+			$(elem)
+				.children()
+				.each((_index: number, keyword: Element) => {
+					keywords.push($(keyword).html()?.trim() ?? "");
+				});
+
+			localBusinessMetas[id].keywords = keywords.join(", ");
+		} else if (type === reservedNames.localBusiness.areaAvailablity) {
+			const areaAvailablity: string[] = new Array();
+			const hasChild: boolean = $(elem).children().length > 0;
+
+			if (hasChild) {
+				$(elem)
+					.children()
+					.each((_index: number, areaElem: Element) => {
+						let availablearea: string = $(areaElem)
+							.html()
+							?.trim() as string;
+
+						//remove special chars to retain only alphanumeric text
+						availablearea = availablearea?.replace(/[^a-zA-Z0-9]/g, "");
+						areaAvailablity.push(availablearea);
+					});
+			} else {
+				let availablearea: string = $(elem).html()?.trim() as string;
+				//remove special chars to retain only alphanumeric text
+				availablearea = availablearea?.replace(/[^a-zA-Z0-9]/g, "");
+				areaAvailablity.push(availablearea);
+			}
+			localBusinessMetas[id].areaServed = areaAvailablity;
+		} else {
+			localBusinessMetas[id] = commonBusinessEntityThings(
+				localBusinessMetas[id],
+				id,
+				type,
+				elem,
+				$,
+			) as LocalBusinessOptions;
+		}
+	});
+
+	// Use Promise.all to await all asynchronous operations
+	const localBusinessMetaData: Awaited<LocalBusinessOptions[]> =
+		(await Promise.all(
+			Object.values(localBusinessMetas).map(fetchGeoLocation),
+		)) as LocalBusinessOptions[];
+
+	return localBusinessMetaData;
+}
+
+
+export function organisation(
+	htmlString: string,
+	htmlPath: string,
+): OrganisationOptions[] {
+	const $: CheerioAPI = load(htmlString);
+	const organisationBaseID = reservedNames.organisation.baseID;
+	const organisationMetas: Record<string, OrganisationOptions> = {};
+
+	$(`[class^="${organisationBaseID}-"]`).each(
+		(_index: number, elem: Element) => {
+			const [id, type] = elemTypeAndIDExtracter(
+				$,
+				elem,
+				organisationBaseID,
+			);
+
+			//basic initiation
+			if (!Object.keys(organisationMetas).includes(id)) {
+				//create object for it
+				organisationMetas[id] = {} as OrganisationOptions;
+				organisationMetas[id].image = [];
+				organisationMetas[id].sameAs = [];
+
+				//deeplink to organisation
+				const url: string = new URL(
+					`${relative(cwd(), htmlPath).replace(".html", "")}`,
+					httpsDomainBase,
+				).href;
+
+				organisationMetas[id].url = url;
+			}
+
+			const elemInnerText: string = $(elem).html()?.trim() as string;
+
+			/* name */
+			if (type === reservedNames.common.heroName) {
+				organisationMetas[id].name = elemInnerText;
+			} else if (type === reservedNames.businessEntity.location.wrapper) {
+				organisationMetas[id].address = commonLocationExtractor($, elem);
+			}
+			//image
+			else if (type === reservedNames.common.heroImage) {
+				const imgLink: string = $(elem).attr("src") ?? "";
+
+				if (!imgLink) {
+					throw new Error("Img tag with no src\nReference ID: " + id);
+				}
+
+				organisationMetas[id].image.push(imgLink);
+			} else if (type === reservedNames.businessEntity.telephone) {
+				//telephone
+				organisationMetas[id].telephone = elemInnerText;
+			} else if (type === reservedNames.organisation.logo) {
+				const logoLink: string = $(elem).attr("src") ?? "";
+
+				if (!logoLink) {
+					throw new Error("Img tag with no src\nReference ID: " + id);
+				}
+
+				organisationMetas[id].logo = logoLink;
+			} else if (type === reservedNames.common.heroLinkRef) {
+				if (!$(elem).is("a")) {
+					throw new Error(
+						`${organisationBaseID}-${id}-${reservedNames.common.heroLinkRef} should be anchor tag`,
+					);
+				}
+
+				const socialMediaLink: string = $(elem).attr("href") as string;
+
+				organisationMetas[id].sameAs.push(socialMediaLink);
+			} else if (type === reservedNames.common.entityDescription) {
+				organisationMetas[id].description =
+					longTextStripper(elemInnerText);
+			} else if (type === reservedNames.organisation.email) {
+				organisationMetas[id].email = elemInnerText;
+			} else if (type === reservedNames.organisation.taxid) {
+				organisationMetas[id].taxID = elemInnerText;
+			} else if (type === reservedNames.organisation.foundingYear) {
+				organisationMetas[id].foundingDate = elemInnerText;
+			}
+		},
+	);
+
+	return Object.values(organisationMetas);
+}
+
 export async function productPage(
 	htmlString: string,
 	htmlPath: string,
 ): Promise<ProductPageReturns> {
 	const $: CheerioAPI = load(htmlString);
-
+	const productBaseID = reservedNames.product.baseID;
 	const productMetas: Record<string, ProductOptions> = {};
 
-	const validitySecs: number = productPriceValidUntilNext * 24 * 60 * 60;
+	const validitySecs: number = reservedNames.product.productPriceValidUntilNext * 24 * 60 * 60;
 
 	const validTill: string = new Date(
 		(await stat(resolve(htmlPath))).mtimeMs + validitySecs,
@@ -1955,9 +1725,9 @@ export async function productPage(
 			}
 
 			/* name of product */
-			if (type === reservedNames.product.name) {
+			if (type === reservedNames.common.heroName) {
 				const productLongname: string[] = innerText
-					.split(producrVariableDelimiter)
+					.split(reservedNames.product.producrVariableDelimiter)
 					.map((item) => item.trim());
 
 				productMetas[id].productName = productLongname[0];
@@ -2027,14 +1797,14 @@ export async function productPage(
 						}
 					});
 				}
-			} else if (type === reservedNames.product.images) {
+			} else if (type === reservedNames.common.heroImage) {
 				const imgLink: string = $(elem).attr("src") ?? "";
 
 				if (!imgLink) {
 					throw new Error("Src not found in image tag, ID: " + id);
 				}
 				productMetas[id].images.push(imgLink);
-			} else if (type === reservedNames.product.description) {
+			} else if (type === reservedNames.common.entityDescription) {
 				productMetas[id].description = longTextStripper(innerText);
 			} else if (type === reservedNames.product.skuID) {
 				productMetas[id].skuid = innerText;
@@ -2050,10 +1820,10 @@ export async function productPage(
 					elem,
 					{} as aggregateRatingOptions,
 				);
-			} else if (type === reservedNames.product.offer.price) {
+			} else if (type === reservedNames.common.heroCost) {
 				productMetas[id].offer.price = parseFloat(innerText);
 				productMetas[id].offer.priceCurrency = (
-					$(elem).data(reservedNames.product.offer.currency) as string
+					$(elem).data(reservedNames.common.currencyDataVar) as string
 				).toUpperCase();
 			} else if (type === reservedNames.product.offer.availability) {
 				const availability: boolean = $(elem).data(
@@ -2190,4 +1960,221 @@ export async function productPage(
 		product: productMetaData,
 		variesBy: variesBy,
 	};
+}
+
+export function profilePage(htmlString: string): ProfilePageOptions {
+	const $: CheerioAPI = load(htmlString);
+	const profileBaseID = reservedNames.profilePage.baseID;
+	const profilePageMeta: ProfilePageOptions = {} as ProfilePageOptions;
+	profilePageMeta.hasPart = [];
+	profilePageMeta.image = [];
+	profilePageMeta.sameAs = [];
+	profilePageMeta.agentInteractionStatistic = [];
+	profilePageMeta.interactionStatistic = [];
+
+	$(`[class^="${profileBaseID}-"]`).each(
+		(_index: number, elem: Element) => {
+			const type: string = elemTypeAndIDExtracter(
+				$,
+				elem,
+				profileBaseID,
+			)[1];
+
+			const innerText: string = $(elem).html()?.trim() as string;
+
+			if (type === reservedNames.common.heroName) {
+				profilePageMeta.name = innerText;
+			} else if (type === reservedNames.profilePage.altName) {
+				profilePageMeta.altname = innerText;
+			} else if (type === reservedNames.profilePage.uniquePlatformID) {
+				/* check if there is any special characters in UID */
+				if (!innerText.match(/[^a-zA-Z0-9\-]/g)) {
+					throw new Error(
+						`ID Should be alphanumeric | REF:${profileBaseID}-${reservedNames.profilePage.uniquePlatformID}`,
+					);
+				}
+
+				profilePageMeta.uid = innerText;
+			} else if (type === reservedNames.common.heroImage) {
+				const imgLink: string = $(elem).attr("src") ?? "";
+
+				if (!imgLink) {
+					throw new Error("Img tag with no src");
+				}
+
+				profilePageMeta.image.push(imgLink);
+			} else if (type === reservedNames.common.publishedDate) {
+				profilePageMeta.dateCreated = parseDateString(innerText);
+			} else if (type === reservedNames.common.modifiedDate) {
+				profilePageMeta.dateModified = parseDateString(innerText);
+			} else if (type === reservedNames.common.heroLinkRef) {
+				if (!$(elem).is("a")) {
+					throw new Error(
+						`${profileBaseID}-${reservedNames.common.heroLinkRef} should be a anchor tag`,
+					);
+				}
+
+				const socialMediaLink: string = $(elem).attr("href") as string;
+
+				profilePageMeta.sameAs.push(socialMediaLink);
+			} else if (type === reservedNames.common.entityDescription) {
+				profilePageMeta.description = longTextStripper(innerText);
+			} else if (type === reservedNames.profilePage.authorWorks.wrapper) {
+				const thumbnail: string =
+					$(elem)
+						.find(`.${reservedNames.profilePage.authorWorks.thumbnail}`)
+						.first()
+						?.attr("src") ?? "";
+
+				const headline: string =
+					$(elem)
+						.find(`.${reservedNames.profilePage.authorWorks.headline}`)
+						.first()
+						.html()
+						?.trim() ?? "";
+
+				const publishedDate: string = parseDateString(
+					$(elem)
+						.find(`.${reservedNames.profilePage.authorWorks.publishedOn}`)
+						.html()
+						?.trim() ?? "",
+				);
+
+				const url: string =
+					$(elem)
+						.find(`.${reservedNames.profilePage.authorWorks.url}`)
+						.attr("href") ?? "";
+
+				profilePageMeta.hasPart?.push({
+					headline: headline,
+					image: thumbnail,
+					datePublished: publishedDate,
+					url: url,
+				});
+			} else if (
+				type === reservedNames.profilePage.authorActionCounts.written
+			) {
+				profilePageMeta.agentInteractionStatistic?.push({
+					interactionType: "WriteAction",
+					interactionCount: parseInt(innerText),
+				});
+			} else if (
+				type === reservedNames.profilePage.authorActionCounts.liked
+			) {
+				profilePageMeta.agentInteractionStatistic?.push({
+					interactionType: "LikeAction",
+					interactionCount: parseInt(innerText),
+				});
+			} else if (
+				type === reservedNames.profilePage.authorActionCounts.follows
+			) {
+				profilePageMeta.agentInteractionStatistic?.push({
+					interactionType: "FollowAction",
+					interactionCount: parseInt(innerText),
+				});
+			} else if (
+				type === reservedNames.profilePage.authorActionCounts.shared
+			) {
+				profilePageMeta.agentInteractionStatistic?.push({
+					interactionType: "ShareAction",
+					interactionCount: parseInt(innerText),
+				});
+			} else if (
+				type === reservedNames.profilePage.audienceActionCounts.followers
+			) {
+				profilePageMeta.interactionStatistic?.push({
+					interactionType: "FollowAction",
+					interactionCount: parseInt(innerText),
+				});
+			} else if (
+				type === reservedNames.profilePage.audienceActionCounts.likes
+			) {
+				profilePageMeta.interactionStatistic?.push({
+					interactionType: "LikeAction",
+					interactionCount: parseInt(innerText),
+				});
+			} else if (
+				type ===
+				reservedNames.profilePage.audienceActionCounts.mutualConnections
+			) {
+				profilePageMeta.interactionStatistic?.push({
+					interactionType: "BefriendAction",
+					interactionCount: parseInt(innerText),
+				});
+			}
+		},
+	);
+
+	return profilePageMeta;
+}
+
+export function softwareApp(htmlString: string): SoftwareAppOptions[] {
+	const $: CheerioAPI = load(htmlString);
+	const softwareAppBaseID = reservedNames.softwareApp.baseID;
+	const softwareAppMetas: Record<string, SoftwareAppOptions> = {};
+
+	$(`[class^="${softwareAppBaseID}-"]`).each((_index, elem) => {
+		const [id, type] = elemTypeAndIDExtracter($, elem, softwareAppBaseID);
+
+		//basic initiation
+		if (!Object.keys(softwareAppMetas).includes(id)) {
+			//create object for it
+			softwareAppMetas[id] = {} as SoftwareAppOptions;
+			softwareAppMetas[id].aggregateRating = {} as aggregateRatingOptions;
+			softwareAppMetas[id].operatingSystem = [];
+		}
+
+		const elemInner: string = $(elem).html()?.trim() as string;
+
+		if (type === reservedNames.common.heroName) {
+			softwareAppMetas[id].name = elemInner;
+		} else if (type === reservedNames.softwareApp.category) {
+			softwareAppMetas[id].category = partialCategoryMatch(
+				elemInner,
+			) as ApplicationCategory;
+		} else if (type === reservedNames.softwareApp.operatingSystem) {
+			const currentOSList: OperatingSystem[] = elemInner
+				.split(reservedNames.softwareApp.OSSeperator)
+				.map((elem) => elem.toUpperCase()) as OperatingSystem[];
+
+			const oldOSList: OperatingSystem[] =
+				softwareAppMetas[id].operatingSystem;
+
+			softwareAppMetas[id].operatingSystem =
+				oldOSList.concat(currentOSList);
+		} else if (type === reservedNames.aggregateRating.wrapper) {
+			softwareAppMetas[id].aggregateRating.ratingValue = parseFloat(
+				$(elem)
+					.find(`.${reservedNames.aggregateRating.aggregatedRatingValue}`)
+					.html() ?? "0",
+			);
+			softwareAppMetas[id].aggregateRating.maxRateRange = parseFloat(
+				$(elem)
+					.find(`.${reservedNames.aggregateRating.maxRangeOfRating}`)
+					.html() ?? "0",
+			);
+			softwareAppMetas[id].aggregateRating.numberOfRatings = parseInt(
+				$(elem)
+					.find(`.${reservedNames.aggregateRating.numberOfRatings}`)
+					.html() ?? "0",
+			);
+		} else if (type === reservedNames.common.heroCost) {
+			const currency: string = $(elem).data(
+				reservedNames.common.currencyDataVar,
+			) as string;
+
+			if (!currency) {
+				throw new Error(
+					`Add data-${reservedNames.common.currencyDataVar} in price element \nReference ID: ${id}`,
+				);
+			}
+
+			softwareAppMetas[id].offer = {
+				price: parseFloat(elemInner),
+				priceCurrency: currency.toUpperCase(),
+			};
+		}
+	});
+
+	return Object.values(softwareAppMetas);
 }

@@ -3,7 +3,7 @@ import axios from "axios";
 import { CheerioAPI, Element, load } from "cheerio";
 import puppeteer from "puppeteer";
 import { createHash, randomBytes } from "node:crypto";
-import { aggregatorVariables, reservedNames } from "../rjsconfig.json";
+import { domainAddress, timeFormat, reservedNames } from "../rjsconfig.json";
 import {
 	ApplicationCategory,
 	GeoOptions,
@@ -19,8 +19,6 @@ import { writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { dirname } from "node:path";
 
-const { domainAddress, productGroupIDHashLength, timeFormat } =
-	aggregatorVariables;
 
 export let httpsDomainBase: string = `https://www.${domainAddress}/`;
 
@@ -200,7 +198,7 @@ export function generateProductGroupID(
 		.concat(concatenatedID.slice(randomPosition));
 
 	// Create SHAKE256 hash
-	const shake256 = createHash("shake" + productGroupIDHashLength);
+	const shake256 = createHash("shake" + reservedNames.product.productGroupIDHashLength);
 
 	// Update hash with data
 	shake256.update(dataWithSalt, "utf8");
@@ -355,23 +353,23 @@ export function recipeTotaltime(
 	/* config checker */
 	const hoursConditions =
 		reservedNames.recipe.cooktime.hours.endsWith(
-			reservedNames.durationID.hours,
+			reservedNames.recipe.durationID.hours,
 		) &&
 		reservedNames.recipe.preptime.hours.endsWith(
-			reservedNames.durationID.hours,
+			reservedNames.recipe.durationID.hours,
 		);
 	const minutesConditions =
 		reservedNames.recipe.cooktime.minutes.endsWith(
-			reservedNames.durationID.minutes,
+			reservedNames.recipe.durationID.minutes,
 		) &&
 		reservedNames.recipe.preptime.minutes.endsWith(
-			reservedNames.durationID.minutes,
+			reservedNames.recipe.durationID.minutes,
 		);
 	const configSatisfied = hoursConditions && minutesConditions;
 	if (!configSatisfied) {
 		throw new Error(
 			`Configuration Error: reservedNames.recipe.(cooktime)&(preptime) hours and minutes
-			 should end with reservedNames.durationID.(minutes)&(hours)`,
+			 should end with reservedNames.recipe.durationID.(minutes)&(hours)`,
 		);
 	}
 
@@ -383,14 +381,14 @@ export function recipeTotaltime(
 		let time: Record<string, number> = { hours: 0, minutes: 0 };
 
 		if (
-			isoDuration.includes(reservedNames.durationID.hours) &&
-			isoDuration.includes(reservedNames.durationID.minutes)
+			isoDuration.includes(reservedNames.recipe.durationID.hours) &&
+			isoDuration.includes(reservedNames.recipe.durationID.minutes)
 		) {
 			time.hours = parseInt(timeMatch?.[0] ?? "0");
 			time.minutes = parseInt(timeMatch?.[1] ?? "0");
-		} else if (isoDuration.includes(reservedNames.durationID.hours)) {
+		} else if (isoDuration.includes(reservedNames.recipe.durationID.hours)) {
 			time.hours = parseInt(timeMatch?.[0] ?? "0");
-		} else if (isoDuration.includes(reservedNames.durationID.minutes)) {
+		} else if (isoDuration.includes(reservedNames.recipe.durationID.minutes)) {
 			time.minutes = parseInt(timeMatch?.[0] ?? "0");
 		}
 		return time;
@@ -425,9 +423,9 @@ export function periodTextToHours(durationAndPeriodType: string): string {
 		.toLowerCase() as string;
 
 	let duration = `PT${durationPeriodType.includes("month") ? parsedDurationInDigit * 30 * 24
-			: durationPeriodType.includes("week") ? parsedDurationInDigit * 7 * 24
-				: durationPeriodType.includes("day") ? parsedDurationInDigit * 1 * 24
-					: parsedDurationInDigit
+		: durationPeriodType.includes("week") ? parsedDurationInDigit * 7 * 24
+			: durationPeriodType.includes("day") ? parsedDurationInDigit * 1 * 24
+				: parsedDurationInDigit
 		}H`;
 
 	return duration;
