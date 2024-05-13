@@ -1,5 +1,5 @@
-import { readFileSync, existsSync, writeFileSync } from "node:fs";
 import { Cheerio, CheerioAPI, Element, load } from "cheerio";
+import { existsSync } from "node:fs";
 import {
 	ApplicationCategory,
 	CourseInstanceOptions,
@@ -38,24 +38,23 @@ import {
 } from "./options";
 
 import {
-	parseDateString,
-	ytVideoMeta,
-	getGeoCode,
-	extractTime,
-	httpsDomainBase,
-	generateMeta,
 	durationInISO,
-	recipeTotaltime,
-	periodTextToHours,
 	elemTypeAndIDExtracter,
+	extractTime,
+	fetchGeoLocation,
+	generateMeta,
+	httpsDomainBase,
+	longTextStripper,
+	parseDateString,
+	partialCategoryMatch,
+	periodTextToHours,
+	recipeTotaltime,
 	rotateCircular,
 	srcToCoordinates,
-	longTextStripper,
-	partialCategoryMatch,
-	fetchGeoLocation,
+	ytVideoMeta,
 } from "./utilities";
 
-import { relative, dirname, basename, join, resolve } from "node:path";
+import { basename, dirname, join, relative, resolve } from "node:path";
 import { cwd } from "node:process";
 
 import { aggregatorVariables, reservedNames } from "../rjsconfig.json";
@@ -75,7 +74,6 @@ const {
 	productBaseID,
 	productPriceValidUntilNext,
 	producrVariableDelimiter,
-	domainAddress,
 } = aggregatorVariables;
 
 import { getCode } from "country-list";
