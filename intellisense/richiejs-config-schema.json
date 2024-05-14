@@ -2,15 +2,902 @@
 	"$schema": "http://json-schema.org/draft-07/schema#",
 	"type": "object",
 	"properties": {
-		"name": {
+		"domainAddress": {
 			"type": "string",
-			"description": "The name of the entry",
-			"markdownDescription": "The name of the entry. [See the documentation](https://example.com)",
+			"markdownDescription": "Your website domainAddress (cresteem.com) | [Guide Link](https://cresteem.com/opensource/richie-js)",
+			"default": "cresteem.com"
+		},
+		"timeFormat": {
+			"type": "string",
+			"markdownDescription": "Time format used in html | Follow luxon syntax - [link](https://moment.github.io/luxon/#/formatting?id=table-of-tokens) | [Guide Link](https://cresteem.com/opensource/richie-js)",
 			"enum": [
-				"option-1",
-				"option-2"
+				"yyyy-MM-dd hh:mm a",
+				"dd-MM-yyyy HH:MM",
+				"dd-MM-yyyy"
 			],
-			"default": "option-1"
+			"default": "yyyy-MM-dd hh:mm a"
+		},
+		"siteSearchBoxFieldName": {
+			"type": "string",
+			"markdownDescription": "'name' attribute's value of html elem which get query input `<input name='searchTerm'>` so 'searchTerm' | [Guide Link](https://cresteem.com/opensource/richie-js)",
+			"default": "searchTerm"
+		},
+		"reservedNames": {
+			"type": "object",
+			"properties": {
+				"aggregateRating": {
+					"type": "object",
+					"properties": {
+						"wrapper": {
+							"type": "string",
+							"markdownDescription": "Name for parent elem or container elem of aggregated rating | [Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "aggrate"
+						},
+						"aggregatedRatingValue": {
+							"type": "string",
+							"markdownDescription": "Name for elem that would have aggregated rating value `<p>Aggregated Rating: <span class='arv'> 4.5 </span> </p>` - so 'arv' | [Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "arv"
+						},
+						"maxRangeOfRating": {
+							"type": "string",
+							"markdownDescription": "Name for elem that would have max rate in scale `<p>Aggregated Rating: <span class='arv'> 4.5 </span> / <span class='mr'> 5 </span> </p>` - so 'mr' | [Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "mr"
+						},
+						"numberOfRatings": {
+							"type": "string",
+							"markdownDescription": "Name for elem that would have number of ratings `<p>Number Of User Ratings: <span class='rc'> 2001 </span> </p>` - so 'rc'[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rc"
+						}
+					}
+				},
+				"reviews": {
+					"type": "object",
+					"properties": {
+						"parentWrapper": {
+							"type": "string",
+							"markdownDescription": "Name for parent elem or container elem of reviews| [Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "reviews"
+						},
+						"childWrapper": {
+							"type": "string",
+							"markdownDescription": "Name of child wrapper elem which would have a user rating | [Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "urate"
+						},
+						"raterName": {
+							"type": "string",
+							"markdownDescription": "Name of elem which would have rater name `<p>Rater Name: <span class='raterO'> </span> </p>`[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rater"
+						},
+						"ratedValue": {
+							"type": "string",
+							"markdownDescription": "Name of elem which would have rating value | [Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rv"
+						},
+						"maxRateRange": {
+							"type": "string",
+							"markdownDescription": "Name of elem which would have max range in scale | [Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "mr"
+						},
+						"reviewPublishedOn": {
+							"type": "string",
+							"markdownDescription": "Name of elem which would have page or platform name which is published on[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rpOn"
+						}
+					}
+				},
+				"common": {
+					"type": "object",
+					"properties": {
+						"fallbackCurrency": {
+							"type": "string",
+							"markdownDescription": "Alpha code of currency 'INR'[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"enum": [
+								"USD",
+								"INR",
+								"EUR",
+								"GBP",
+								"AUD",
+								"CAD",
+								"CHF",
+								"CNY",
+								"HKD",
+								"JPY",
+								"KRW",
+								"MXN",
+								"NZD",
+								"SGD",
+								"SEK",
+								"NOK",
+								"DKK",
+								"RUB",
+								"BRL",
+								"TRY"
+							],
+							"default": "INR"
+						},
+						"publishedDate": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "pdt"
+						},
+						"modifiedDate": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "mdt"
+						},
+						"heroImage": {
+							"type": "string",
+							"markdownDescription": "Name for elem which has thumbnail image url | [Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "img"
+						},
+						"author": {
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "aname"
+								},
+								"url": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "aurl"
+								},
+								"jobTitle": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "ajob"
+								}
+							}
+						},
+						"publisher": {
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "pname"
+								},
+								"url": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "purl"
+								}
+							}
+						},
+						"authorAndPubPrefix": {
+							"type": "object",
+							"properties": {
+								"person": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "P"
+								},
+								"organisation": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "O"
+								}
+							}
+						},
+						"heroName": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "name"
+						},
+						"entityDescription": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "desc"
+						},
+						"keywords": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "kw"
+						},
+						"MO": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "mode"
+						},
+						"currencyDataVar": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "currency"
+						},
+						"heroCost": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "cost"
+						},
+						"cuisineType": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "csnt"
+						},
+						"heroLinkRef": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rlink"
+						},
+						"videoFrame": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "vframe"
+						}
+					}
+				},
+				"article": {
+					"type": "object",
+					"properties": {
+						"baseID": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rjs-article"
+						},
+						"articleType": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "articletype"
+						},
+						"authorNameStartwith": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "a"
+						},
+						"publisherNameStartwith": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "p"
+						}
+					}
+				},
+				"movie": {
+					"type": "object",
+					"properties": {
+						"baseID": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rjs-movie"
+						},
+						"director": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "dir"
+						}
+					}
+				},
+				"recipe": {
+					"type": "object",
+					"properties": {
+						"baseID": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rjs-recipe"
+						},
+						"preptime": {
+							"type": "object",
+							"properties": {
+								"hours": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "pth"
+								},
+								"minutes": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "ptm"
+								},
+								"hoursAndMinutes": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "pthm"
+								}
+							}
+						},
+						"cooktime": {
+							"type": "object",
+							"properties": {
+								"hours": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "cth"
+								},
+								"minutes": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "ctm"
+								},
+								"hoursAndMinutes": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "cthm"
+								}
+							}
+						},
+						"durationID": {
+							"type": "object",
+							"properties": {
+								"hours": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "h"
+								},
+								"minutes": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "m"
+								}
+							}
+						},
+						"serveCount": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "serves"
+						},
+						"recipeCategory": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "cat"
+						},
+						"nutritionInformations": {
+							"type": "object",
+							"properties": {
+								"wrapper": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "nutrition"
+								},
+								"calories": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "cal"
+								}
+							}
+						},
+						"ingredients": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "ingredient"
+						},
+						"instructions": {
+							"type": "object",
+							"properties": {
+								"wrapper": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "instructions"
+								},
+								"childwrapper": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "step"
+								},
+								"shortInstruction": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "short"
+								},
+								"longInstruction": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "long"
+								},
+								"image": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "simg"
+								}
+							}
+						}
+					}
+				},
+				"course": {
+					"type": "object",
+					"properties": {
+						"baseID": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rjs-course"
+						},
+						"language": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "lang"
+						},
+						"instructor": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "ins"
+						},
+						"duration": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "period"
+						},
+						"courseFrequency": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "freq"
+						},
+						"courseRepeatation": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rep"
+						}
+					}
+				},
+				"restaurant": {
+					"type": "object",
+					"properties": {
+						"baseID": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rjs-restaurant"
+						}
+					}
+				},
+				"events": {
+					"type": "object",
+					"properties": {
+						"baseID": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rjs-event"
+						},
+						"startFrom": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "from"
+						},
+						"endAt": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "end"
+						},
+						"status": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "sts"
+						}
+					}
+				},
+				"faqPage": {
+					"type": "object",
+					"properties": {
+						"baseID": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rjs-faq"
+						},
+						"question": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "question"
+						},
+						"answer": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "answer"
+						}
+					}
+				},
+				"video": {
+					"type": "object",
+					"properties": {
+						"baseID": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rjs-video"
+						},
+						"segmentsWrapper": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "index"
+						},
+						"startOffsetDataVar": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "offset"
+						}
+					}
+				},
+				"localBusiness": {
+					"type": "object",
+					"properties": {
+						"baseID": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rjs-lb"
+						},
+						"areaAvailablity": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "areaserves"
+						}
+					}
+				},
+				"organisation": {
+					"type": "object",
+					"properties": {
+						"baseID": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rjs-org"
+						},
+						"logo": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "logo"
+						},
+						"email": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "email"
+						},
+						"foundingYear": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "found"
+						},
+						"taxid": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "tid"
+						}
+					}
+				},
+				"product": {
+					"type": "object",
+					"properties": {
+						"baseID": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rjs-prod"
+						},
+						"productPriceValidUntilNext": {
+							"type": "number",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": 30
+						},
+						"productGroupIDHashLength": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "128"
+						},
+						"producrVariableDelimiter": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"enum": [
+								",",
+								"|",
+								"-"
+							],
+							"default": "|"
+						},
+						"skuID": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "sku"
+						},
+						"mpnCode": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "mpn"
+						},
+						"brand": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "brand"
+						},
+						"variesByDataVar": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "var"
+						},
+						"offer": {
+							"type": "object",
+							"properties": {
+								"shippingDetails": {
+									"type": "object",
+									"properties": {
+										"deliveryCost": {
+											"type": "string",
+											"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+											"default": "delcost"
+										},
+										"deliveryOver": {
+											"type": "string",
+											"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+											"default": "delover"
+										},
+										"processingTime": {
+											"type": "string",
+											"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+											"default": "ptime"
+										},
+										"transitTime": {
+											"type": "string",
+											"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+											"default": "ttime"
+										},
+										"rangeDataVar": {
+											"type": "string",
+											"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+											"default": "range"
+										}
+									}
+								},
+								"returnPolicy": {
+									"type": "object",
+									"properties": {
+										"returnWithin": {
+											"type": "string",
+											"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+											"default": "returnin"
+										},
+										"returnFees": {
+											"type": "string",
+											"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+											"default": "returnfee"
+										}
+									}
+								},
+								"availability": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "avail"
+								},
+								"itemCondition": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "cond"
+								}
+							}
+						},
+						"varientParameterName": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "var"
+						},
+						"fallbacks": {
+							"type": "object",
+							"properties": {
+								"deliveryOver": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "india"
+								}
+							}
+						}
+					}
+				},
+				"profilePage": {
+					"type": "object",
+					"properties": {
+						"baseID": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rjs-pp"
+						},
+						"altName": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "altname"
+						},
+						"uniquePlatformID": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "uid"
+						},
+						"authorWorks": {
+							"type": "object",
+							"properties": {
+								"wrapper": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "awork"
+								},
+								"headline": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "head"
+								},
+								"thumbnail": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "timg"
+								},
+								"publishedOn": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "pon"
+								},
+								"url": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "url"
+								}
+							}
+						},
+						"authorActionCounts": {
+							"type": "object",
+							"properties": {
+								"written": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "aposts"
+								},
+								"liked": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "aliked"
+								},
+								"follows": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "afollows"
+								},
+								"shared": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "ashared"
+								}
+							}
+						},
+						"audienceActionCounts": {
+							"type": "object",
+							"properties": {
+								"followers": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "followers"
+								},
+								"likes": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "likes"
+								},
+								"mutualConnections": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "bicon"
+								}
+							}
+						}
+					}
+				},
+				"softwareApp": {
+					"type": "object",
+					"properties": {
+						"baseID": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "rjs-sapp"
+						},
+						"operatingSystem": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "os"
+						},
+						"OSSeperator": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"enum": [
+								"-",
+								"|",
+								","
+							],
+							"default": ","
+						},
+						"category": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "cat"
+						}
+					}
+				},
+				"businessEntity": {
+					"type": "object",
+					"properties": {
+						"location": {
+							"type": "object",
+							"properties": {
+								"wrapper": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "loc"
+								},
+								"physicalLocationName": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "venue"
+								},
+								"virtualLocation": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "vlurl"
+								},
+								"street": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "stl"
+								},
+								"city": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "ct"
+								},
+								"state": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "st"
+								},
+								"country": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "ctry"
+								},
+								"pincode": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "pc"
+								}
+							}
+						},
+						"telephone": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "tel"
+						},
+						"reservationDataVar": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "reserve"
+						},
+						"workHours": {
+							"type": "object",
+							"properties": {
+								"wrapper": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "workhours"
+								},
+								"dayRange": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "wdr"
+								},
+								"dayAlone": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "wd"
+								},
+								"timein24": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "HR"
+								},
+								"timein12": {
+									"type": "string",
+									"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+									"default": "hr"
+								}
+							}
+						},
+						"menuLink": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "menu"
+						},
+						"mapFrame": {
+							"type": "string",
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)",
+							"default": "map"
+						}
+					}
+				}
+			}
 		}
 	}
 }
