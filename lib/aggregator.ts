@@ -1133,6 +1133,38 @@ function commonBusinessEntityThings(
 			latitude: latitude,
 			longitude: longitude,
 		};
+	} else if (type === reservedNames.common.keywords) {
+		const keywords: string[] = new Array();
+		$(elem)
+			.children()
+			.each((_index: number, keyword: Element) => {
+				keywords.push($(keyword).html()?.trim() ?? "");
+			});
+
+		businessEntityMeta.keywords = keywords.join(", ");
+	} else if (type === reservedNames.localBusiness.areaAvailablity) {
+		const areaAvailablity: string[] = new Array();
+		const hasChild: boolean = $(elem).children().length > 0;
+
+		if (hasChild) {
+			$(elem)
+				.children()
+				.each((_index: number, areaElem: Element) => {
+					let availablearea: string = $(areaElem)
+						.html()
+						?.trim() as string;
+
+					//remove special chars to retain only alphanumeric text
+					availablearea = availablearea?.replace(/[^a-zA-Z0-9]/g, "");
+					areaAvailablity.push(availablearea);
+				});
+		} else {
+			let availablearea: string = $(elem).html()?.trim() as string;
+			//remove special chars to retain only alphanumeric text
+			availablearea = availablearea?.replace(/[^a-zA-Z0-9]/g, "");
+			areaAvailablity.push(availablearea);
+		}
+		businessEntityMeta.areaServed = areaAvailablity;
 	}
 	return businessEntityMeta;
 }
@@ -1549,47 +1581,14 @@ export async function localBusiness(
 			localBusinessMetas[id].url = url;
 		}
 
-		if (type === reservedNames.common.keywords) {
-			const keywords: string[] = new Array();
-			$(elem)
-				.children()
-				.each((_index: number, keyword: Element) => {
-					keywords.push($(keyword).html()?.trim() ?? "");
-				});
+		localBusinessMetas[id] = commonBusinessEntityThings(
+			localBusinessMetas[id],
+			id,
+			type,
+			elem,
+			$,
+		) as LocalBusinessOptions;
 
-			localBusinessMetas[id].keywords = keywords.join(", ");
-		} else if (type === reservedNames.localBusiness.areaAvailablity) {
-			const areaAvailablity: string[] = new Array();
-			const hasChild: boolean = $(elem).children().length > 0;
-
-			if (hasChild) {
-				$(elem)
-					.children()
-					.each((_index: number, areaElem: Element) => {
-						let availablearea: string = $(areaElem)
-							.html()
-							?.trim() as string;
-
-						//remove special chars to retain only alphanumeric text
-						availablearea = availablearea?.replace(/[^a-zA-Z0-9]/g, "");
-						areaAvailablity.push(availablearea);
-					});
-			} else {
-				let availablearea: string = $(elem).html()?.trim() as string;
-				//remove special chars to retain only alphanumeric text
-				availablearea = availablearea?.replace(/[^a-zA-Z0-9]/g, "");
-				areaAvailablity.push(availablearea);
-			}
-			localBusinessMetas[id].areaServed = areaAvailablity;
-		} else {
-			localBusinessMetas[id] = commonBusinessEntityThings(
-				localBusinessMetas[id],
-				id,
-				type,
-				elem,
-				$,
-			) as LocalBusinessOptions;
-		}
 	});
 
 	// Use Promise.all to await all asynchronous operations

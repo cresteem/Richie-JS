@@ -429,7 +429,7 @@ export function makeSiteSearchBox(
 }
 
 async function richie(): Promise<void> {
-	const filepath = "test-sample/Sitesearch/searchpage.html";
+	const filepath = "test-sample/localbusiness.html";
 	const destinationFile = join(
 		process.cwd(),
 		"outputs",
@@ -439,7 +439,7 @@ async function richie(): Promise<void> {
 	const source = await readFile(filepath, { encoding: "utf8" });
 
 	return new Promise((resolve, reject) => {
-		makeSiteSearchBox(filepath, source, destinationFile)
+		makeLocalBusiness(filepath, source, destinationFile)
 			.then(() => {
 				resolve();
 			})
