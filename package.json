@@ -6,7 +6,7 @@
 		"require": "./dist/richie.js"
 	},
 	"description": "Rich Result Generator",
-	"version": "0.9.0",
+	"version": "1.0.0",
 	"main": "./dist/richie.js",
 	"types": "./dist/types/",
 	"files": [

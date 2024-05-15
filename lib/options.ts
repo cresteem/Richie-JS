@@ -521,3 +521,60 @@ export interface ProductPageReturns {
 	product: ProductOptions[];
 	variesBy: string[];
 }
+
+/* available richie */
+export type richies =
+	| "article"
+	| "breadcrumb"
+	| "crecipe"
+	| "cmovie"
+	| "crestaurant"
+	| "ccourse"
+	| "recipe"
+	| "movie"
+	| "restaurant"
+	| "course"
+	| "event"
+	| "faq"
+	| "video"
+	| "localbusiness"
+	| "organization"
+	| "product"
+	| "productwv"
+	| "profile"
+	| "searchbox"
+	| "software";
+
+export interface richieOPS {
+	aggregator: Function;
+	serializer: Function;
+}
+
+//groups by aggregator params
+//(A) i-source
+export const richieGroupA: richies[] = [
+	"article",
+	"faq",
+	"software",
+	"video",
+	"profile",
+];
+
+//(B) i-source, ii-HTMLPath
+export const richieGroupB: richies[] = [
+	"movie",
+	"cmovie",
+	"recipe",
+	"crecipe",
+	"course",
+	"ccourse",
+	"restaurant",
+	"crestaurant",
+	"localbusiness",
+	"organization",
+	"event",
+	"product",
+];
+
+//(C) i-HTMLPath
+export const richieGroupC: richies[] = ["breadcrumb", "searchbox"];

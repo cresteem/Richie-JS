@@ -1,6 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { join, basename } from "node:path";
-
+import { basename } from "path";
 import * as aggregator from "./lib/aggregator";
 import {
 	serializeArticle,
@@ -26,427 +25,144 @@ import {
 } from "./lib/serializer";
 
 import { createJsonLD, writeOutput } from "./lib/utilities";
+import {
+	richieGroupA,
+	richieGroupB,
+	richieGroupC,
+	richieOPS,
+	richies,
+} from "./lib/options";
 
-export function makeArticle(
-	source: string,
-	destinationFile: string,
+const functionMap: Record<richies, richieOPS> = {
+	article: {
+		aggregator: aggregator.article,
+		serializer: serializeArticle,
+	},
+	breadcrumb: {
+		aggregator: aggregator.breadCrumb,
+		serializer: serializeBreadCrumb,
+	},
+	crecipe: {
+		aggregator: aggregator.recipe,
+		serializer: serializeRecipeCarousel,
+	},
+	cmovie: {
+		aggregator: aggregator.movie,
+		serializer: serializeMovieCarousel,
+	},
+	crestaurant: {
+		aggregator: aggregator.restaurant,
+		serializer: serializeRestaurantCarousel,
+	},
+	ccourse: {
+		aggregator: aggregator.course,
+		serializer: serializeCourseCarousel,
+	},
+	recipe: {
+		aggregator: aggregator.recipe,
+		serializer: serializeRecipe,
+	},
+	movie: {
+		aggregator: aggregator.movie,
+		serializer: serializeMovie,
+	},
+	restaurant: {
+		aggregator: aggregator.restaurant,
+		serializer: serializeRestaurant,
+	},
+	course: {
+		aggregator: aggregator.course,
+		serializer: serializeCourse,
+	},
+	event: {
+		aggregator: aggregator.eventsPage,
+		serializer: serializeEventsPage,
+	},
+	faq: {
+		aggregator: aggregator.FAQ,
+		serializer: serializeFAQ,
+	},
+	video: {
+		aggregator: aggregator.video,
+		serializer: serializeVideo,
+	},
+	localbusiness: {
+		aggregator: aggregator.localBusiness,
+		serializer: serializeLocalBusiness,
+	},
+	organization: {
+		aggregator: aggregator.organisation,
+		serializer: serializeOrganisation,
+	},
+	product: {
+		aggregator: aggregator.productPage,
+		serializer: serializeProductPage,
+	},
+	productwv: {
+		aggregator: aggregator.productPage,
+		serializer: serializeproductWithVarientPage,
+	},
+	profile: {
+		aggregator: aggregator.profilePage,
+		serializer: serializeProfilePage,
+	},
+	searchbox: {
+		aggregator: () => {
+			console.log("no aggregation");
+		},
+		serializer: serializeSiteSearchBox,
+	},
+	software: {
+		aggregator: aggregator.softwareApp,
+		serializer: serializeSoftwareApp,
+	},
+};
+
+export async function richie(
+	richieName: richies,
+	filepath: string,
+	destinationPath: string = "",
 ): Promise<void> {
-	const aggregatedData = aggregator.article(source);
-	const serializedData = serializeArticle(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
+	const destinationFile: string =
+		!!destinationPath ? destinationPath : filepath;
 
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
+	const source: string = await readFile(filepath, { encoding: "utf8" });
+
+	//standardize parameters
+	const aggregatorParams: string[] | boolean =
+		richieGroupA.includes(richieName) ? [source]
+		: richieGroupB.includes(richieName) ? [source, filepath]
+		: richieGroupC.includes(richieName) ? [filepath]
+		: false;
+
+	return new Promise(async (resolve, reject) => {
+		if (!aggregatorParams) {
+			reject(new Error("Unsupported Richie name"));
+		} else {
+			const aggregator: Function = functionMap[richieName].aggregator;
+			const serializer: Function = functionMap[richieName].serializer;
+
+			const aggregatedData = await aggregator(...aggregatorParams);
+			const serializedData = serializer(aggregatedData);
+			const richResultSnippet = createJsonLD(serializedData);
+
+			writeOutput(source, destinationFile, richResultSnippet)
+				.then(() => {
+					resolve();
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		}
 	});
 }
 
-export function makeBreadcrumb(
-	htmlPath: string,
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const aggregatedData = aggregator.breadCrumb(htmlPath);
-	const serializedData = serializeBreadCrumb(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
+export async function testRichie(): Promise<void> {
+	const richieName: richies = "article";
+	const filepath = "test-sample/article.html";
+	const destinationFile = "./outputs/" + "Test_" + basename(filepath);
 
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
+	await richie(richieName, filepath, destinationFile);
 }
 
-export function makeMovie(
-	htmlPath: string,
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const aggregatedData = aggregator.movie(source, htmlPath);
-	const serializedData = serializeMovie(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-export function makeMovieCarousel(
-	htmlPath: string,
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const aggregatedData = aggregator.movie(source, htmlPath);
-	const serializedData = serializeMovieCarousel(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-export async function makeRecipe(
-	htmlPath: string,
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const aggregatedData = await aggregator.recipe(source, htmlPath);
-	const serializedData = serializeRecipe(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-export async function makeRecipeCarousel(
-	htmlPath: string,
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const aggregatedData = await aggregator.recipe(source, htmlPath);
-	const serializedData = serializeRecipeCarousel(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-export function makeCourse(
-	htmlPath: string,
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const aggregatedData = aggregator.course(source, htmlPath);
-	const serializedData = serializeCourse(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-export function makeCourseCarousel(
-	htmlPath: string,
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const aggregatedData = aggregator.course(source, htmlPath);
-	const serializedData = serializeCourseCarousel(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-export async function makeRestaurant(
-	htmlPath: string,
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const aggregatedData = await aggregator.restaurant(source, htmlPath);
-	const serializedData = serializeRestaurant(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-export async function makeRestaurantCarousel(
-	htmlPath: string,
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const aggregatedData = await aggregator.restaurant(source, htmlPath);
-	const serializedData = serializeRestaurantCarousel(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-export function makeFAQ(
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const aggregatedData = aggregator.FAQ(source);
-	const serializedData = serializeFAQ(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-export function makeSoftwareApp(
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const aggregatedData = aggregator.softwareApp(source);
-	const serializedData = serializeSoftwareApp(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-export async function makeVideo(
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const aggregatedData = await aggregator.video(source);
-	const serializedData = serializeVideo(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-export async function makeLocalBusiness(
-	htmlPath: string,
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const aggregatedData = await aggregator.localBusiness(source, htmlPath);
-	const serializedData = serializeLocalBusiness(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-export function makeOrganisation(
-	htmlPath: string,
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const aggregatedData = aggregator.organisation(source, htmlPath);
-	const serializedData = serializeOrganisation(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-export function makeProfilePage(
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const aggregatedData = aggregator.profilePage(source);
-	const serializedData = serializeProfilePage(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-export async function makeEvents(
-	htmlPath: string,
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const aggregatedData = await aggregator.eventsPage(source, htmlPath);
-	const serializedData = serializeEventsPage(aggregatedData);
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-export async function makeProduct(
-	htmlPath: string,
-	source: string,
-	destinationFile: string,
-	_isProductsWithVar: boolean = false,
-): Promise<void> {
-	const aggregatedData = await aggregator.productPage(source, htmlPath);
-
-	const serializedData =
-		_isProductsWithVar ?
-			serializeproductWithVarientPage(
-				aggregatedData.product,
-				aggregatedData.variesBy,
-			)
-			: serializeProductPage(aggregatedData.product);
-
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-export function makeProductWithVar(
-	htmlPath: string,
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const isProductsWithVar: boolean = true;
-	return new Promise((resolve, reject) => {
-		makeProduct(htmlPath, source, destinationFile, isProductsWithVar)
-			.then(() => {
-				resolve();
-			})
-			.catch((err) => {
-				reject(err);
-			});
-	});
-}
-
-export function makeSiteSearchBox(
-	htmlPath: string,
-	source: string,
-	destinationFile: string,
-): Promise<void> {
-	const serializedData = serializeSiteSearchBox(htmlPath);
-
-	const richResultSnippet = createJsonLD(serializedData);
-
-	return new Promise((resolve, reject) => {
-		writeOutput(source, destinationFile, richResultSnippet)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-async function richie(): Promise<void> {
-	const filepath = "test-sample/localbusiness.html";
-	const destinationFile = join(
-		process.cwd(),
-		"outputs",
-		"Test_" + basename(filepath),
-	);
-
-	const source = await readFile(filepath, { encoding: "utf8" });
-
-	return new Promise((resolve, reject) => {
-		makeLocalBusiness(filepath, source, destinationFile)
-			.then(() => {
-				resolve();
-			})
-			.catch((error) => {
-				reject(error);
-			});
-	});
-}
-
-richie();
+testRichie();
