@@ -574,6 +574,7 @@ export const richieGroupB: richies[] = [
 	"organization",
 	"event",
 	"product",
+	"productwv",
 ];
 
 //(C) i-HTMLPath

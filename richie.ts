@@ -143,7 +143,15 @@ export async function richie(
 			const serializer: Function = functionMap[richieName].serializer;
 
 			const aggregatedData = await aggregator(...aggregatorParams);
-			const serializedData = serializer(aggregatedData);
+
+			const serializerParams: any[] =
+				richieName === "productwv" ?
+					[...Object.values(aggregatedData)] // [productMeta,variesBy]
+				: richieName === "product" ?
+					[Object.values(aggregatedData)[0]] // [productMeta]
+				:	[aggregatedData];
+
+			const serializedData = serializer(...serializerParams);
 			const richResultSnippet = createJsonLD(serializedData);
 
 			writeOutput(source, destinationFile, richResultSnippet)
@@ -158,8 +166,8 @@ export async function richie(
 }
 
 export async function testRichie(): Promise<void> {
-	const richieName: richies = "article";
-	const filepath = "test-sample/article.html";
+	const richieName: richies = "organization";
+	const filepath = "test-sample/org.html";
 	const destinationFile = "./outputs/" + "Test_" + basename(filepath);
 
 	await richie(richieName, filepath, destinationFile);
