@@ -3,7 +3,7 @@ import { rmSync, existsSync } from "fs";
 import { mkdirpSync } from "mkdirp";
 import { basename, join } from "path";
 import { richies, testProps } from "../lib/options";
-import richie from "../richie";
+import { richie } from "../richie";
 
 const opfolder = "./test/outputs";
 let iterN = 0;

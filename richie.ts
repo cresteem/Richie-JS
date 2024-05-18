@@ -116,7 +116,7 @@ const functionMap: Record<richies, richieOPS> = {
 	},
 };
 
-export default async function richie(
+export async function richie(
 	richieName: richies,
 	filepath: string,
 	destinationPath: string = "",

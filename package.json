@@ -3,12 +3,12 @@
 	"displayName": "Richie JS",
 	"exports": {
 		"import": "./dist/richie.js",
-		"require": "./dist/richie.js"
+		"require": "./dist/richie.js",
+		"types": "./dist/types/richie.d.ts"
 	},
 	"description": "Rich Result Generator",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"main": "./dist/richie.js",
-	"types": "./dist/types/",
 	"files": [
 		"dist",
 		"intellisense"
@@ -16,28 +16,22 @@
 	"directories": {
 		"lib": "./dist/lib"
 	},
-	"dist": {
-		"shasum": "not added"
-	},
-	"icon": "not added",
 	"engines": {
 		"node": ">=21.7.3",
 		"npm": ">=10.5.0"
 	},
-	"engineStrict": false,
 	"preferGlobal": true,
 	"bin": {
 		"rjs": "./dist/lib/schemaWriter.js"
 	},
 	"scripts": {
 		"dev": "rimraf dist && tsc -p tscdev.json",
-		"build": "rimraf dist && tsc -b",
-		"watch": "tsc --watch",
-		"br": "cls && yarn dev && node ./dist/richie.js",
+		"dr": "cls && yarn dev && node ./dist/richie.js",
 		"rp": "node ./dist/richie.js",
-		"clean": "cls && rimraf dist",
-		"bt": "cls && yarn dev && jest",
 		"test": "jest",
+		"build": "cls && rimraf dist && tsc -p tsconfig.json",
+		"watch": "tsc --watch",
+		"clean": "cls && rimraf dist",
 		"deploy": "yarn build && yarn publish --access public && git push"
 	},
 	"repository": {
