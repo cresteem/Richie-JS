@@ -26,12 +26,11 @@ if (projectHasConfig) {
 		}
 		process.exit(1);
 	}
-} else {
-	//load default configuration
-	defaultConfig = JSON.parse(
-		readFileSync(join(__dirname, CONFIG_FILE_NAME), { encoding: "utf8" }),
-	);
 }
+//load default configuration
+defaultConfig = JSON.parse(
+	readFileSync(join(__dirname, CONFIG_FILE_NAME), { encoding: "utf8" }),
+);
 
 const configurations: configurationOptions = {
 	...defaultConfig,
