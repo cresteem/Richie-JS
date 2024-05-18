@@ -59,7 +59,6 @@ import { cwd } from "node:process";
 
 import { reservedNames, timeFormat } from "../rjsconfig.json";
 
-
 import { getCode } from "country-list";
 import { stat } from "node:fs/promises";
 
@@ -132,7 +131,7 @@ export function article(htmlString: string): articleOptions {
 		const value =
 			type === reservedNames.common.author.url ?
 				$(elem).attr("href")
-				: $(elem).html();
+			:	$(elem).html();
 
 		if (type.startsWith(reservedNames.common.author.name)) {
 			authorMetaData[id].name = value;
@@ -170,7 +169,7 @@ export function article(htmlString: string): articleOptions {
 		const value =
 			type === reservedNames.common.publisher.url ?
 				$(elem).attr("href")
-				: $(elem).html();
+			:	$(elem).html();
 		if (type === reservedNames.common.publisher.name) {
 			publisherMetaData[id].name = value;
 		} else if (type === reservedNames.common.publisher.url) {
@@ -363,8 +362,8 @@ export function course(
 			if (!availableModeType.includes(mode)) {
 				throw new Error(
 					"given mode in HTML is not supported.\nOnly these are supported by Richie JS\n[ " +
-					availableModeType.join(", ") +
-					" ]",
+						availableModeType.join(", ") +
+						" ]",
 				);
 			}
 
@@ -438,7 +437,7 @@ export function movie(
 			//adding url deeplink
 			movieMetas[id].url = new URL(
 				relative(cwd(), htmlPath).replace(".html", "") +
-				`#${movieBaseID}-${id}`,
+					`#${movieBaseID}-${id}`,
 				httpsDomainBase,
 			).href;
 
@@ -1150,9 +1149,7 @@ function commonBusinessEntityThings(
 			$(elem)
 				.children()
 				.each((_index: number, areaElem: Element) => {
-					let availablearea: string = $(areaElem)
-						.html()
-						?.trim() as string;
+					let availablearea: string = $(areaElem).html()?.trim() as string;
 
 					//remove special chars to retain only alphanumeric text
 					availablearea = availablearea?.replace(/[^a-zA-Z0-9]/g, "");
@@ -1265,7 +1262,7 @@ export async function eventsPage(
 			} catch {
 				console.log(
 					"Error While Parsing Data String\n DateTime format should follow this " +
-					timeFormat,
+						timeFormat,
 				);
 				process.exit(1);
 			}
@@ -1275,7 +1272,7 @@ export async function eventsPage(
 			} catch {
 				console.log(
 					"Error While Parsing Data String\n DateTime format should follow this " +
-					timeFormat,
+						timeFormat,
 				);
 				process.exit(1);
 			}
@@ -1378,7 +1375,7 @@ export async function eventsPage(
 				const venue: string = $(elem)
 					.find(
 						"." +
-						reservedNames.businessEntity.location.physicalLocationName,
+							reservedNames.businessEntity.location.physicalLocationName,
 					)
 					.html()
 					?.trim() as string;
@@ -1439,7 +1436,7 @@ export async function eventsPage(
 						reservedNames.common.authorAndPubPrefix.organisation?.toLowerCase()
 					) ?
 						"Organization"
-						: "Person",
+					:	"Person",
 				name: innerText,
 				url: $(elem).attr("href") ?? "no url found",
 			};
@@ -1478,7 +1475,6 @@ export function FAQ(htmlString: string): FAQMeta[] {
 
 	return faqsMetaData;
 }
-
 
 export async function video(
 	htmlString: string,
@@ -1588,7 +1584,6 @@ export async function localBusiness(
 			elem,
 			$,
 		) as LocalBusinessOptions;
-
 	});
 
 	// Use Promise.all to await all asynchronous operations
@@ -1599,7 +1594,6 @@ export async function localBusiness(
 
 	return localBusinessMetaData;
 }
-
 
 export function organisation(
 	htmlString: string,
@@ -1695,7 +1689,8 @@ export async function productPage(
 	const productBaseID = reservedNames.product.baseID;
 	const productMetas: Record<string, ProductOptions> = {};
 
-	const validitySecs: number = reservedNames.product.productPriceValidUntilNext * 24 * 60 * 60;
+	const validitySecs: number =
+		reservedNames.product.productPriceValidUntilNext * 24 * 60 * 60;
 
 	const validTill: string = new Date(
 		(await stat(resolve(htmlPath))).mtimeMs + validitySecs,
@@ -1758,8 +1753,8 @@ export async function productPage(
 
 							const gender: Gender =
 								rawGender === "male" ? "MALE"
-									: rawGender === "female" ? "FEMALE"
-										: "UNISEX";
+								: rawGender === "female" ? "FEMALE"
+								: "UNISEX";
 
 							productMetas[id].suggestedGender = gender;
 
@@ -1838,9 +1833,9 @@ export async function productPage(
 
 				productMetas[id].offer.itemCondition =
 					itemCondition === "new" ? "NewCondition"
-						: itemCondition === "used" ? "UsedCondition"
-							: itemCondition === "refurb" ? "RefurbishedCondition"
-								: "Not Mentioned";
+					: itemCondition === "used" ? "UsedCondition"
+					: itemCondition === "refurb" ? "RefurbishedCondition"
+					: "Not Mentioned";
 			} else if (
 				type === reservedNames.product.offer.shippingDetails.deliveryCost
 			) {
@@ -1877,11 +1872,11 @@ export async function productPage(
 					returnPolicyCategory:
 						returnWithin > 0 ?
 							"MerchantReturnFiniteReturnWindow"
-							: "MerchantReturnNotPermitted",
+						:	"MerchantReturnNotPermitted",
 					returnFees:
 						returnFees === "0" || returnFees === "free" ?
 							"FreeReturn"
-							: "ReturnFeesCustomerResponsibility",
+						:	"ReturnFeesCustomerResponsibility",
 				} as MerchantReturnPolicy;
 			} else if (
 				type === reservedNames.product.offer.shippingDetails.processingTime

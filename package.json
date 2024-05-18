@@ -34,7 +34,9 @@
 		"watch": "tsc --watch",
 		"br": "cls && yarn dev && node ./dist/richie.js",
 		"rp": "node ./dist/richie.js",
-		"clean": "cls && rimraf dist"
+		"clean": "cls && rimraf dist",
+		"bt": "cls && yarn dev && jest",
+		"rt": "cls && node ./dist/test/runall.js"
 	},
 	"repository": {
 		"type": "git",
@@ -66,10 +68,17 @@
 		"puppeteer": "^22.3.0"
 	},
 	"devDependencies": {
+		"@babel/core": "^7.24.5",
+		"@babel/preset-env": "^7.24.5",
+		"@babel/preset-typescript": "^7.24.1",
 		"@types/country-list": "^2.1.4",
+		"@types/jest": "^29.5.12",
 		"@types/luxon": "^3.4.2",
 		"@typescript-eslint/eslint-plugin": "^7.7.0",
+		"babel-jest": "^29.7.0",
+		"jest": "^29.7.0",
 		"rimraf": "^5.0.5",
+		"ts-node": "^10.9.2",
 		"typescript": "^5.4.5"
 	}
 }

@@ -107,9 +107,7 @@ const functionMap: Record<richies, richieOPS> = {
 		serializer: serializeProfilePage,
 	},
 	searchbox: {
-		aggregator: () => {
-			console.log("no aggregation");
-		},
+		aggregator: (htmlPath: string): string => htmlPath,
 		serializer: serializeSiteSearchBox,
 	},
 	software: {
@@ -118,7 +116,7 @@ const functionMap: Record<richies, richieOPS> = {
 	},
 };
 
-export async function richie(
+export default async function richie(
 	richieName: richies,
 	filepath: string,
 	destinationPath: string = "",
@@ -164,13 +162,3 @@ export async function richie(
 		}
 	});
 }
-
-export async function testRichie(): Promise<void> {
-	const richieName: richies = "organization";
-	const filepath = "test-sample/org.html";
-	const destinationFile = "./outputs/" + "Test_" + basename(filepath);
-
-	await richie(richieName, filepath, destinationFile);
-}
-
-testRichie();

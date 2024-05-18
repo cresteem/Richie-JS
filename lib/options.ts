@@ -579,3 +579,8 @@ export const richieGroupB: richies[] = [
 
 //(C) i-HTMLPath
 export const richieGroupC: richies[] = ["breadcrumb", "searchbox"];
+
+export interface testProps {
+	testfile: string;
+	destFile: string;
+}
