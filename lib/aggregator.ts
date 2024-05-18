@@ -57,7 +57,9 @@ import {
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { cwd } from "node:process";
 
-import { reservedNames, timeFormat } from "../rjsconfig.json";
+import configurations from "../configLoader";
+
+const { reservedNames, timeFormat } = configurations;
 
 import { getCode } from "country-list";
 import { stat } from "node:fs/promises";

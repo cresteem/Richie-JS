@@ -1,9 +1,9 @@
-import { DateTime } from "luxon";
 import axios from "axios";
 import { CheerioAPI, Element, load } from "cheerio";
-import puppeteer from "puppeteer";
+import { DateTime } from "luxon";
 import { createHash, randomBytes } from "node:crypto";
-import { domainAddress, timeFormat, reservedNames } from "../rjsconfig.json";
+import puppeteer from "puppeteer";
+import configurations from "../configLoader";
 import {
 	ApplicationCategory,
 	GeoOptions,
@@ -13,12 +13,12 @@ import {
 	breadCrumbMeta,
 	videoObjectOptions,
 } from "./options";
+const { domainAddress, reservedNames, timeFormat } = configurations;
 
 import { format } from "@prettier/sync";
-import { writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
+import { writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
-
 
 export let httpsDomainBase: string = `https://www.${domainAddress}/`;
 
@@ -166,9 +166,9 @@ export function extractTime(timeRange: string, is24: boolean): string[] {
 				isAM ?
 					hh === "12" ?
 						"00"
-						: hh
-					: hh !== "12" ? `${12 + Number(hh)}`
-						: hh;
+					:	hh
+				: hh !== "12" ? `${12 + Number(hh)}`
+				: hh;
 
 			time = `${hh}:${mm}`;
 			return time;
@@ -198,7 +198,9 @@ export function generateProductGroupID(
 		.concat(concatenatedID.slice(randomPosition));
 
 	// Create SHAKE256 hash
-	const shake256 = createHash("shake" + reservedNames.product.productGroupIDHashLength);
+	const shake256 = createHash(
+		"shake" + reservedNames.product.productGroupIDHashLength,
+	);
 
 	// Update hash with data
 	shake256.update(dataWithSalt, "utf8");
@@ -311,7 +313,7 @@ export function generateMeta(
 	listItem.item = new URL(
 		preserveBasename ?
 			currentUrl.replace("html", "")
-			: dirname(currentUrl),
+		:	dirname(currentUrl),
 		httpsDomainBase,
 	).href;
 
@@ -386,9 +388,13 @@ export function recipeTotaltime(
 		) {
 			time.hours = parseInt(timeMatch?.[0] ?? "0");
 			time.minutes = parseInt(timeMatch?.[1] ?? "0");
-		} else if (isoDuration.includes(reservedNames.recipe.durationID.hours)) {
+		} else if (
+			isoDuration.includes(reservedNames.recipe.durationID.hours)
+		) {
 			time.hours = parseInt(timeMatch?.[0] ?? "0");
-		} else if (isoDuration.includes(reservedNames.recipe.durationID.minutes)) {
+		} else if (
+			isoDuration.includes(reservedNames.recipe.durationID.minutes)
+		) {
 			time.minutes = parseInt(timeMatch?.[0] ?? "0");
 		}
 		return time;
@@ -422,11 +428,12 @@ export function periodTextToHours(durationAndPeriodType: string): string {
 		.match(/[a-zA-Z]+/)?.[0]
 		.toLowerCase() as string;
 
-	let duration = `PT${durationPeriodType.includes("month") ? parsedDurationInDigit * 30 * 24
+	let duration = `PT${
+		durationPeriodType.includes("month") ? parsedDurationInDigit * 30 * 24
 		: durationPeriodType.includes("week") ? parsedDurationInDigit * 7 * 24
-			: durationPeriodType.includes("day") ? parsedDurationInDigit * 1 * 24
-				: parsedDurationInDigit
-		}H`;
+		: durationPeriodType.includes("day") ? parsedDurationInDigit * 1 * 24
+		: parsedDurationInDigit
+	}H`;
 
 	return duration;
 }

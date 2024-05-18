@@ -2,7 +2,7 @@
 import { existsSync } from "fs";
 import { copyFile, readFile, writeFile } from "fs/promises";
 import { mkdirpSync } from "mkdirp";
-import { dirname, join, basename } from "path";
+import { basename, dirname, join } from "path";
 
 const defaultConfigPaths: Record<string, string> = {
 	win32: `${process.env.APPDATA}/Code/User/settings.json`,
@@ -130,20 +130,19 @@ function writeSettings(
 			basename(sourceSchema),
 		).replaceAll("\\", "/");
 
-		let schemaDestPath = mode === "ws" ?
-			"./.vscode/richiejs-config-schema.json"
-			: userSchemaPath;
+		let schemaDestPath =
+			mode === "ws" ?
+				"./.vscode/richiejs-config-schema.json"
+			:	userSchemaPath;
 
-
-		let schemaPath: string = mode === 'user' && process.platform === 'win32'
-			? schemaDestPath.slice(3) //remove drive letter
-			: schemaDestPath;
-
-
+		let schemaPath: string =
+			mode === "user" && process.platform === "win32" ?
+				schemaDestPath.slice(3) //remove drive letter
+			:	schemaDestPath;
 
 		const schemaConfigSnippet: Record<string, any> = {
 			fileMatch: ["rjsconfig.json"],
-			/* schema file url */ url: schemaPath
+			/* schema file url */ url: schemaPath,
 		};
 
 		if (existsSync(configPath) && !forceCreate) {
@@ -202,8 +201,8 @@ function main(): Promise<void> {
 
 	const validParam: boolean | string =
 		mode === "user" ? userSettings
-			: mode === "ws" ? workspaceSettings
-				: false;
+		: mode === "ws" ? workspaceSettings
+		: false;
 
 	return new Promise((resolve, reject) => {
 		if (validParam) {

@@ -34,9 +34,10 @@ import {
 	httpsDomainBase,
 } from "./utilities";
 
-import { siteSearchBoxFieldName } from "../rjsconfig.json";
+import configurations from "../configLoader";
+const { siteSearchBoxFieldName } = configurations;
 
-import { relative, basename, join, dirname } from "path";
+import { basename, dirname, join, relative } from "path";
 
 function aggregateRatingSerializer(
 	aggregateRating: aggregateRatingOptions,

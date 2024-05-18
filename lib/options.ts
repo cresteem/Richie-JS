@@ -584,3 +584,213 @@ export interface testProps {
 	testfile: string;
 	destFile: string;
 }
+
+export interface configurationOptions {
+	domainAddress: string;
+	timeFormat: string;
+	siteSearchBoxFieldName: string;
+	reservedNames: {
+		aggregateRating: {
+			wrapper: string;
+			aggregatedRatingValue: string;
+			maxRangeOfRating: string;
+			numberOfRatings: string;
+		};
+		reviews: {
+			parentWrapper: string;
+			childWrapper: string;
+			raterName: string;
+			ratedValue: string;
+			maxRateRange: string;
+			reviewPublishedOn: string;
+		};
+		common: {
+			fallbackCurrency: string;
+			publishedDate: string;
+			modifiedDate: string;
+			heroImage: string;
+			author: {
+				name: string;
+				url: string;
+				jobTitle: string;
+			};
+			publisher: {
+				name: string;
+				url: string;
+			};
+			authorAndPubPrefix: {
+				person: string;
+				organisation: string;
+			};
+			heroName: string;
+			entityDescription: string;
+			keywords: string;
+			MO: string;
+			currencyDataVar: string;
+			heroCost: string;
+			cuisineType: string;
+			heroLinkRef: string;
+			videoFrame: string;
+		};
+		article: {
+			baseID: string;
+			articleType: string;
+			authorNameStartwith: string;
+			publisherNameStartwith: string;
+		};
+		movie: {
+			baseID: string;
+			director: string;
+		};
+		recipe: {
+			baseID: string;
+			preptime: {
+				hours: string;
+				minutes: string;
+				hoursAndMinutes: string;
+			};
+			cooktime: {
+				hours: string;
+				minutes: string;
+				hoursAndMinutes: string;
+			};
+			durationID: {
+				hours: string;
+				minutes: string;
+			};
+			serveCount: string;
+			recipeCategory: string;
+			nutritionInformations: {
+				wrapper: string;
+				calories: string;
+			};
+			ingredients: string;
+			instructions: {
+				wrapper: string;
+				childwrapper: string;
+				shortInstruction: string;
+				longInstruction: string;
+				image: string;
+			};
+		};
+		course: {
+			baseID: string;
+			language: string;
+			instructor: string;
+			duration: string;
+			courseFrequency: string;
+			courseRepeatation: string;
+		};
+		restaurant: {
+			baseID: string;
+		};
+		events: {
+			baseID: string;
+			startFrom: string;
+			endAt: string;
+			status: string;
+		};
+		faqPage: {
+			baseID: string;
+			question: string;
+			answer: string;
+		};
+		video: {
+			baseID: string;
+			segmentsWrapper: string;
+			startOffsetDataVar: string;
+		};
+		localBusiness: {
+			baseID: string;
+			areaAvailablity: string;
+		};
+		organisation: {
+			baseID: string;
+			logo: string;
+			email: string;
+			foundingYear: string;
+			taxid: string;
+		};
+		product: {
+			baseID: string;
+			productPriceValidUntilNext: number;
+			productGroupIDHashLength: string;
+			producrVariableDelimiter: string;
+			skuID: string;
+			mpnCode: string;
+			brand: string;
+			variesByDataVar: string;
+			offer: {
+				shippingDetails: {
+					deliveryCost: string;
+					deliveryOver: string;
+					processingTime: string;
+					transitTime: string;
+					rangeDataVar: string;
+				};
+				returnPolicy: {
+					returnWithin: string;
+					returnFees: string;
+				};
+				availability: string;
+				itemCondition: string;
+			};
+			varientParameterName: string;
+			fallbacks: {
+				deliveryOver: string;
+			};
+		};
+		profilePage: {
+			baseID: string;
+			altName: string;
+			uniquePlatformID: string;
+			authorWorks: {
+				wrapper: string;
+				headline: string;
+				thumbnail: string;
+				publishedOn: string;
+				url: string;
+			};
+			authorActionCounts: {
+				written: string;
+				liked: string;
+				follows: string;
+				shared: string;
+			};
+			audienceActionCounts: {
+				followers: string;
+				likes: string;
+				mutualConnections: string;
+			};
+		};
+		softwareApp: {
+			baseID: string;
+			operatingSystem: string;
+			OSSeperator: string;
+			category: string;
+		};
+		businessEntity: {
+			location: {
+				wrapper: string;
+				physicalLocationName: string;
+				virtualLocation: string;
+				street: string;
+				city: string;
+				state: string;
+				country: string;
+				pincode: string;
+			};
+			telephone: string;
+			reservationDataVar: string;
+			workHours: {
+				wrapper: string;
+				dayRange: string;
+				dayAlone: string;
+				timein24: string;
+				timein12: string;
+			};
+			menuLink: string;
+			mapFrame: string;
+		};
+	};
+}

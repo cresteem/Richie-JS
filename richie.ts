@@ -1,5 +1,4 @@
 import { readFile } from "node:fs/promises";
-import { basename } from "path";
 import * as aggregator from "./lib/aggregator";
 import {
 	serializeArticle,
@@ -24,7 +23,6 @@ import {
 	serializeproductWithVarientPage,
 } from "./lib/serializer";
 
-import { createJsonLD, writeOutput } from "./lib/utilities";
 import {
 	richieGroupA,
 	richieGroupB,
@@ -32,6 +30,7 @@ import {
 	richieOPS,
 	richies,
 } from "./lib/options";
+import { createJsonLD, writeOutput } from "./lib/utilities";
 
 const functionMap: Record<richies, richieOPS> = {
 	article: {
