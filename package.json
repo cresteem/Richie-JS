@@ -36,7 +36,8 @@
 		"rp": "node ./dist/richie.js",
 		"clean": "cls && rimraf dist",
 		"bt": "cls && yarn dev && jest",
-		"test": "jest"
+		"test": "jest",
+		"deploy":"yarn build && yarn publish --access public"
 	},
 	"repository": {
 		"type": "git",
