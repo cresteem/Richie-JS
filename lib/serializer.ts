@@ -36,7 +36,6 @@ import {
 
 import { siteSearchBoxFieldName } from "../rjsconfig.json";
 
-
 import { relative, basename, join, dirname } from "path";
 
 function aggregateRatingSerializer(
@@ -146,7 +145,9 @@ function videoObjectSerializer(
 	return serializedVideoObject;
 }
 
-function nutritionalInfoSerializer(nutritionalInfo: NutritionInfoOptions): Record<string, any> {
+function nutritionalInfoSerializer(
+	nutritionalInfo: NutritionInfoOptions,
+): Record<string, any> {
 	const serializedNutritionalInfo = {
 		"@type": "NutritionInformation",
 		calories: nutritionalInfo.calories,
@@ -260,7 +261,7 @@ export function serializeArticle(
 
 export function serializeBreadCrumb(
 	breadCrumbData: breadCrumbListOptions,
-): Record<string, any> {
+): Record<string, any> | null {
 	if (breadCrumbData.breadCrumbMetas.length > 1) {
 		const serializedJsonLD: Record<string, any> = {
 			"@context": "https://schema.org",
@@ -281,7 +282,7 @@ export function serializeBreadCrumb(
 		return serializedJsonLD;
 	} else {
 		console.log("BreadCrumb not possible");
-		process.exit();
+		return null;
 	}
 }
 
@@ -836,7 +837,7 @@ export function serializeProfilePage(
 	ProfilePageData: ProfilePageOptions,
 ): Record<string, any> {
 	//remove non-alphanumeric characters except hyphen and underscore
-	ProfilePageData.uid = ProfilePageData.uid.replace(/[^a-zA-Z0-9-_]/g, '')
+	ProfilePageData.uid = ProfilePageData.uid.replace(/[^a-zA-Z0-9-_]/g, "");
 
 	const serializedJsonLD: Record<string, any> = {
 		"@context": "https://schema.org",
@@ -916,7 +917,7 @@ export function serializeEventsPage(
 						"@type": "PerformingGroup",
 						name: `${instance.performers.slice(0, -1).join(", ")} and ${instance.performers.at(-1)}`,
 					}
-					: {
+				:	{
 						"@type": "Person",
 						name: instance.performers[0],
 					},
@@ -1029,7 +1030,7 @@ function offerSerializer(offerMetaData: Offers): Record<string, any> {
 		itemCondition: offerMetaData.itemCondition,
 		hasMerchantReturnPolicy: returnPolicySerializer(
 			offerMetaData.hasMerchantReturnPolicy ??
-			({} as MerchantReturnPolicy),
+				({} as MerchantReturnPolicy),
 		),
 		shippingDetails: shippingDetailsSerializer(
 			offerMetaData.shippingDetails ?? ({} as OfferShippingDetails),
