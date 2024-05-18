@@ -37,7 +37,7 @@
 		"clean": "cls && rimraf dist",
 		"bt": "cls && yarn dev && jest",
 		"test": "jest",
-		"deploy": "yarn build && yarn publish --access public"
+		"deploy": "yarn build && yarn publish --access public && git push"
 	},
 	"repository": {
 		"type": "git",
