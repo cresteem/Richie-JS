@@ -6,11 +6,12 @@
 		"require": "./dist/richie.js"
 	},
 	"description": "Rich Result Generator",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"main": "./dist/richie.js",
 	"types": "./dist/types/",
 	"files": [
-		"dist"
+		"dist",
+		"intellisense"
 	],
 	"directories": {
 		"lib": "./dist/lib"
