@@ -36,7 +36,7 @@
 		"rp": "node ./dist/richie.js",
 		"clean": "cls && rimraf dist",
 		"bt": "cls && yarn dev && jest",
-		"rt": "cls && node ./dist/test/runall.js"
+		"test": "jest"
 	},
 	"repository": {
 		"type": "git",
