@@ -1,3 +1,5 @@
+[![Run Tests](https://github.com/cresteem/Richie-JS/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/cresteem/Richie-JS/actions/workflows/test.yaml)
+
 ## License
 
 RICHIE JS © 2024 by [CRESTEEM](https://www.cresteem.com/) is licensed under [APACHE LICENSE VERSION 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
