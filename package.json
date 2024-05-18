@@ -6,7 +6,7 @@
 		"require": "./dist/richie.js"
 	},
 	"description": "Rich Result Generator",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"main": "./dist/richie.js",
 	"types": "./dist/types/",
 	"files": [
@@ -37,7 +37,7 @@
 		"clean": "cls && rimraf dist",
 		"bt": "cls && yarn dev && jest",
 		"test": "jest",
-		"deploy":"yarn build && yarn publish --access public"
+		"deploy": "yarn build && yarn publish --access public"
 	},
 	"repository": {
 		"type": "git",
@@ -49,7 +49,7 @@
 		"Generator"
 	],
 	"author": "CRESTEEM <connect@cresteem.com>",
-	"license":"Apache-2.0",
+	"license": "Apache-2.0",
 	"maintainers": [
 		"CRESTEEM <connect@cresteem.com>",
 		"DARSAN <darsan@cresteem.com>"
