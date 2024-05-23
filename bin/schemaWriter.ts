@@ -1,8 +1,9 @@
-#! node
 import { existsSync } from "fs";
 import { copyFile, readFile, writeFile } from "fs/promises";
 import { mkdirpSync } from "mkdirp";
 import { basename, dirname, join } from "path";
+
+type isenseModes = "user" | "ws";
 
 const defaultConfigPaths: Record<string, string> = {
 	win32: `${process.env.APPDATA}/Code/User/settings.json`,
@@ -120,7 +121,7 @@ function copySchema(
 }
 
 function writeSettings(
-	mode: settingModes,
+	mode: isenseModes,
 	configPath: string,
 	forceCreate: boolean = false,
 ): Promise<void> {
@@ -141,7 +142,7 @@ function writeSettings(
 			:	schemaDestPath;
 
 		const schemaConfigSnippet: Record<string, any> = {
-			fileMatch: ["rjsconfig.json"],
+			fileMatch: ["rjs.config.json"],
 			/* schema file url */ url: schemaPath,
 		};
 
@@ -182,44 +183,31 @@ function writeSettings(
 	});
 }
 
-type settingModes = "user" | "ws";
-
-function main(): Promise<void> {
-	const availableCommands: string[] = ["isense"];
-	const givenCommand = process.argv[2];
-	if (
-		process.argv.length < 3 ||
-		!availableCommands.includes(givenCommand)
-	) {
-		console.log(
-			`Usage: rjs ${availableCommands} ${givenCommand === "isense" ? "ws|user" : ""}`,
-		);
+export function isense(): Promise<void> {
+	if (process.argv.length < 3) {
+		//parameter missing
+		console.log(`Usage: rjs isense ws|user`);
 		process.exit(1);
+	} else {
+		const mode: isenseModes = process.argv[3] as isenseModes;
+
+		const validParam: boolean | string =
+			mode === "user" ? userSettings
+			: mode === "ws" ? workspaceSettings
+			: false;
+
+		return new Promise((resolve, reject) => {
+			if (validParam) {
+				writeSettings(mode, validParam)
+					.then(() => {
+						resolve();
+					})
+					.catch((err) => {
+						reject(err);
+					});
+			} else {
+				reject("Error: Wrong parameter");
+			}
+		});
 	}
-
-	const mode: settingModes = process.argv[3] as settingModes;
-
-	const validParam: boolean | string =
-		mode === "user" ? userSettings
-		: mode === "ws" ? workspaceSettings
-		: false;
-
-	return new Promise((resolve, reject) => {
-		if (validParam) {
-			writeSettings(mode, validParam)
-				.then(() => {
-					resolve();
-				})
-				.catch((err) => {
-					reject(err);
-				});
-		} else {
-			reject("Parameter missing or wrong");
-		}
-	});
 }
-
-main().catch((err) => {
-	console.log(err);
-	process.exit(1);
-});

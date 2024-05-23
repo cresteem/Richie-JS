@@ -898,6 +898,41 @@
 					}
 				}
 			}
+		},
+		"preference": {
+			"type": "object",
+			"properties": {
+				"isCarousals": {
+					"type": "object",
+					"properties": {
+						"movie": {
+							"type": "boolean",
+							"default": false,
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)"
+						},
+						"course": {
+							"type": "boolean",
+							"default": false,
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)"
+						},
+						"recipe": {
+							"type": "boolean",
+							"default": false,
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)"
+						},
+						"restaurant": {
+							"type": "boolean",
+							"default": false,
+							"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)"
+						}
+					}
+				},
+				"isProductVar": {
+					"type": "boolean",
+					"default": false,
+					"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)"
+				}
+			}
 		}
 	}
 }

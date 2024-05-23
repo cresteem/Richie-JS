@@ -30,6 +30,6 @@ function removeCommentsFromFile(inputFilePath, outputFilePath) {
 }
 
 const inputFilePath = "newconf.jsonc";
-const outputFilePath = "rjsconfig.json";
+const outputFilePath = "rjs.config.json";
 
 removeCommentsFromFile(inputFilePath, outputFilePath);

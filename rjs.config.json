@@ -205,5 +205,14 @@
 			"menuLink": "menu",
 			"mapFrame": "map"
 		}
+	},
+	"preference": {
+		"isCarousals": {
+			"movie": false,
+			"course": true,
+			"restaurant": false,
+			"recipe": true
+		},
+		"isProductVar": true
 	}
 }

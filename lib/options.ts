@@ -793,4 +793,20 @@ export interface configurationOptions {
 			mapFrame: string;
 		};
 	};
+	preference: {
+		isCarousals: {
+			movie: boolean;
+			course: boolean;
+			restaurant: boolean;
+			recipe: boolean;
+		};
+		isProductVar: boolean;
+	};
+}
+
+export interface richieOptions {
+	searchExtensions?: string[];
+	destDir?: string;
+	omitPatterns?: string[];
+	norm?: boolean;
 }
