@@ -1,4 +1,4 @@
-import { rmSync } from "fs";
+import { rmSync, existsSync } from "fs";
 import { readFile } from "fs/promises";
 import { globSync } from "glob";
 import { dirname, join, relative, basename } from "path";
@@ -30,7 +30,7 @@ export async function makeRichie(
 	options = { ...richieDefaultOptions, ...options };
 
 	//remove previous op dir and files
-	if (!options.norm) {
+	if (!options.norm && existsSync(options.destDir as string)) {
 		rmSync(options.destDir as string, { recursive: true });
 	}
 

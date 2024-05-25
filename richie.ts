@@ -31,6 +31,7 @@ import {
 	richies,
 } from "./lib/options";
 import { createJsonLD, writeOutput } from "./lib/utilities";
+import { sweep } from "./lib/sweeper";
 
 const functionMap: Record<richies, richieOPS> = {
 	article: {
@@ -150,8 +151,9 @@ export async function richie(
 
 			const serializedData = serializer(...serializerParams);
 			const richResultSnippet = createJsonLD(serializedData);
+			const cleanSource = sweep(richieName, source);
 
-			writeOutput(source, destinationFile, richResultSnippet)
+			writeOutput(cleanSource, destinationFile, richResultSnippet)
 				.then(() => {
 					resolve();
 				})
