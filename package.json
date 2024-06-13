@@ -7,7 +7,7 @@
 		"types": "./dist/types/richie.d.ts"
 	},
 	"description": "Rich Result Generator",
-	"version": "1.1.2",
+	"version": "1.1.3",
 	"main": "./dist/richie.js",
 	"files": [
 		"dist",
