@@ -36,7 +36,7 @@ export function sweep(richieName: richies, htmlSource: string): string {
 			return _cleanSoftwareApp(htmlDOM);
 
 		default:
-			return "null";
+			return htmlDOM.html();
 	}
 }
 
@@ -47,7 +47,7 @@ function _cleanArticle(DOMTree: CheerioAPI): string {
 	return htmlString;
 }
 
-function _cleanCourse(DOMTree: CheerioAPI) {
+function _cleanCourse(DOMTree: CheerioAPI): string {
 	DOMTree(`[data-${reservedNames.course.language}]`).removeAttr(
 		`data-${reservedNames.course.language}`,
 	);
