@@ -1,4 +1,14 @@
-[![Run Tests](https://github.com/cresteem/Richie-JS/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/cresteem/Richie-JS/actions/workflows/test.yaml)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/cresteem/Richie-JS/test.yaml?branch=main&style=flat&logo=github&logoColor=black&logoSize=auto&label=Test&labelColor=white&color=rgb(80%2C200%2C10))
+
+
+Available on NPM:
+
+![NPM Version](https://img.shields.io/npm/v/%40cresteem%2Frichie-js?style=flat&logo=rocket&logoColor=black&logoSize=auto&label=Richie%20JS%20Version&labelColor=white)
+
+
+![NPM Downloads](https://img.shields.io/npm/d18m/%40cresteem%2Frichie-js?style=flat&logo=rocket&logoColor=black&logoSize=auto&label=Download%20Counts&labelColor=white&color=rgb(80,200,10))
+
+
 
 ## License
 
@@ -54,3 +64,5 @@ npx rjs isense user
 ```bash
 npx rjs isense ws
 ```
+## Maintainer
+[@iamspdarsan](https://github.com/iamspdarsan) - [LinkedIN](https://in.linkedin.com/in/iamspdarsan) - [Github](https://github.com/iamspdarsan)
