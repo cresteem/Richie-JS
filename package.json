@@ -62,7 +62,7 @@
 		"luxon": "3.4.4",
 		"mkdirp": "3.0.1",
 		"prettier": "3.2.5",
-		"puppeteer": "22.3.0",
+		"puppeteer": "22.12.0",
 		"yargs": "17.7.2"
 	},
 	"devDependencies": {
