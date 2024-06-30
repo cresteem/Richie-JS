@@ -30,7 +30,8 @@
 		"noUnusedParameters": true,
 		"noUncheckedIndexedAccess": false,
 		"sourceMap": false,
-		"removeComments": true
+		"removeComments": true,
+		"skipLibCheck": true
 	},
 	"exclude": [
 		"node_modules",
