@@ -1,34 +1,32 @@
 <div align="center">
 
-# [Title] - [short desc]
+# Richie JS - Powerful SEO Tool for Generating Rich Results
 
-<p id="intro">[This is a placeholder paragraph. Here some introductory text or describe the content that will eventually go in this section. This text is meant to give a sense of how the final content will look in the design.]
-</p>
+<p id="intro">Richie JS is a powerful SEO tool designed to streamline the creation of structured data for rich results, boosting your website's visibility on search engines. It automates the generation of JSON-LD output, enabling quick and efficient optimization for search engine performance and enhancing user engagement.</p>
+
 
 ### Supported Platforms
 
-[![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)]()
+
 [![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)]()
 [![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)]()
 [![Node JS](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)]()
-[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)]()
-[![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)]()
+
 
 ---
 
-[uname-holder/reponame-holder] [npm-name-holder] [wf-holder] - for test&build
 
 <p>
 
 <span>
-  <a href="https://github.com/uname-holder/reponame-holder/commits/main">
-    <img src="https://img.shields.io/github/last-commit/uname-holder/reponame-holder?display_timestamp=committer&style=for-the-badge&label=Updated%20On" alt="GitHub last commit"/>
+  <a href="https://github.com/cresteem/Richie-JS/commits/main">
+    <img src="https://img.shields.io/github/last-commit/cresteem/Richie-JS?display_timestamp=committer&style=for-the-badge&label=Updated%20On" alt="GitHub last commit"/>
   </a>
 </span>
 
 <span>
   <a href="">
-    <img src="https://img.shields.io/github/commit-activity/m/uname-holder/reponame-holder?style=for-the-badge&label=Commit%20Activity" alt="GitHub commit activity"/>
+    <img src="https://img.shields.io/github/commit-activity/m/cresteem/Richie-JS?style=for-the-badge&label=Commit%20Activity" alt="GitHub commit activity"/>
   </a>
 </span>
 
@@ -37,14 +35,8 @@
 <p>
 
 <span>
-  <a href="https://github.com/uname-holder/reponame-holder/actions/workflows/wf-holder.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/uname-holder/reponame-holder/wf-holder.yml?style=for-the-badge&label=Build%20Status" alt="GitHub Actions Build Status"/>
-  </a>
-</span>
-
-<span>
-  <a href="https://github.com/uname-holder/reponame-holder/actions/workflows/wf-holder.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/uname-holder/reponame-holder/wf-holder.yml?style=for-the-badge&label=Test%20Status" alt="GitHub Actions Test Status"/>
+  <a href="https://github.com/cresteem/Richie-JS/actions/workflows/test.yaml">
+    <img src="https://img.shields.io/github/actions/workflow/status/cresteem/Richie-JS/test.yaml?style=for-the-badge&label=Test%20Status" alt="GitHub Actions Test Status"/>
   </a>
 </span>
 
@@ -56,13 +48,13 @@
 
 <span>
   <a href="LICENSE">
-    <img src="https://img.shields.io/github/license/uname-holder/reponame-holder?style=for-the-badge&label=License" alt="GitHub License"/>
+    <img src="https://img.shields.io/github/license/cresteem/Richie-JS?style=for-the-badge&label=License" alt="GitHub License"/>
   </a>
 </span>
 
 <span>
-  <a href="https://github.com/uname-holder/reponame-holder/releases">
-    <img src="https://img.shields.io/github/v/release/uname-holder/reponame-holder?include_prereleases&sort=date&display_name=tag&style=for-the-badge&label=Latest%20Version" alt="GitHub Release"/>
+  <a href="https://github.com/cresteem/Richie-JS/releases">
+    <img src="https://img.shields.io/github/v/release/cresteem/Richie-JS?sort=date&display_name=tag&style=for-the-badge&label=Latest%20Version" alt="GitHub Release"/>
   </a>
 </span>
 
@@ -71,8 +63,8 @@
 <p>
 
 <span>
-  <a href="https://www.codefactor.io/repository/github/uname-holder/reponame-holder/issues/main">
-    <img src="https://img.shields.io/codefactor/grade/github/uname-holder/reponame-holder?style=for-the-badge&label=Code%20Quality%20Grade" alt="CodeFactor Grade"/>
+  <a href="https://www.codefactor.io/repository/github/cresteem/Richie-JS/issues/main">
+    <img src="https://img.shields.io/codefactor/grade/github/cresteem/Richie-JS?style=for-the-badge&label=Code%20Quality%20Grade" alt="CodeFactor Grade"/>
   </a>
 </span>
 
@@ -84,13 +76,13 @@
 
 <span>
   <a href="">
-    <img src="https://img.shields.io/npm/d18m/npm-name-holder?style=for-the-badge&label=Downloads%20On%20NPM" alt="NPM Downloads"/>
+    <img src="https://img.shields.io/npm/d18m/%40cresteem%2Frichie-js?style=for-the-badge&label=Downloads%20On%20NPM" alt="NPM Downloads"/>
   </a>
 </span>
 
 <span>
   <a href="">
-    <img src="https://img.shields.io/github/stars/uname-holder/reponame-holder?style=for-the-badge&label=Stars" alt="GitHub Repo stars"/>
+    <img src="https://img.shields.io/github/stars/cresteem/Richie-JS?style=for-the-badge&label=Stars" alt="GitHub Repo stars"/>
   </a>
 </span>
 
@@ -120,7 +112,6 @@
 
 - [Installation - Step-by-Step Guide](#installation---step-by-step-guide-)
 - [Usage](#usage)
-- [In-Action](#in-action-)
 
 - [License](#license-%EF%B8%8F)
 - [Contributing to Our Project](#contributing-to-our-project-)
@@ -131,14 +122,20 @@
 
 ## Features and Benefits ✨
 
-- [f1]
-- [f2]
-- [fn]
+* **Automated Rich Results Generation:** Automate the creation of rich snippets with minimal manual effort.
+* **Google-Recognized Structured Data:** Generates JSON-LD outputs that comply with Google’s rich results standards.
+* **Customizable Configuration:** Easily tailor output and settings through the `rjs.config.json` file.
+* **Improved SEO Performance:** Boost your website’s visibility and user engagement by integrating rich snippets.
+* **Command-Line Interface (CLI) Support:** Offers powerful CLI commands for streamlined operations.
+* **Open-Source Flexibility:** Licensed under Apache 2.0, allowing free use and modification in projects.
 
 ## Use Cases ✅
-
-- [usecase 1]
-- [use case 2]
+* **SEO Specialists:** Effortlessly generate rich snippets for client websites, improving search rankings.
+* **Web Developers:** Integrate structured data into websites without complex coding.
+* **Digital Marketers:** Enhance website visibility and drive engagement through optimized SEO practices.
+* **Content Managers:** Automatically generate SEO-friendly structured data for blog posts and articles.
+* **E-commerce Platforms:** Improve product visibility in search results by incorporating rich snippets.
+* **Agencies and Freelancers:** Quickly deliver SEO enhancements to client projects.
 
 ---
 
@@ -157,31 +154,57 @@ Thank you for being part of this journey. Your support means the world to us. �
 ---
 
 ## Installation - Step-by-Step Guide 🪜
+Refer below link:
 
-[Installation instructions here]
-
-- **Step 1:**
-- **Step 2:**
-- **Step 3:**
-- **Step 4:**
-- **Step 5:**
+[Getting Started](https://richiejs.cresteem.com/getting-started-with-richie-js)
 
 ## Usage
 
-- [purpose heading]
-  [Demonstration here]
+Everything from top to bottom of Richie JS available here - https://richiejs.cresteem.com/
 
+### Generate a rich result
 ```bash
-demo
+npx rjs make
 ```
 
-## In-Action 🤺
+### Store output in a specific directory
+```bash
+npx rjs make -d <destinationFolder>
+```
 
-[video] or [gif] or [image]
+### Exclude specific files and folders
+```bash
+npx rjs make --no <relativePath/subpath>
+```
+
+**⚠️ By default, Richie JS removes previous outputs or clears the destination directory.**
+
+### To preserve existing files, use the `--norm` or `-p` flag:
+```bash
+npx rjs make -p
+# or
+npx rjs make --norm
+```
+
+### ⚙️🛠️ Custom Configuration
+Override default settings by creating an `rjs.config.json` file in the project's root directory.
+
+### 🤖 Setting Up IntelliSense for Richie JS
+**⚠️ Only for VS Code**
+
+#### Option 1: System-wide IntelliSense support
+```bash
+npx rjs isense user
+```
+
+#### Option 2: Project-specific IntelliSense support
+```bash
+npx rjs isense ws
+```
 
 ## License ©️
 
-This project is licensed under the [Apache License 2.0 or GNU General Public License v3.0 or MIT](LICENSE).
+This project is licensed under the [Apache License 2.0](LICENSE).
 
 ## Contributing to Our Project 🤝
 
@@ -197,7 +220,7 @@ Thank you for being part of this journey!
 
 ## Website 🌐
 
-<a id="url" href="https://darsan.in">[https://darsan.in]</a>
+<a id="url" href="https://richiejs.cresteem.com">richiejs.cresteem.com</a>
 
 ## Contact Information
 
@@ -205,7 +228,7 @@ For any questions, please reach out via connect@cresteem.com
 
 ## Credits 🙏🏻
 
-[credits to lib maintainers/creators]
+Richie JS is an open-source project developed and maintained by [DARSAN](https://darsan.in/) at [CRESTEEM](https://www.cresteem.com/). Special thanks to the creators and maintainers of the foundational libraries used, including [Axios](https://axios-http.com/), [Cheerio](https://cheerio.js.org/), [Puppeteer](https://pptr.dev/), and [Yargs](https://yargs.js.org/).
 
 ---
 
@@ -274,12 +297,25 @@ For any questions, please reach out via connect@cresteem.com
 ---
 
 #### Topics
-
 <ul id="keywords">
-
-<li>A</li>
-<li>B</li>
-<li>C</li>
-<li>D</li>
-
+<li>seo automation</li>
+<li>rich results</li>
+<li>json-ld generation</li>
+<li>structured data tool</li>
+<li>node.js seo</li>
+<li>google snippets</li>
+<li>web development seo</li>
+<li>cheerio</li>
+<li>puppeteer</li>
+<li>axios</li>
+<li>seo</li>
+<li>seo improvement</li>
+<li>search engine optimization</li>
+<li>website visibility</li>
+<li>seo tools</li>
+<li>cresteem</li>
+<li>developer tools</li>
+<li>cli tools</li>
+<li>open-source seo</li>
+<li>digital marketing</li>
 </ul>
