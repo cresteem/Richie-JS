@@ -1,83 +1,100 @@
 {
-	"name": "@cresteem/richie-js",
-	"displayName": "Richie JS",
-	"exports": {
-		"import": "./dist/richie.js",
-		"require": "./dist/richie.js",
-		"types": "./dist/types/richie.d.ts"
-	},
-	"description": "Rich Result Generator",
-	"version": "1.1.5",
-	"main": "./dist/richie.js",
-	"files": [
-		"dist",
-		"intellisense"
-	],
-	"directories": {
-		"lib": "./dist/lib"
-	},
-	"engines": {
-		"node": ">=21.7.3",
-		"npm": ">=10.5.0"
-	},
-	"preferGlobal": true,
-	"bin": {
-		"rjs": "./dist/bin/rjs.js"
-	},
-	"scripts": {
-		"dev": "rimraf dist && tsc -p tscdev.json",
-		"dr": "cls && yarn dev && node ./dist/richie.js",
-		"rp": "node ./dist/richie.js",
-		"test": "jest",
-		"build": "cls && rimraf dist && tsc -p tsconfig.json && ncp ./rjs.config.json ./dist/rjs.config.json",
-		"watch": "tsc --watch",
-		"clean": "cls && rimraf dist",
-		"deploy": "yarn build && yarn publish --access public && git push"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/cresteem/Richie-JS.git"
-	},
-	"keywords": [
-		"Rich",
-		"Result",
-		"Generator"
-	],
-	"author": "CRESTEEM <connect@cresteem.com>",
-	"license": "Apache-2.0",
-	"maintainers": [
-		"CRESTEEM <connect@cresteem.com>",
-		"DARSAN <darsan@cresteem.com>"
-	],
-	"bugs": {
-		"url": "https://github.com/cresteem/Richie-JS/issues"
-	},
-	"homepage": "https://cresteem.com/opensource/richie-js",
-	"dependencies": {
-		"@prettier/sync": "0.5.1",
-		"axios": "1.6.7",
-		"cheerio": "1.0.0-rc.12",
-		"country-list": "2.3.0",
-		"glob": "10.3.15",
-		"luxon": "3.4.4",
-		"mkdirp": "3.0.1",
-		"prettier": "3.2.5",
-		"puppeteer": "22.12.0",
-		"yargs": "17.7.2"
-	},
-	"devDependencies": {
-		"@babel/core": "7.24.5",
-		"@babel/preset-env": "7.24.5",
-		"@babel/preset-typescript": "7.24.1",
-		"@types/country-list": "2.1.4",
-		"@types/jest": "29.5.12",
-		"@types/luxon": "3.4.2",
-		"@typescript-eslint/eslint-plugin": "7.7.0",
-		"babel-jest": "29.7.0",
-		"jest": "29.7.0",
-		"ncp": "2.0.0",
-		"rimraf": "5.0.5",
-		"ts-node": "10.9.2",
-		"typescript": "5.4.5"
-	}
+  "name": "@cresteem/richie-js",
+  "displayName": "Richie JS",
+  "exports": {
+    "import": "./dist/richie.js",
+    "require": "./dist/richie.js",
+    "types": "./dist/types/richie.d.ts"
+  },
+  "description": "Richie JS is a powerful SEO tool designed to streamline the creation of structured data for rich results, boosting your website's visibility on search engines. It automates the generation of JSON-LD output, enabling quick and efficient optimization for search engine performance and enhancing user engagement.",
+  "version": "1.1.6",
+  "main": "./dist/richie.js",
+  "files": [
+    "dist",
+    "intellisense"
+  ],
+  "directories": {
+    "lib": "./dist/lib"
+  },
+  "engines": {
+    "node": ">=21.7.3",
+    "npm": ">=10.5.0"
+  },
+  "preferGlobal": true,
+  "bin": {
+    "rjs": "./dist/bin/rjs.js"
+  },
+  "scripts": {
+    "dev": "rimraf dist && tsc -p tscdev.json",
+    "dr": "cls && yarn dev && node ./dist/richie.js",
+    "rp": "node ./dist/richie.js",
+    "test": "jest",
+    "build": "cls && rimraf dist && tsc -p tsconfig.json && ncp ./rjs.config.json ./dist/rjs.config.json",
+    "watch": "tsc --watch",
+    "clean": "cls && rimraf dist",
+    "deploy": "yarn build && yarn publish --access public && git push"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cresteem/Richie-JS.git"
+  },
+  "keywords": [
+    "seo automation",
+    "rich results",
+    "json-ld generation",
+    "structured data tool",
+    "node.js seo",
+    "google snippets",
+    "web development seo",
+    "cheerio",
+    "puppeteer",
+    "axios",
+    "seo",
+    "seo improvement",
+    "search engine optimization",
+    "website visibility",
+    "seo tools",
+    "cresteem",
+    "developer tools",
+    "cli tools",
+    "open-source seo",
+    "digital marketing"
+  ],
+  "author": "CRESTEEM <connect@cresteem.com>",
+  "license": "Apache-2.0",
+  "maintainers": [
+    "CRESTEEM <connect@cresteem.com>",
+    "DARSAN <darsan@cresteem.com>"
+  ],
+  "bugs": {
+    "url": "https://github.com/cresteem/Richie-JS/issues"
+  },
+  "homepage": "https://richiejs.cresteem.com",
+  "dependencies": {
+    "@prettier/sync": "0.5.1",
+    "axios": "1.6.7",
+    "cheerio": "1.0.0-rc.12",
+    "country-list": "2.3.0",
+    "glob": "10.3.15",
+    "luxon": "3.4.4",
+    "mkdirp": "3.0.1",
+    "prettier": "3.2.5",
+    "puppeteer": "22.12.0",
+    "yargs": "17.7.2"
+  },
+  "devDependencies": {
+    "@babel/core": "7.24.5",
+    "@babel/preset-env": "7.24.5",
+    "@babel/preset-typescript": "7.24.1",
+    "@types/country-list": "2.1.4",
+    "@types/jest": "29.5.12",
+    "@types/luxon": "3.4.2",
+    "@typescript-eslint/eslint-plugin": "7.7.0",
+    "babel-jest": "29.7.0",
+    "jest": "29.7.0",
+    "ncp": "2.0.0",
+    "rimraf": "5.0.5",
+    "ts-node": "10.9.2",
+    "typescript": "5.4.5"
+  }
 }
