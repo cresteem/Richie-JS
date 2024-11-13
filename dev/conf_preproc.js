@@ -29,7 +29,7 @@ function removeCommentsFromFile(inputFilePath, outputFilePath) {
 	});
 }
 
-const inputFilePath = "newconf.jsonc";
-const outputFilePath = "rjs.config.json";
+const inputFilePath = "base.richiejs.jsonc";
+const outputFilePath = ".richiejs";
 
 removeCommentsFromFile(inputFilePath, outputFilePath);

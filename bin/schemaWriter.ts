@@ -1,6 +1,5 @@
-import { existsSync } from "fs";
 import { copyFile, readFile, writeFile } from "fs/promises";
-import { mkdirpSync } from "mkdirp";
+import { existsSync, mkdirSync } from "node:fs";
 import { basename, dirname, join } from "path";
 
 type isenseModes = "user" | "ws";
@@ -81,7 +80,7 @@ function createSettings(
 	};
 
 	if (mkParentFolder) {
-		mkdirpSync(dirname(configPath));
+		mkdirSync(dirname(configPath));
 	}
 
 	return new Promise((resolve, reject) => {
@@ -142,7 +141,7 @@ function writeSettings(
 			:	schemaDestPath;
 
 		const schemaConfigSnippet: Record<string, any> = {
-			fileMatch: ["rjs.config.json"],
+			fileMatch: [".richiejs"],
 			/* schema file url */ url: schemaPath,
 		};
 

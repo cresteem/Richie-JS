@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { configurationOptions } from "./lib/options";
 
-const CONFIG_FILE_NAME = "rjs.config.json";
+const CONFIG_FILE_NAME = ".richiejs";
 
 const projectConfigFile = join(process.cwd(), CONFIG_FILE_NAME);
 const projectHasConfig = existsSync(projectConfigFile);

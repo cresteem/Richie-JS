@@ -1,6 +1,5 @@
-import { rmSync, existsSync } from "fs";
+import { existsSync, mkdirSync, rmSync } from "node:fs";
 
-import { mkdirpSync } from "mkdirp";
 import { basename, join } from "path";
 import { richies, testProps } from "../lib/options";
 import { richie } from "../richie";
@@ -87,7 +86,7 @@ function runAll(): Promise<string> {
 		//nothing to do
 	} finally {
 		//make op dir
-		mkdirpSync(opfolder);
+		mkdirSync(opfolder);
 	}
 
 	const testOps: Promise<void>[] = [];

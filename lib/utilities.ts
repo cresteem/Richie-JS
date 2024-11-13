@@ -1,5 +1,6 @@
-import axios from "axios";
-import { CheerioAPI, Element, load } from "cheerio";
+import { get } from "https";
+
+import { CheerioAPI, load } from "cheerio";
 import { DateTime } from "luxon";
 import { createHash, randomBytes } from "node:crypto";
 import puppeteer from "puppeteer";
@@ -34,6 +35,37 @@ export function parseDateString(date: string): string {
 	);
 }
 
+function _fetchWebPage(pageUrl: string): Promise<string> {
+	return new Promise((resolve, reject) => {
+		get(pageUrl, (response) => {
+			if (response.statusCode !== 200) {
+				const errorMessage: string = `Failed to get 
+				'${pageUrl}' (status code: ${response.statusCode})`;
+
+				console.error(errorMessage);
+				reject(errorMessage);
+			}
+
+			let data: string = "";
+
+			// Collect data chunks
+			response.on("data", (chunk) => {
+				data += chunk;
+			});
+
+			// Once all data is received, process it
+			response.on("end", () => {
+				resolve(data);
+			});
+		}).on("error", (err) => {
+			const errorMessage: string = `Error: ${err.message}`;
+
+			console.error(errorMessage);
+			reject(errorMessage);
+		});
+	});
+}
+
 export async function ytVideoMeta(
 	embedUrl: string,
 ): Promise<videoObjectOptions> {
@@ -51,9 +83,9 @@ export async function ytVideoMeta(
 
 	const youtubeUrl: string = "https://www.youtube.com/watch?v=" + videoId;
 
-	const response = await axios.get(youtubeUrl);
+	const response = await _fetchWebPage(youtubeUrl);
 
-	const $ = load(response.data);
+	const $ = load(response);
 
 	//props
 	const videoTitle: string = $("title").html() ?? "videoTitle not found";
@@ -440,7 +472,7 @@ export function periodTextToHours(durationAndPeriodType: string): string {
 
 export function elemTypeAndIDExtracter(
 	$: CheerioAPI,
-	elem: Element,
+	elem: any,
 	baseID: string,
 ): string[] {
 	/* make class name as case insensitive */

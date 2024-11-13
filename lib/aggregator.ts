@@ -1,4 +1,4 @@
-import { Cheerio, CheerioAPI, Element, load } from "cheerio";
+import { Cheerio, CheerioAPI, load } from "cheerio";
 import { existsSync } from "node:fs";
 import {
 	ApplicationCategory,
@@ -795,7 +795,7 @@ export async function recipe(
 
 function commonReviewsExtractor(
 	$: CheerioAPI,
-	reviewWrapperElem: Element,
+	reviewWrapperElem: any,
 	reviewList: reviewOptions[],
 	id: string,
 ): reviewOptions[] {
@@ -860,7 +860,7 @@ function commonReviewsExtractor(
 
 function commonAggregateRatingExtractor(
 	$: CheerioAPI,
-	ARWrapper: Element,
+	ARWrapper: any,
 	aggregateRating: aggregateRatingOptions,
 ): aggregateRatingOptions {
 	aggregateRating.ratingValue = parseFloat(
@@ -888,14 +888,14 @@ function commonAggregateRatingExtractor(
 
 function commonLocationExtractor(
 	$: CheerioAPI,
-	elem: Element,
+	elem: any,
 ): PostalAddressOptions {
 	/* address */
 	//street
 	const streetList: string[] = new Array();
 	$(elem)
 		.find(`.${reservedNames.businessEntity.location.street}`)
-		.each((_index: number, streetElem: Element) => {
+		.each((_index: number, streetElem: any) => {
 			streetList.push($(streetElem).html()?.trim() ?? "");
 		});
 
@@ -950,7 +950,7 @@ function commonBusinessEntityThings(
 	businessEntityMeta: LocalBusinessOptions | RestaurantOptions,
 	id: string,
 	type: string,
-	elem: Element,
+	elem: any,
 	$: CheerioAPI,
 ): LocalBusinessOptions | RestaurantOptions {
 	if (type === reservedNames.common.heroName) {
@@ -1138,7 +1138,7 @@ function commonBusinessEntityThings(
 		const keywords: string[] = new Array();
 		$(elem)
 			.children()
-			.each((_index: number, keyword: Element) => {
+			.each((_index: number, keyword: any) => {
 				keywords.push($(keyword).html()?.trim() ?? "");
 			});
 
@@ -1150,7 +1150,7 @@ function commonBusinessEntityThings(
 		if (hasChild) {
 			$(elem)
 				.children()
-				.each((_index: number, areaElem: Element) => {
+				.each((_index: number, areaElem: any) => {
 					let availablearea: string = $(areaElem).html()?.trim() as string;
 
 					//remove special chars to retain only alphanumeric text
@@ -1239,7 +1239,7 @@ export async function eventsPage(
 		await stat(resolve(cwd(), htmlPath))
 	).mtime.toISOString();
 
-	$(`[class^="${eventBaseID}-"]`).each((_index: number, elem: Element) => {
+	$(`[class^="${eventBaseID}-"]`).each((_index: number, elem: any) => {
 		const [id, type] = elemTypeAndIDExtracter($, elem, eventBaseID);
 
 		const innerText: string = $(elem).html()?.trim() as string;
@@ -1358,7 +1358,7 @@ export async function eventsPage(
 					.find(
 						"." + reservedNames.businessEntity.location.virtualLocation,
 					)
-					.map((_index: number, elem: Element): string => {
+					.map((_index: number, elem: any): string => {
 						return $(elem).attr("href") ?? "empty";
 					})
 					.toArray();
@@ -1509,9 +1509,9 @@ export async function video(
 				})(),
 			);
 		} else if (type === reservedNames.video.segmentsWrapper) {
-			const clips: Cheerio<Element> = $(elem).children();
+			const clips: Cheerio<any> = $(elem).children();
 
-			clips.each((index: number, clip: Element) => {
+			clips.each((index: number, clip: any) => {
 				const name: string = $(clip).html() as string;
 
 				const start: number = parseFloat(
@@ -1521,7 +1521,7 @@ export async function video(
 				);
 
 				const approximatedEnd: number = 5;
-				const nextClipElem: Element = clips[index + 1];
+				const nextClipElem: any = clips[index + 1];
 
 				const end: number = parseFloat(
 					($(nextClipElem).data(
@@ -1606,7 +1606,7 @@ export function organisation(
 	const organisationMetas: Record<string, OrganisationOptions> = {};
 
 	$(`[class^="${organisationBaseID}-"]`).each(
-		(_index: number, elem: Element) => {
+		(_index: number, elem: any) => {
 			const [id, type] = elemTypeAndIDExtracter(
 				$,
 				elem,
@@ -1698,223 +1698,219 @@ export async function productPage(
 		(await stat(resolve(htmlPath))).mtimeMs + validitySecs,
 	).toISOString();
 
-	$(`[class^="${productBaseID}-"]`).each(
-		(_index: number, elem: Element) => {
-			const [id, type] = elemTypeAndIDExtracter($, elem, productBaseID);
+	$(`[class^="${productBaseID}-"]`).each((_index: number, elem: any) => {
+		const [id, type] = elemTypeAndIDExtracter($, elem, productBaseID);
 
-			const innerText: string = $(elem).html()?.trim() as string;
+		const innerText: string = $(elem).html()?.trim() as string;
 
-			//basic initiation
-			if (!Object.keys(productMetas).includes(id)) {
-				//create object for it
-				productMetas[id] = {} as ProductOptions;
-				productMetas[id].images = [];
-				productMetas[id].offer = {} as Offers;
+		//basic initiation
+		if (!Object.keys(productMetas).includes(id)) {
+			//create object for it
+			productMetas[id] = {} as ProductOptions;
+			productMetas[id].images = [];
+			productMetas[id].offer = {} as Offers;
 
-				productMetas[id].offer.shippingDetails =
-					{} as OfferShippingDetails;
+			productMetas[id].offer.shippingDetails = {} as OfferShippingDetails;
 
-				productMetas[id].offer.hasMerchantReturnPolicy =
-					{} as MerchantReturnPolicy;
+			productMetas[id].offer.hasMerchantReturnPolicy =
+				{} as MerchantReturnPolicy;
 
-				productMetas[id].offer.validTill = validTill;
+			productMetas[id].offer.validTill = validTill;
+		}
+
+		/* name of product */
+		if (type === reservedNames.common.heroName) {
+			const productLongname: string[] = innerText
+				.split(reservedNames.product.producrVariableDelimiter)
+				.map((item) => item.trim());
+
+			productMetas[id].productName = productLongname[0];
+
+			const varyMeta: string[] = (
+				$(elem).data(reservedNames.product.variesByDataVar) as string
+			)?.split("-");
+
+			if (!!varyMeta) {
+				varyMeta.forEach((vary: string, index: number): void => {
+					if (vary === "color") {
+						productMetas[id].color = productLongname[index + 1];
+
+						productMetas[id].variesBy = {
+							...productMetas[id].variesBy,
+							color: productMetas[id].color,
+						};
+					} else if (vary === "audage") {
+						productMetas[id].suggestedAge = parseFloat(
+							productLongname[index + 1].replace(/[^\d]/g, ""),
+						);
+
+						productMetas[id].variesBy = {
+							...productMetas[id].variesBy,
+							suggestedAge: productMetas[id].suggestedAge,
+						};
+					} else if (vary === "gender") {
+						const rawGender = productLongname[index + 1].toLowerCase();
+
+						const gender: Gender =
+							rawGender === "male" ? "MALE"
+							: rawGender === "female" ? "FEMALE"
+							: "UNISEX";
+
+						productMetas[id].suggestedGender = gender;
+
+						productMetas[id].variesBy = {
+							...productMetas[id].variesBy,
+							suggestedGender: productMetas[id].suggestedGender,
+						};
+					} else if (vary === "material") {
+						productMetas[id].material = productLongname[index + 1];
+
+						productMetas[id].variesBy = {
+							...productMetas[id].variesBy,
+							material: productMetas[id].material,
+						};
+					} else if (vary === "pattern") {
+						productMetas[id].pattern = productLongname[index + 1];
+
+						productMetas[id].variesBy = {
+							...productMetas[id].variesBy,
+							pattern: productMetas[id].pattern,
+						};
+					} else if (vary === "size") {
+						const size = productLongname[index + 1];
+						productMetas[id].size = Object.values(sizeAvailable).filter(
+							(elem) =>
+								typeof elem === "string" && elem.toString().includes(size),
+						) as sizeAvailable[];
+
+						productMetas[id].variesBy = {
+							...productMetas[id].variesBy,
+							size: productMetas[id].size?.join(", "),
+						};
+					}
+				});
 			}
+		} else if (type === reservedNames.common.heroImage) {
+			const imgLink: string = $(elem).attr("src") ?? "";
 
-			/* name of product */
-			if (type === reservedNames.common.heroName) {
-				const productLongname: string[] = innerText
-					.split(reservedNames.product.producrVariableDelimiter)
-					.map((item) => item.trim());
-
-				productMetas[id].productName = productLongname[0];
-
-				const varyMeta: string[] = (
-					$(elem).data(reservedNames.product.variesByDataVar) as string
-				)?.split("-");
-
-				if (!!varyMeta) {
-					varyMeta.forEach((vary: string, index: number): void => {
-						if (vary === "color") {
-							productMetas[id].color = productLongname[index + 1];
-
-							productMetas[id].variesBy = {
-								...productMetas[id].variesBy,
-								color: productMetas[id].color,
-							};
-						} else if (vary === "audage") {
-							productMetas[id].suggestedAge = parseFloat(
-								productLongname[index + 1].replace(/[^\d]/g, ""),
-							);
-
-							productMetas[id].variesBy = {
-								...productMetas[id].variesBy,
-								suggestedAge: productMetas[id].suggestedAge,
-							};
-						} else if (vary === "gender") {
-							const rawGender = productLongname[index + 1].toLowerCase();
-
-							const gender: Gender =
-								rawGender === "male" ? "MALE"
-								: rawGender === "female" ? "FEMALE"
-								: "UNISEX";
-
-							productMetas[id].suggestedGender = gender;
-
-							productMetas[id].variesBy = {
-								...productMetas[id].variesBy,
-								suggestedGender: productMetas[id].suggestedGender,
-							};
-						} else if (vary === "material") {
-							productMetas[id].material = productLongname[index + 1];
-
-							productMetas[id].variesBy = {
-								...productMetas[id].variesBy,
-								material: productMetas[id].material,
-							};
-						} else if (vary === "pattern") {
-							productMetas[id].pattern = productLongname[index + 1];
-
-							productMetas[id].variesBy = {
-								...productMetas[id].variesBy,
-								pattern: productMetas[id].pattern,
-							};
-						} else if (vary === "size") {
-							const size = productLongname[index + 1];
-							productMetas[id].size = Object.values(sizeAvailable).filter(
-								(elem) =>
-									typeof elem === "string" &&
-									elem.toString().includes(size),
-							) as sizeAvailable[];
-
-							productMetas[id].variesBy = {
-								...productMetas[id].variesBy,
-								size: productMetas[id].size?.join(", "),
-							};
-						}
-					});
-				}
-			} else if (type === reservedNames.common.heroImage) {
-				const imgLink: string = $(elem).attr("src") ?? "";
-
-				if (!imgLink) {
-					throw new Error("Src not found in image tag, ID: " + id);
-				}
-				productMetas[id].images.push(imgLink);
-			} else if (type === reservedNames.common.entityDescription) {
-				productMetas[id].description = longTextStripper(innerText);
-			} else if (type === reservedNames.product.skuID) {
-				productMetas[id].skuid = innerText;
-			} else if (type === reservedNames.product.mpnCode) {
-				productMetas[id].mpncode = innerText;
-			} else if (type === reservedNames.product.brand) {
-				productMetas[id].brandName = innerText;
-			} else if (type === reservedNames.reviews.parentWrapper) {
-				productMetas[id].reviews = commonReviewsExtractor($, elem, [], id);
-			} else if (type === reservedNames.aggregateRating.wrapper) {
-				productMetas[id].aggregateRating = commonAggregateRatingExtractor(
-					$,
-					elem,
-					{} as aggregateRatingOptions,
-				);
-			} else if (type === reservedNames.common.heroCost) {
-				productMetas[id].offer.price = parseFloat(innerText);
-				productMetas[id].offer.priceCurrency = (
-					$(elem).data(reservedNames.common.currencyDataVar) as string
-				).toUpperCase();
-			} else if (type === reservedNames.product.offer.availability) {
-				const availability: boolean = $(elem).data(
-					reservedNames.product.offer.availability,
-				) as boolean;
-
-				productMetas[id].offer.availability =
-					availability ? "InStock" : "OutOfStock";
-			} else if (type === reservedNames.product.offer.itemCondition) {
-				const itemCondition: string = (
-					$(elem).data(reservedNames.product.offer.itemCondition) as string
-				)?.toLowerCase();
-
-				productMetas[id].offer.itemCondition =
-					itemCondition === "new" ? "NewCondition"
-					: itemCondition === "used" ? "UsedCondition"
-					: itemCondition === "refurb" ? "RefurbishedCondition"
-					: "Not Mentioned";
-			} else if (
-				type === reservedNames.product.offer.shippingDetails.deliveryCost
-			) {
-				productMetas[id].offer.shippingDetails = {
-					...productMetas[id].offer.shippingDetails,
-					shippingCost: parseFloat(innerText),
-					shippingDestination: getCode(
-						($(elem).data(
-							reservedNames.product.offer.shippingDetails.deliveryOver,
-						) as string) ?? reservedNames.product.fallbacks.deliveryOver,
-					),
-				} as OfferShippingDetails;
-
-				productMetas[id].offer.hasMerchantReturnPolicy = {
-					...productMetas[id].offer.hasMerchantReturnPolicy,
-					applicableCountry:
-						productMetas[id].offer.shippingDetails?.shippingDestination ??
-						"Not Mentioned",
-				} as MerchantReturnPolicy;
-			} else if (
-				type === reservedNames.product.offer.returnPolicy.returnWithin
-			) {
-				const returnWithin = parseFloat(innerText.replace(/\D/g, "")); //only digits
-
-				const returnFees: string = $(
-					`.${productBaseID}-${id}-${reservedNames.product.offer.returnPolicy.returnFees}`,
-				)
-					.html()
-					?.toLowerCase() as string;
-
-				productMetas[id].offer.hasMerchantReturnPolicy = {
-					...productMetas[id].offer.hasMerchantReturnPolicy,
-					returnWithin: returnWithin,
-					returnPolicyCategory:
-						returnWithin > 0 ?
-							"MerchantReturnFiniteReturnWindow"
-						:	"MerchantReturnNotPermitted",
-					returnFees:
-						returnFees === "0" || returnFees === "free" ?
-							"FreeReturn"
-						:	"ReturnFeesCustomerResponsibility",
-				} as MerchantReturnPolicy;
-			} else if (
-				type === reservedNames.product.offer.shippingDetails.processingTime
-			) {
-				const [min, max] = (
-					$(elem).data(
-						reservedNames.product.offer.shippingDetails.rangeDataVar,
-					) as string
-				)
-					.split("-")
-					.slice(0, 2)
-					.map((elem) => parseFloat(elem));
-
-				productMetas[id].offer.shippingDetails = {
-					...productMetas[id].offer.shippingDetails,
-					processingTime: [min, max],
-				} as OfferShippingDetails;
-			} else if (
-				type === reservedNames.product.offer.shippingDetails.transitTime
-			) {
-				const [min, max] = (
-					$(elem).data(
-						reservedNames.product.offer.shippingDetails.rangeDataVar,
-					) as string
-				)
-					.split("-")
-					.slice(0, 2)
-					.map((elem) => parseFloat(elem));
-
-				productMetas[id].offer.shippingDetails = {
-					...productMetas[id].offer.shippingDetails,
-					deliveryTime: [min, max],
-				} as OfferShippingDetails;
+			if (!imgLink) {
+				throw new Error("Src not found in image tag, ID: " + id);
 			}
-		},
-	);
+			productMetas[id].images.push(imgLink);
+		} else if (type === reservedNames.common.entityDescription) {
+			productMetas[id].description = longTextStripper(innerText);
+		} else if (type === reservedNames.product.skuID) {
+			productMetas[id].skuid = innerText;
+		} else if (type === reservedNames.product.mpnCode) {
+			productMetas[id].mpncode = innerText;
+		} else if (type === reservedNames.product.brand) {
+			productMetas[id].brandName = innerText;
+		} else if (type === reservedNames.reviews.parentWrapper) {
+			productMetas[id].reviews = commonReviewsExtractor($, elem, [], id);
+		} else if (type === reservedNames.aggregateRating.wrapper) {
+			productMetas[id].aggregateRating = commonAggregateRatingExtractor(
+				$,
+				elem,
+				{} as aggregateRatingOptions,
+			);
+		} else if (type === reservedNames.common.heroCost) {
+			productMetas[id].offer.price = parseFloat(innerText);
+			productMetas[id].offer.priceCurrency = (
+				$(elem).data(reservedNames.common.currencyDataVar) as string
+			).toUpperCase();
+		} else if (type === reservedNames.product.offer.availability) {
+			const availability: boolean = $(elem).data(
+				reservedNames.product.offer.availability,
+			) as boolean;
+
+			productMetas[id].offer.availability =
+				availability ? "InStock" : "OutOfStock";
+		} else if (type === reservedNames.product.offer.itemCondition) {
+			const itemCondition: string = (
+				$(elem).data(reservedNames.product.offer.itemCondition) as string
+			)?.toLowerCase();
+
+			productMetas[id].offer.itemCondition =
+				itemCondition === "new" ? "NewCondition"
+				: itemCondition === "used" ? "UsedCondition"
+				: itemCondition === "refurb" ? "RefurbishedCondition"
+				: "Not Mentioned";
+		} else if (
+			type === reservedNames.product.offer.shippingDetails.deliveryCost
+		) {
+			productMetas[id].offer.shippingDetails = {
+				...productMetas[id].offer.shippingDetails,
+				shippingCost: parseFloat(innerText),
+				shippingDestination: getCode(
+					($(elem).data(
+						reservedNames.product.offer.shippingDetails.deliveryOver,
+					) as string) ?? reservedNames.product.fallbacks.deliveryOver,
+				),
+			} as OfferShippingDetails;
+
+			productMetas[id].offer.hasMerchantReturnPolicy = {
+				...productMetas[id].offer.hasMerchantReturnPolicy,
+				applicableCountry:
+					productMetas[id].offer.shippingDetails?.shippingDestination ??
+					"Not Mentioned",
+			} as MerchantReturnPolicy;
+		} else if (
+			type === reservedNames.product.offer.returnPolicy.returnWithin
+		) {
+			const returnWithin = parseFloat(innerText.replace(/\D/g, "")); //only digits
+
+			const returnFees: string = $(
+				`.${productBaseID}-${id}-${reservedNames.product.offer.returnPolicy.returnFees}`,
+			)
+				.html()
+				?.toLowerCase() as string;
+
+			productMetas[id].offer.hasMerchantReturnPolicy = {
+				...productMetas[id].offer.hasMerchantReturnPolicy,
+				returnWithin: returnWithin,
+				returnPolicyCategory:
+					returnWithin > 0 ?
+						"MerchantReturnFiniteReturnWindow"
+					:	"MerchantReturnNotPermitted",
+				returnFees:
+					returnFees === "0" || returnFees === "free" ?
+						"FreeReturn"
+					:	"ReturnFeesCustomerResponsibility",
+			} as MerchantReturnPolicy;
+		} else if (
+			type === reservedNames.product.offer.shippingDetails.processingTime
+		) {
+			const [min, max] = (
+				$(elem).data(
+					reservedNames.product.offer.shippingDetails.rangeDataVar,
+				) as string
+			)
+				.split("-")
+				.slice(0, 2)
+				.map((elem) => parseFloat(elem));
+
+			productMetas[id].offer.shippingDetails = {
+				...productMetas[id].offer.shippingDetails,
+				processingTime: [min, max],
+			} as OfferShippingDetails;
+		} else if (
+			type === reservedNames.product.offer.shippingDetails.transitTime
+		) {
+			const [min, max] = (
+				$(elem).data(
+					reservedNames.product.offer.shippingDetails.rangeDataVar,
+				) as string
+			)
+				.split("-")
+				.slice(0, 2)
+				.map((elem) => parseFloat(elem));
+
+			productMetas[id].offer.shippingDetails = {
+				...productMetas[id].offer.shippingDetails,
+				deliveryTime: [min, max],
+			} as OfferShippingDetails;
+		}
+	});
 
 	//make url for each different items
 	const productMetaData: ProductOptions[] = Object.values(
@@ -1968,138 +1964,132 @@ export function profilePage(htmlString: string): ProfilePageOptions {
 	profilePageMeta.agentInteractionStatistic = [];
 	profilePageMeta.interactionStatistic = [];
 
-	$(`[class^="${profileBaseID}-"]`).each(
-		(_index: number, elem: Element) => {
-			const type: string = elemTypeAndIDExtracter(
-				$,
-				elem,
-				profileBaseID,
-			)[1];
+	$(`[class^="${profileBaseID}-"]`).each((_index: number, elem: any) => {
+		const type: string = elemTypeAndIDExtracter($, elem, profileBaseID)[1];
 
-			const innerText: string = $(elem).html()?.trim() as string;
+		const innerText: string = $(elem).html()?.trim() as string;
 
-			if (type === reservedNames.common.heroName) {
-				profilePageMeta.name = innerText;
-			} else if (type === reservedNames.profilePage.altName) {
-				profilePageMeta.altname = innerText;
-			} else if (type === reservedNames.profilePage.uniquePlatformID) {
-				/* check if there is any special characters in UID */
-				if (!innerText.match(/[^a-zA-Z0-9\-]/g)) {
-					throw new Error(
-						`ID Should be alphanumeric | REF:${profileBaseID}-${reservedNames.profilePage.uniquePlatformID}`,
-					);
-				}
-
-				profilePageMeta.uid = innerText;
-			} else if (type === reservedNames.common.heroImage) {
-				const imgLink: string = $(elem).attr("src") ?? "";
-
-				if (!imgLink) {
-					throw new Error("Img tag with no src");
-				}
-
-				profilePageMeta.image.push(imgLink);
-			} else if (type === reservedNames.common.publishedDate) {
-				profilePageMeta.dateCreated = parseDateString(innerText);
-			} else if (type === reservedNames.common.modifiedDate) {
-				profilePageMeta.dateModified = parseDateString(innerText);
-			} else if (type === reservedNames.common.heroLinkRef) {
-				if (!$(elem).is("a")) {
-					throw new Error(
-						`${profileBaseID}-${reservedNames.common.heroLinkRef} should be a anchor tag`,
-					);
-				}
-
-				const socialMediaLink: string = $(elem).attr("href") as string;
-
-				profilePageMeta.sameAs.push(socialMediaLink);
-			} else if (type === reservedNames.common.entityDescription) {
-				profilePageMeta.description = longTextStripper(innerText);
-			} else if (type === reservedNames.profilePage.authorWorks.wrapper) {
-				const thumbnail: string =
-					$(elem)
-						.find(`.${reservedNames.profilePage.authorWorks.thumbnail}`)
-						.first()
-						?.attr("src") ?? "";
-
-				const headline: string =
-					$(elem)
-						.find(`.${reservedNames.profilePage.authorWorks.headline}`)
-						.first()
-						.html()
-						?.trim() ?? "";
-
-				const publishedDate: string = parseDateString(
-					$(elem)
-						.find(`.${reservedNames.profilePage.authorWorks.publishedOn}`)
-						.html()
-						?.trim() ?? "",
+		if (type === reservedNames.common.heroName) {
+			profilePageMeta.name = innerText;
+		} else if (type === reservedNames.profilePage.altName) {
+			profilePageMeta.altname = innerText;
+		} else if (type === reservedNames.profilePage.uniquePlatformID) {
+			/* check if there is any special characters in UID */
+			if (!innerText.match(/[^a-zA-Z0-9\-]/g)) {
+				throw new Error(
+					`ID Should be alphanumeric | REF:${profileBaseID}-${reservedNames.profilePage.uniquePlatformID}`,
 				);
-
-				const url: string =
-					$(elem)
-						.find(`.${reservedNames.profilePage.authorWorks.url}`)
-						.attr("href") ?? "";
-
-				profilePageMeta.hasPart?.push({
-					headline: headline,
-					image: thumbnail,
-					datePublished: publishedDate,
-					url: url,
-				});
-			} else if (
-				type === reservedNames.profilePage.authorActionCounts.written
-			) {
-				profilePageMeta.agentInteractionStatistic?.push({
-					interactionType: "WriteAction",
-					interactionCount: parseInt(innerText),
-				});
-			} else if (
-				type === reservedNames.profilePage.authorActionCounts.liked
-			) {
-				profilePageMeta.agentInteractionStatistic?.push({
-					interactionType: "LikeAction",
-					interactionCount: parseInt(innerText),
-				});
-			} else if (
-				type === reservedNames.profilePage.authorActionCounts.follows
-			) {
-				profilePageMeta.agentInteractionStatistic?.push({
-					interactionType: "FollowAction",
-					interactionCount: parseInt(innerText),
-				});
-			} else if (
-				type === reservedNames.profilePage.authorActionCounts.shared
-			) {
-				profilePageMeta.agentInteractionStatistic?.push({
-					interactionType: "ShareAction",
-					interactionCount: parseInt(innerText),
-				});
-			} else if (
-				type === reservedNames.profilePage.audienceActionCounts.followers
-			) {
-				profilePageMeta.interactionStatistic?.push({
-					interactionType: "FollowAction",
-					interactionCount: parseInt(innerText),
-				});
-			} else if (
-				type === reservedNames.profilePage.audienceActionCounts.likes
-			) {
-				profilePageMeta.interactionStatistic?.push({
-					interactionType: "LikeAction",
-					interactionCount: parseInt(innerText),
-				});
-			} else if (
-				type ===
-				reservedNames.profilePage.audienceActionCounts.mutualConnections
-			) {
-				profilePageMeta.interactionStatistic?.push({
-					interactionType: "BefriendAction",
-					interactionCount: parseInt(innerText),
-				});
 			}
-		},
-	);
+
+			profilePageMeta.uid = innerText;
+		} else if (type === reservedNames.common.heroImage) {
+			const imgLink: string = $(elem).attr("src") ?? "";
+
+			if (!imgLink) {
+				throw new Error("Img tag with no src");
+			}
+
+			profilePageMeta.image.push(imgLink);
+		} else if (type === reservedNames.common.publishedDate) {
+			profilePageMeta.dateCreated = parseDateString(innerText);
+		} else if (type === reservedNames.common.modifiedDate) {
+			profilePageMeta.dateModified = parseDateString(innerText);
+		} else if (type === reservedNames.common.heroLinkRef) {
+			if (!$(elem).is("a")) {
+				throw new Error(
+					`${profileBaseID}-${reservedNames.common.heroLinkRef} should be a anchor tag`,
+				);
+			}
+
+			const socialMediaLink: string = $(elem).attr("href") as string;
+
+			profilePageMeta.sameAs.push(socialMediaLink);
+		} else if (type === reservedNames.common.entityDescription) {
+			profilePageMeta.description = longTextStripper(innerText);
+		} else if (type === reservedNames.profilePage.authorWorks.wrapper) {
+			const thumbnail: string =
+				$(elem)
+					.find(`.${reservedNames.profilePage.authorWorks.thumbnail}`)
+					.first()
+					?.attr("src") ?? "";
+
+			const headline: string =
+				$(elem)
+					.find(`.${reservedNames.profilePage.authorWorks.headline}`)
+					.first()
+					.html()
+					?.trim() ?? "";
+
+			const publishedDate: string = parseDateString(
+				$(elem)
+					.find(`.${reservedNames.profilePage.authorWorks.publishedOn}`)
+					.html()
+					?.trim() ?? "",
+			);
+
+			const url: string =
+				$(elem)
+					.find(`.${reservedNames.profilePage.authorWorks.url}`)
+					.attr("href") ?? "";
+
+			profilePageMeta.hasPart?.push({
+				headline: headline,
+				image: thumbnail,
+				datePublished: publishedDate,
+				url: url,
+			});
+		} else if (
+			type === reservedNames.profilePage.authorActionCounts.written
+		) {
+			profilePageMeta.agentInteractionStatistic?.push({
+				interactionType: "WriteAction",
+				interactionCount: parseInt(innerText),
+			});
+		} else if (
+			type === reservedNames.profilePage.authorActionCounts.liked
+		) {
+			profilePageMeta.agentInteractionStatistic?.push({
+				interactionType: "LikeAction",
+				interactionCount: parseInt(innerText),
+			});
+		} else if (
+			type === reservedNames.profilePage.authorActionCounts.follows
+		) {
+			profilePageMeta.agentInteractionStatistic?.push({
+				interactionType: "FollowAction",
+				interactionCount: parseInt(innerText),
+			});
+		} else if (
+			type === reservedNames.profilePage.authorActionCounts.shared
+		) {
+			profilePageMeta.agentInteractionStatistic?.push({
+				interactionType: "ShareAction",
+				interactionCount: parseInt(innerText),
+			});
+		} else if (
+			type === reservedNames.profilePage.audienceActionCounts.followers
+		) {
+			profilePageMeta.interactionStatistic?.push({
+				interactionType: "FollowAction",
+				interactionCount: parseInt(innerText),
+			});
+		} else if (
+			type === reservedNames.profilePage.audienceActionCounts.likes
+		) {
+			profilePageMeta.interactionStatistic?.push({
+				interactionType: "LikeAction",
+				interactionCount: parseInt(innerText),
+			});
+		} else if (
+			type ===
+			reservedNames.profilePage.audienceActionCounts.mutualConnections
+		) {
+			profilePageMeta.interactionStatistic?.push({
+				interactionType: "BefriendAction",
+				interactionCount: parseInt(innerText),
+			});
+		}
+	});
 
 	return profilePageMeta;
 }

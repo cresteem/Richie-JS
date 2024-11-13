@@ -1,14 +1,11 @@
-import { rmSync, existsSync } from "fs";
 import { readFile } from "fs/promises";
 import { globSync } from "glob";
-import { dirname, join, relative, basename } from "path";
+import { existsSync, mkdirSync, rmSync } from "node:fs";
+import { basename, dirname, join, relative } from "path";
 import configuration from "../configLoader";
-import { richies } from "../lib/options";
-
-import { mkdirpSync } from "mkdirp";
+import { richieOptions, richies } from "../lib/options";
 import { richie } from "../richie";
 const { reservedNames, preference } = configuration;
-import { richieOptions } from "../lib/options";
 
 const richieCarousals: Partial<richies>[] = [
 	"movie",
@@ -78,7 +75,7 @@ export async function makeRichie(
 
 							try {
 								//make dir
-								mkdirpSync(dirname(dest));
+								mkdirSync(dirname(dest));
 							} catch (err: any) {
 								/* console.log(err.code); */
 							}
