@@ -16,10 +16,6 @@
   "directories": {
     "lib": "./dist/lib"
   },
-  "engines": {
-    "node": ">=21.7.3",
-    "npm": ">=10.5.0"
-  },
   "preferGlobal": true,
   "bin": {
     "rjs": "./dist/bin/rjs.js"
