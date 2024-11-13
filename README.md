@@ -1,5 +1,7 @@
 <div align="center">
 
+![Richi JS logo](./logo.png)
+
 # Richie JS - Powerful SEO Tool for Generating Rich Results
 
 <p id="intro">Richie JS is a powerful SEO tool designed to streamline the creation of structured data for rich results, boosting your website's visibility on search engines. It automates the generation of JSON-LD output, enabling quick and efficient optimization for search engine performance and enhancing user engagement.</p>
@@ -124,7 +126,7 @@
 
 * **Automated Rich Results Generation:** Automate the creation of rich snippets with minimal manual effort.
 * **Google-Recognized Structured Data:** Generates JSON-LD outputs that comply with Google’s rich results standards.
-* **Customizable Configuration:** Easily tailor output and settings through the `rjs.config.json` file.
+* **Customizable Configuration:** Easily tailor output and settings through the `.richiejs` file.
 * **Improved SEO Performance:** Boost your website’s visibility and user engagement by integrating rich snippets.
 * **Command-Line Interface (CLI) Support:** Offers powerful CLI commands for streamlined operations.
 * **Open-Source Flexibility:** Licensed under Apache 2.0, allowing free use and modification in projects.
@@ -187,7 +189,7 @@ npx rjs make --norm
 ```
 
 ### ⚙️🛠️ Custom Configuration
-Override default settings by creating an `rjs.config.json` file in the project's root directory.
+Override default settings by creating an `.richiejs` file in the project's root directory.
 
 ### 🤖 Setting Up IntelliSense for Richie JS
 **⚠️ Only for VS Code**
@@ -228,7 +230,7 @@ For any questions, please reach out via connect@cresteem.com
 
 ## Credits 🙏🏻
 
-Richie JS is an open-source project developed and maintained by [DARSAN](https://darsan.in/) at [CRESTEEM](https://www.cresteem.com/). Special thanks to the creators and maintainers of the foundational libraries used, including [Axios](https://axios-http.com/), [Cheerio](https://cheerio.js.org/), [Puppeteer](https://pptr.dev/), and [Yargs](https://yargs.js.org/).
+Richie JS is an open-source project developed and maintained by [DARSAN](https://darsan.in/) at [CRESTEEM](https://www.cresteem.com/). Special thanks to the creators and maintainers of the foundational libraries used, including [Cheerio](https://cheerio.js.org/), [Puppeteer](https://pptr.dev/), and [Yargs](https://yargs.js.org/).
 
 ---
 
@@ -294,23 +296,16 @@ Richie JS is an open-source project developed and maintained by [DARSAN](https:/
 #### Topics
 <ul id="keywords">
 <li>seo automation</li>
-<li>rich results</li>
-<li>json-ld generation</li>
-<li>structured data tool</li>
-<li>node.js seo</li>
 <li>google snippets</li>
-<li>web development seo</li>
-<li>cheerio</li>
-<li>puppeteer</li>
-<li>axios</li>
+<li>web development</li>
 <li>seo</li>
-<li>seo improvement</li>
-<li>search engine optimization</li>
 <li>website visibility</li>
-<li>seo tools</li>
-<li>cresteem</li>
 <li>developer tools</li>
 <li>cli tools</li>
-<li>open-source seo</li>
 <li>digital marketing</li>
+<li>seo tool</li>
+<li>rich results</li>
+<li>json-ld</li>
+<li>structured data</li>
+<li>schema markup</li>
 </ul>
