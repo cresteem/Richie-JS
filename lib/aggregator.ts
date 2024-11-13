@@ -54,7 +54,14 @@ import {
 	ytVideoMeta,
 } from "./utilities";
 
-import { basename, dirname, join, relative, resolve } from "node:path";
+import {
+	basename,
+	dirname,
+	join,
+	relative,
+	resolve,
+	sep,
+} from "node:path";
 import { cwd } from "node:process";
 
 import configurations from "../configLoader";
@@ -199,7 +206,7 @@ export function breadCrumb(htmlPath: string): breadCrumbListOptions {
 	const relativePath: string = relative(cwd(), htmlPath);
 
 	/* path branches in chronological order */
-	const pathTree: string[] = relativePath.split("\\");
+	const pathTree: string[] = relativePath.split(sep);
 
 	/* check if input htmlpath is index.html */
 	const sourceIsIndex: boolean = basename(htmlPath) === "index.html";
@@ -218,7 +225,7 @@ export function breadCrumb(htmlPath: string): breadCrumbListOptions {
 		/* assume in first iteration file
 		always exist so skip existance check */
 		if (firstIteration) {
-			let itemUrl: string = pathTree.join("\\");
+			let itemUrl: string = pathTree.join(sep);
 
 			const preserveBasename: boolean = sourceIsIndex ? false : true;
 
@@ -241,7 +248,7 @@ export function breadCrumb(htmlPath: string): breadCrumbListOptions {
 		} else {
 			//check if index html is available for each levels
 			// L1/L2 => L1/L2/index.html
-			const requiredFile: string = pathTree.join("\\") + "\\index.html";
+			const requiredFile: string = pathTree.join(sep) + `${sep}index.html`;
 
 			if (existsSync(requiredFile)) {
 				const listItem: breadCrumbMeta = generateMeta(
