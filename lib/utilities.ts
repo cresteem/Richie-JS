@@ -292,9 +292,12 @@ export function combineAggregateRatings(
 export function createJsonLD(
 	innerDataObject: Record<string, any>,
 ): string {
-	const jsonLD = `<script type="application/ld+json">${JSON.stringify(
-		innerDataObject,
-	)}</script>`;
+	const jsonLD =
+		innerDataObject ?
+			`<script type="application/ld+json">${JSON.stringify(
+				innerDataObject,
+			)}</script>`
+		:	"";
 	return jsonLD;
 }
 

@@ -30,8 +30,8 @@ import {
 	richieOPS,
 	richies,
 } from "./lib/options";
-import { createJsonLD, writeOutput } from "./lib/utilities";
 import { sweep } from "./lib/sweeper";
+import { createJsonLD, writeOutput } from "./lib/utilities";
 
 const functionMap: Record<richies, richieOPS> = {
 	article: {
@@ -117,7 +117,7 @@ const functionMap: Record<richies, richieOPS> = {
 };
 
 export async function richie(
-	richieName: richies,
+	richieNames: richies[],
 	filepath: string,
 	destinationPath: string = "",
 ): Promise<void> {
@@ -126,40 +126,45 @@ export async function richie(
 
 	const source: string = await readFile(filepath, { encoding: "utf8" });
 
-	//standardize parameters
-	const aggregatorParams: string[] | boolean =
-		richieGroupA.includes(richieName) ? [source]
-		: richieGroupB.includes(richieName) ? [source, filepath]
-		: richieGroupC.includes(richieName) ? [filepath]
-		: false;
+	let richResultSnippets: string = "";
+	let cleanSource: string | null = null;
 
 	return new Promise(async (resolve, reject) => {
-		if (!aggregatorParams) {
-			reject(new Error("Unsupported Richie name"));
-		} else {
-			const aggregator: Function = functionMap[richieName].aggregator;
-			const serializer: Function = functionMap[richieName].serializer;
+		for (const richieName of richieNames) {
+			//standardize parameters
+			const aggregatorParams: string[] | boolean =
+				richieGroupA.includes(richieName) ? [source]
+				: richieGroupB.includes(richieName) ? [source, filepath]
+				: richieGroupC.includes(richieName) ? [filepath]
+				: false;
 
-			const aggregatedData = await aggregator(...aggregatorParams);
+			if (!aggregatorParams) {
+				reject(new Error("Unsupported Richie name"));
+			} else {
+				const aggregator: Function = functionMap[richieName].aggregator;
+				const serializer: Function = functionMap[richieName].serializer;
 
-			const serializerParams: any[] =
-				richieName === "productwv" ?
-					[...Object.values(aggregatedData)] // [productMeta,variesBy]
-				: richieName === "product" ?
-					[Object.values(aggregatedData)[0]] // [productMeta]
-				:	[aggregatedData];
+				const aggregatedData = await aggregator(...aggregatorParams);
 
-			const serializedData = serializer(...serializerParams);
-			const richResultSnippet = createJsonLD(serializedData);
-			const cleanSource = sweep(richieName, source);
+				const serializerParams: any[] =
+					richieName === "productwv" ?
+						[...Object.values(aggregatedData)] // [productMeta,variesBy]
+					: richieName === "product" ?
+						[Object.values(aggregatedData)[0]] // [productMeta]
+					:	[aggregatedData];
 
-			writeOutput(cleanSource, destinationFile, richResultSnippet)
-				.then(() => {
-					resolve();
-				})
-				.catch((error) => {
-					reject(error);
-				});
+				const serializedData = serializer(...serializerParams);
+				richResultSnippets += createJsonLD(serializedData);
+				cleanSource = sweep(richieName, cleanSource ?? source);
+			}
 		}
+
+		writeOutput(cleanSource as string, destinationFile, richResultSnippets)
+			.then(() => {
+				resolve();
+			})
+			.catch((error) => {
+				reject(error);
+			});
 	});
 }

@@ -86,7 +86,7 @@ function runAll(): Promise<string> {
 		//nothing to do
 	} finally {
 		//make op dir
-		mkdirSync(opfolder);
+		mkdirSync(opfolder, { recursive: true });
 	}
 
 	const testOps: Promise<void>[] = [];

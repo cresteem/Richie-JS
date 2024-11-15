@@ -216,15 +216,12 @@ export function breadCrumb(htmlPath: string): breadCrumbListOptions {
 	const levelCounts: number =
 		sourceIsIndex ? pathTree.length - 1 : pathTree.length;
 
-	/* In first iteration no need to check file existance */
-	let firstIteration: boolean = true;
-
 	let realLevel: number = levelCounts; //to track real chronological level according to web protocol
 
 	for (let i: number = 0; i < levelCounts; i++) {
 		/* assume in first iteration file
 		always exist so skip existance check */
-		if (firstIteration) {
+		if (i === 0) {
 			let itemUrl: string = pathTree.join(sep);
 
 			const preserveBasename: boolean = sourceIsIndex ? false : true;
@@ -242,9 +239,6 @@ export function breadCrumb(htmlPath: string): breadCrumbListOptions {
 			/* if source is index pop two times otherwise pop one time*/
 			//EX: L1/L2/L3/index.html => L1/L2
 			if (sourceIsIndex) pathTree.pop();
-
-			//switching flag for next iterations
-			firstIteration = false;
 		} else {
 			//check if index html is available for each levels
 			// L1/L2 => L1/L2/index.html

@@ -213,6 +213,7 @@
 			"restaurant": false,
 			"recipe": true
 		},
-		"isProductVar": true
+		"isProductVar": true,
+		"breadcrumb":false
 	}
 }

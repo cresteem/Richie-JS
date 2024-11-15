@@ -801,6 +801,9 @@ export interface configurationOptions {
 			recipe: boolean;
 		};
 		isProductVar: boolean;
+
+		//15/11/2024
+		breadcrumb: boolean;
 	};
 }
 

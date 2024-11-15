@@ -931,6 +931,11 @@
 					"type": "boolean",
 					"default": false,
 					"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)"
+				},
+				"breadcrumb":{
+					"type": "boolean",
+					"default": false,
+					"markdownDescription": "[Guide Link](https://cresteem.com/opensource/richie-js)"
 				}
 			}
 		}

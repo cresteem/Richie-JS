@@ -62,68 +62,69 @@ export async function makeRichie(
 			new Promise((resolve, reject) => {
 				readFile(file, { encoding: "utf8" })
 					.then((htmlText) => {
-						const neededRichies: richies[] =
-							richieTypeAcquisition(htmlText);
+						let neededRichies: richies[] = richieTypeAcquisition(htmlText);
 
-						neededRichies.forEach((richieName) => {
-							const dest = join(
-								process.cwd(),
-								options.destDir ?? "",
-								dirname(relative(process.cwd(), file)),
-								basename(file),
-							);
+						const dest = join(
+							process.cwd(),
+							options.destDir ?? "",
+							dirname(relative(process.cwd(), file)),
+							basename(file),
+						);
 
-							try {
-								//make dir
-								mkdirSync(dirname(dest));
-							} catch (err: any) {
-								/* console.log(err.code); */
-							}
+						try {
+							//make dir
+							mkdirSync(dirname(dest), { recursive: true });
+						} catch (err: any) {
+							console.log(err);
+							process.exit(1);
+						}
 
-							//carousal handler
-							if (
-								richieCarousals.includes(richieName) ||
-								richieName === "product"
-							) {
-								switch (richieName) {
-									case "recipe":
-										if (isCarousals.recipe) {
-											richieName = "crecipe";
-										}
-										break;
-									case "movie":
-										if (isCarousals.movie) {
-											richieName = "cmovie";
-										}
-										break;
-									case "restaurant":
-										if (isCarousals.restaurant) {
-											richieName = "crestaurant";
-										}
-										break;
-									case "course":
-										if (isCarousals.course) {
-											richieName = "ccourse";
-										}
-										break;
-									case "product":
-										if (preference.isProductVar) {
-											richieName = "productwv";
-										}
-										break;
-								}
+						neededRichies = neededRichies.map((richieName: richies) => {
+							switch (richieName) {
+								case "recipe":
+									if (isCarousals.recipe) {
+										return "crecipe";
+									}
+									return richieName;
+
+								case "movie":
+									if (isCarousals.movie) {
+										return "cmovie";
+									}
+									return richieName;
+
+								case "restaurant":
+									if (isCarousals.restaurant) {
+										return "crestaurant";
+									}
+									return richieName;
+
+								case "course":
+									if (isCarousals.course) {
+										return "ccourse";
+									}
+									return richieName;
+
+								case "product":
+									if (preference.isProductVar) {
+										return "productwv";
+									}
+									return richieName;
+
+								default:
+									return richieName;
 							}
 
 							//
-
-							richie(richieName, file, dest)
-								.then(() => {
-									resolve();
-								})
-								.catch((err) => {
-									reject(err);
-								});
 						});
+
+						richie(neededRichies, file, dest)
+							.then(() => {
+								resolve();
+							})
+							.catch((err) => {
+								reject(err);
+							});
 					})
 					.catch((err) => {
 						reject(err);
@@ -135,21 +136,22 @@ export async function makeRichie(
 	await Promise.all(concurrentOPS);
 }
 
-// File type acquisition based on artifacts
+// File type acquisition based on content
 function richieTypeAcquisition(htmlText: string): richies[] {
 	const availableTypes: richies[] = [];
 
 	//a=len(2)
-	const noIDTypes: richies[] = ["breadcrumb", "searchbox"];
+	/* const noIDTypes: richies[] = ["breadcrumb", "searchbox"]; */
 
 	//b=len(5) a+b = 7
-	const IDTypesVars: richies[] = [
+	/* Identifiable by content but controlled by configuration file */
+	/* const IDTypesVars: richies[] = [
 		"crecipe",
 		"cmovie",
-		"course",
+		"ccourse",
 		"crestaurant",
 		"productwv",
-	];
+	]; */
 
 	//c=len(13) a+b+c = 20
 	const IDTypesRecord: Partial<Record<richies, string>> = {
@@ -182,6 +184,12 @@ function richieTypeAcquisition(htmlText: string): richies[] {
 			}
 		}
 	});
+
+	/* breadcrumb controlled by configfile */
+	if (preference.breadcrumb) {
+		availableTypes.push("breadcrumb");
+	}
+	/*  */
 
 	return availableTypes;
 }
