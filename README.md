@@ -1,6 +1,6 @@
 <div align="center">
 
-![Richi JS logo](./logo.png)
+![Richi JS logo](./logo/rjs-icon.svg)
 
 # Richie JS - Powerful SEO Tool for Generating Rich Results
 

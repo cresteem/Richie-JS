@@ -1,5 +1,5 @@
 import { copyFile, readFile, writeFile } from "fs/promises";
-import { existsSync, mkdirSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync } from "node:fs";
 import { basename, dirname, join } from "path";
 
 type isenseModes = "user" | "ws";
@@ -59,6 +59,11 @@ function appendSettings(
 		newConfigs["json.schemas"] = [schemaConfigSnippet];
 	}
 
+	/* Associate icon to configuration file. */
+	copyRichieJSIcon();
+	newConfigs = { ...newConfigs, ...iconAssociationObject };
+	/*  */
+
 	return new Promise((resolve, reject) => {
 		writeFile(configPath, JSON.stringify(newConfigs, null, 3))
 			.then(() => {
@@ -80,7 +85,7 @@ function createSettings(
 	};
 
 	if (mkParentFolder) {
-		mkdirSync(dirname(configPath));
+		mkdirSync(dirname(configPath), { recursive: true });
 	}
 
 	return new Promise((resolve, reject) => {
@@ -165,7 +170,7 @@ function writeSettings(
 							reject(err);
 						});
 				} else {
-					reject("Other error: " + err.message);
+					reject("Other error: " + err);
 				}
 			}
 		} else {
@@ -208,5 +213,36 @@ export function isense(): Promise<void> {
 				reject("Error: Wrong parameter");
 			}
 		});
+	}
+}
+
+const iconAssociationObject = {
+	"material-icon-theme.files.associations": {
+		".richiejs": "../../icons/rjs-icon",
+	},
+};
+
+async function copyRichieJSIcon() {
+	const userHome: string = (
+		process.platform === "win32" ?
+			join(process.env.HOMEDRIVE ?? "", process.env.HOMEPATH ?? "")
+		:	process.env.HOME) as string;
+
+	const destPath = join(
+		userHome,
+		".vscode",
+		"extensions",
+		"icons",
+		"rjs-icon.svg",
+	);
+
+	const source = join(__dirname, "..", "..", "logo", "rjs-icon.svg");
+
+	try {
+		mkdirSync(dirname(destPath), { recursive: true });
+		copyFileSync(source, destPath);
+	} catch (err) {
+		console.log("Error copying icon: ", err);
+		process.exit(1);
 	}
 }
