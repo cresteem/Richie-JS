@@ -75,7 +75,7 @@ function run(richieName: richies): Promise<void> {
 	const testfile = testRecords[richieName].testfile;
 	const destinationFile = testRecords[richieName].destFile;
 
-	return richie(richieName, testfile, destinationFile);
+	return richie([richieName], testfile, destinationFile);
 }
 
 function runAll(): Promise<string> {
