@@ -1,14 +1,14 @@
 #! node
 import { hideBin } from "yargs/helpers";
 import yargs from "yargs/yargs";
-import { isense } from "./schemaWriter";
+import { richieOptions } from "../lib/types";
+import iconAssociator from "./iconAssociator";
 import { makeRichie } from "./richieMaker";
-import { richieOptions } from "lib/options";
 
-type availableCommandsOP = "isense" | "make";
+type availableCommandsOP = "init" | "make";
 
 function main(): Promise<void> {
-	const availableCommands: availableCommandsOP[] = ["isense", "make"];
+	const availableCommands: availableCommandsOP[] = ["init", "make"];
 	const givenCommand: availableCommandsOP = process
 		.argv[2] as availableCommandsOP;
 
@@ -46,8 +46,12 @@ function main(): Promise<void> {
 
 	return new Promise((resolve, reject) => {
 		switch (givenCommand) {
-			case "isense":
-				isense()
+			case "make":
+				makeRichie({
+					destDir: argv.destDir,
+					omitPatterns: argv.omitPatterns,
+					norm: argv.norm,
+				})
 					.then(() => {
 						resolve();
 					})
@@ -55,12 +59,9 @@ function main(): Promise<void> {
 						reject(err);
 					});
 				break;
-			case "make":
-				makeRichie({
-					destDir: argv.destDir,
-					omitPatterns: argv.omitPatterns,
-					norm: argv.norm,
-				})
+
+			case "init":
+				iconAssociator()
 					.then(() => {
 						resolve();
 					})
