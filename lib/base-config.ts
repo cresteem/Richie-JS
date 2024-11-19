@@ -1,0 +1,223 @@
+import { configurationOptions } from "./types";
+
+const baseConfig: Partial<configurationOptions> = {
+	domainAddress: "cresteem.com",
+	timeFormat: "yyyy-MM-dd hh:mm a",
+	siteSearchBoxFieldName: "searchTerm",
+	reservedNames: {
+		aggregateRating: {
+			wrapper: "aggrate",
+			aggregatedRatingValue: "arv",
+			maxRangeOfRating: "mr",
+			numberOfRatings: "rc",
+		},
+		reviews: {
+			parentWrapper: "reviews",
+			childWrapper: "urate",
+			raterName: "rater",
+			ratedValue: "rv",
+			maxRateRange: "mr",
+			reviewPublishedOn: "rpOn",
+		},
+		common: {
+			fallbackCurrency: "INR",
+			publishedDate: "pdt",
+			modifiedDate: "mdt",
+			heroImage: "img",
+			author: {
+				name: "aname",
+				url: "aurl",
+				jobTitle: "ajob",
+			},
+			publisher: {
+				name: "pname",
+				url: "purl",
+			},
+			authorAndPubPrefix: {
+				person: "P",
+				organisation: "O",
+			},
+			heroName: "name",
+			entityDescription: "desc",
+			keywords: "kw",
+			MO: "mode",
+			currencyDataVar: "currency",
+			heroCost: "cost",
+			cuisineType: "csnt",
+			heroLinkRef: "rlink",
+			videoFrame: "vframe",
+		},
+		article: {
+			baseID: "rjs-article",
+			articleType: "articletype",
+			authorNameStartwith: "a",
+			publisherNameStartwith: "p",
+		},
+		movie: {
+			baseID: "rjs-movie",
+			director: "dir",
+		},
+		recipe: {
+			baseID: "rjs-recipe",
+			preptime: {
+				hours: "pth",
+				minutes: "ptm",
+				hoursAndMinutes: "pthm",
+			},
+			cooktime: {
+				hours: "cth",
+				minutes: "ctm",
+				hoursAndMinutes: "cthm",
+			},
+			durationID: {
+				hours: "h",
+				minutes: "m",
+			},
+			serveCount: "serves",
+			recipeCategory: "cat",
+			nutritionInformations: {
+				wrapper: "nutrition",
+				calories: "cal",
+			},
+			ingredients: "ingredient",
+			instructions: {
+				wrapper: "instructions",
+				childwrapper: "step",
+				shortInstruction: "short",
+				longInstruction: "long",
+				image: "simg",
+			},
+		},
+		course: {
+			baseID: "rjs-course",
+			language: "lang",
+			instructor: "ins",
+			duration: "period",
+			courseFrequency: "freq",
+			courseRepeatation: "rep",
+		},
+		restaurant: {
+			baseID: "rjs-restaurant",
+		},
+		events: {
+			baseID: "rjs-event",
+			startFrom: "from",
+			endAt: "end",
+			status: "sts",
+		},
+		faqPage: {
+			baseID: "rjs-faq",
+			question: "question",
+			answer: "answer",
+		},
+		video: {
+			baseID: "rjs-video",
+			segmentsWrapper: "index",
+			startOffsetDataVar: "offset",
+		},
+		localBusiness: {
+			baseID: "rjs-lb",
+			areaAvailablity: "areaserves",
+		},
+		organisation: {
+			baseID: "rjs-org",
+			logo: "logo",
+			email: "email",
+			foundingYear: "found",
+			taxid: "tid",
+		},
+		product: {
+			baseID: "rjs-prod",
+			productPriceValidUntilNext: 30,
+			productGroupIDHashLength: "128",
+			producrVariableDelimiter: "|",
+			skuID: "sku",
+			mpnCode: "mpn",
+			brand: "brand",
+			variesByDataVar: "var",
+			offer: {
+				shippingDetails: {
+					deliveryCost: "delcost",
+					deliveryOver: "delover",
+					processingTime: "ptime",
+					transitTime: "ttime",
+					rangeDataVar: "range",
+				},
+				returnPolicy: {
+					returnWithin: "returnin",
+					returnFees: "returnfee",
+				},
+				availability: "avail",
+				itemCondition: "cond",
+			},
+			varientParameterName: "var",
+			fallbacks: {
+				deliveryOver: "india",
+			},
+		},
+		profilePage: {
+			baseID: "rjs-pp",
+			altName: "altname",
+			uniquePlatformID: "uid",
+			authorWorks: {
+				wrapper: "awork",
+				headline: "head",
+				thumbnail: "timg",
+				publishedOn: "pon",
+				url: "url",
+			},
+			authorActionCounts: {
+				written: "aposts",
+				liked: "aliked",
+				follows: "afollows",
+				shared: "ashared",
+			},
+			audienceActionCounts: {
+				followers: "followers",
+				likes: "likes",
+				mutualConnections: "bicon",
+			},
+		},
+		softwareApp: {
+			baseID: "rjs-sapp",
+			operatingSystem: "os",
+			OSSeperator: ",",
+			category: "cat",
+		},
+		businessEntity: {
+			location: {
+				wrapper: "loc",
+				physicalLocationName: "venue",
+				virtualLocation: "vlurl",
+				street: "stl",
+				city: "ct",
+				state: "st",
+				country: "ctry",
+				pincode: "pc",
+			},
+			telephone: "tel",
+			reservationDataVar: "reserve",
+			workHours: {
+				wrapper: "workhours",
+				dayRange: "wdr",
+				dayAlone: "wd",
+				timein24: "HR",
+				timein12: "hr",
+			},
+			menuLink: "menu",
+			mapFrame: "map",
+		},
+	},
+	preference: {
+		isCarousals: {
+			movie: false,
+			course: false,
+			restaurant: false,
+			recipe: false,
+		},
+		isProductVar: false,
+		breadcrumb: false,
+	},
+};
+
+export default baseConfig;
