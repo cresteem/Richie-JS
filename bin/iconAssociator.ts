@@ -36,6 +36,9 @@ function appendSettings(
 	const iconAssociationObject = {
 		"material-icon-theme.files.associations": {
 			"richie.config.ts": "../../icons/rjs-icon",
+			"richie.config.js": "../../icons/rjs-icon",
+			"richie.config.mjs": "../../icons/rjs-icon",
+			"richie.config.cjs": "../../icons/rjs-icon",
 		},
 	};
 

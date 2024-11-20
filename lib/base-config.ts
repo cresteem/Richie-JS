@@ -3,8 +3,10 @@ import { configurationOptions } from "./types";
 const baseConfig: Partial<configurationOptions> = {
 	domainAddress: "cresteem.com",
 	timeFormat: "yyyy-MM-dd hh:mm a",
-	siteSearchBoxFieldName: "searchTerm",
 	reservedNames: {
+		siteSearchBox: {
+			baseID: "spage",
+		},
 		aggregateRating: {
 			wrapper: "aggrate",
 			aggregatedRatingValue: "arv",
@@ -217,6 +219,7 @@ const baseConfig: Partial<configurationOptions> = {
 		},
 		isProductVar: false,
 		breadcrumb: false,
+		siteSearchBoxFieldName: "searchTerm",
 	},
 };
 

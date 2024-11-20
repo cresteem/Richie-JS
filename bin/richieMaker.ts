@@ -1,24 +1,18 @@
 import { readFile } from "fs/promises";
 import { globSync } from "glob";
 import { existsSync, mkdirSync, rmSync } from "node:fs";
-import { basename, dirname, join, relative } from "path";
+import { basename, dirname, join, relative } from "node:path";
 import configuration from "../configLoader";
-import { richieOptions, richies } from "../lib/options";
+import { richieOptions, richies } from "../lib/types";
 import { richie } from "../richie";
-const { reservedNames, preference } = configuration;
-
-const richieCarousals: Partial<richies>[] = [
-	"movie",
-	"course",
-	"recipe",
-	"restaurant",
-];
-
-const isCarousals = preference.isCarousals;
 
 const richieDefaultOptions: richieOptions = {
 	searchExtensions: ["html"],
 };
+
+//loading configurations
+const { reservedNames, preference } = configuration();
+const isCarousals = preference.isCarousals;
 
 export async function makeRichie(
 	options: richieOptions = richieDefaultOptions,
@@ -172,6 +166,7 @@ function richieTypeAcquisition(htmlText: string): richies[] {
 		profile: reservedNames.profilePage.baseID,
 
 		software: reservedNames.softwareApp.baseID,
+		searchbox: reservedNames.siteSearchBox.baseID,
 	};
 
 	Object.keys(IDTypesRecord).forEach((richieName) => {
