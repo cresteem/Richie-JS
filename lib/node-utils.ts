@@ -1,5 +1,5 @@
 import { format } from "@prettier/sync";
-import { load } from "cheerio/slim";
+import { load } from "cheerio";
 import { writeFile } from "node:fs/promises";
 
 /*  //it is only good if you have google business page 
@@ -74,7 +74,6 @@ export function writeOutput(
 	richResult: string,
 	pretty: boolean = true,
 ): Promise<void> {
-	console.log(source);
 	/* loading source as dom object */
 	const $ = load(source);
 

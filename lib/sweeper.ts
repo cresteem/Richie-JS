@@ -1,8 +1,8 @@
 import { CheerioAPI, load } from "cheerio";
 import configuration from "../configLoader";
-import { richies } from "./options";
+import { richies } from "./types";
 
-const { reservedNames } = configuration;
+const { reservedNames } = configuration();
 
 export function sweep(richieName: richies, htmlSource: string): string {
 	const htmlDOM: CheerioAPI = load(htmlSource);

@@ -345,11 +345,12 @@ export default class BaseUtils {
 		const timeFormat: string = `yyyy-MM-dd'T'HH:mm:ssZZ`;
 
 		//settings unlimited expiry date
-		const expires = DateTime.fromFormat(uploadDate, timeFormat)
-			.plus({
-				years: 1000,
-			})
-			.toFormat(this.timeFormat);
+		const expires =
+			DateTime.fromFormat(uploadDate, timeFormat)
+				.plus({
+					years: 1000,
+				})
+				.toISO() ?? "";
 
 		return {
 			videoTitle: videoTitle,

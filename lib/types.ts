@@ -1,3 +1,5 @@
+import { PathLike, StatOptions, Stats } from "node:fs";
+
 type Currency =
 	| "USD"
 	| "INR"
@@ -585,11 +587,14 @@ export interface testProps {
 	destFile: string;
 }
 
-export interface configurationOptions {
+export interface configurationOptions extends Plugins {
 	domainAddress: string;
 	timeFormat: string;
-	siteSearchBoxFieldName: string;
+
 	reservedNames: {
+		siteSearchBox: {
+			baseID: string;
+		};
 		aggregateRating: {
 			wrapper: string;
 			aggregatedRatingValue: string;
@@ -801,9 +806,48 @@ export interface configurationOptions {
 			recipe: boolean;
 		};
 		isProductVar: boolean;
-
-		//15/11/2024
 		breadcrumb: boolean;
+		siteSearchBoxFieldName: string;
+	};
+}
+
+export interface Plugins {
+	htmlParser: (htmlString: any) => any /* | CheerioAPI */;
+
+	fetchGeoLocation: (
+		meta: LocalBusinessOptions | RestaurantOptions | any,
+	) => any;
+
+	pathLib: {
+		dirname: (filePath: string) => string;
+		basename: (filepath: string, ext?: string) => string;
+		join: (...paths: string[]) => string;
+		relative: (from: string, to: string) => string;
+		resolve: (...paths: string[]) => string;
+		sep: "\\" | "/";
+		cwd: () => string;
+	};
+	cryptoLib: {
+		createHash: (algorithm: string) => any;
+		randomBytes: (length: number) => any;
+	};
+	fsLib: {
+		stat: (
+			path: PathLike,
+			opts?: StatOptions & {
+				bigint?: false | undefined;
+			},
+		) => Promise<Stats>;
+		readFileSync: (
+			path: string,
+			options:
+				| {
+						encoding: BufferEncoding;
+						flag?: string | undefined;
+				  }
+				| BufferEncoding,
+		) => string;
+		existsSync: (path: PathLike) => boolean;
 	};
 }
 
@@ -812,4 +856,8 @@ export interface richieOptions {
 	destDir?: string;
 	omitPatterns?: string[];
 	norm?: boolean;
+}
+
+export interface richieReactOptions {
+	richieNames: richies[];
 }
