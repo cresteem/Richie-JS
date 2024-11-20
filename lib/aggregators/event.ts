@@ -19,7 +19,7 @@ export default async function makeEventsPage(
 	} else {
 		validFrom = (
 			await this.stat(this.resolve(this.cwd(), htmlPath))
-		).mtime.toISOString();
+		)?.mtime?.toISOString();
 	}
 
 	$(`[class^="${eventBaseID}-"]`).each((_index: number, elem: any) => {

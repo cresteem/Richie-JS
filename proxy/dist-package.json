@@ -1,0 +1,13 @@
+{
+	"name": "rjs-proxy",
+	"version": "0.0.1",
+	"description": "Proxy to handle client side cross site requests",
+	"main": "index.js",
+	"repository": "https://github.com/cresteem/Richie-JS.git",
+	"author": "PRIYADARSAN S <iamspdarsan@gmail.com>",
+	"license": "Apache-2.0",
+	"private": true,
+	"dependencies": {
+		"@google-cloud/functions-framework": "^3.4.2"
+	}
+}

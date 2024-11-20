@@ -234,7 +234,17 @@ export function extractTime(timeRange: string, is24: boolean): string[] {
 
 async function _fetchWebPage(pageUrl: string): Promise<string> {
 	try {
-		const response = await fetch(pageUrl);
+		const response = await fetch(
+			`https://asia-south1-bonse-430603.cloudfunctions.net/rjs-proxy`,
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ url: pageUrl }),
+			},
+		);
+
 		if (!response.ok) {
 			throw new Error(
 				`Failed to get '${pageUrl}' (status code: ${response.status})`,

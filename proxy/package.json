@@ -1,0 +1,28 @@
+{
+	"name": "rjs-proxy",
+	"version": "0.0.1",
+	"description": "Proxy to handle client side cross site requests",
+	"main": "index.js",
+	"repository": "https://github.com/cresteem/Richie-JS.git",
+	"author": "PRIYADARSAN S <iamspdarsan@gmail.com>",
+	"license": "Apache-2.0",
+	"private": true,
+	"scripts": {
+		"dev": "cls && rimraf dist && tsc -p tsconfig.json",
+		"dr": "yarn dev && yarn rp",
+		"rp": "pushd dist && npx @google-cloud/functions-framework --target=invoke && popd",
+		"build": "cls && rimraf dist && tsc -p tsconfig.json && ncp ./dist-package.json ./dist/package.json",
+		"clean": "cls && rimraf dist",
+		"deploy": "yarn build && deploy"
+	},
+	"dependencies": {
+		"@google-cloud/functions-framework": "^3.4.2"
+	},
+	"devDependencies": {
+		"rimraf": "latest",
+		"ncp": "latest",
+		"@types/node": "^20.14.8",
+		"ts-node": "10.9.2",
+		"typescript": "5.4.5"
+	}
+}
