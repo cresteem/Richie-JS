@@ -37,6 +37,7 @@
 		"node_modules",
 		"test",
 		"jest.config.ts",
-		"lib/browser"
+		"lib/browser",
+		"dist"
 	]
 }

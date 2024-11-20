@@ -1,4 +1,4 @@
-import { load as cheerio } from "cheerio/slim";
+import { load as cheerio } from "cheerio";
 import { createHash, randomBytes } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { stat } from "node:fs/promises";

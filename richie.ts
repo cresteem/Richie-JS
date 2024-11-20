@@ -1,135 +1,33 @@
 import { readFile } from "node:fs/promises";
-import * as aggregator from "./lib/aggregator";
-import {
-	serializeArticle,
-	serializeBreadCrumb,
-	serializeCourse,
-	serializeCourseCarousel,
-	serializeEventsPage,
-	serializeFAQ,
-	serializeLocalBusiness,
-	serializeMovie,
-	serializeMovieCarousel,
-	serializeOrganisation,
-	serializeProductPage,
-	serializeProfilePage,
-	serializeRecipe,
-	serializeRecipeCarousel,
-	serializeRestaurant,
-	serializeRestaurantCarousel,
-	serializeSiteSearchBox,
-	serializeSoftwareApp,
-	serializeVideo,
-	serializeproductWithVarientPage,
-} from "./lib/serializer";
 
+import configurations from "./configLoader";
+import functionMapper from "./lib/function-map";
+import { createJsonLD, writeOutput } from "./lib/node-utils";
+import { sweep } from "./lib/sweeper";
 import {
+	configurationOptions,
 	richieGroupA,
 	richieGroupB,
 	richieGroupC,
-	richieOPS,
 	richies,
-} from "./lib/options";
-import { sweep } from "./lib/sweeper";
-import { createJsonLD, writeOutput } from "./lib/utilities";
-
-const functionMap: Record<richies, richieOPS> = {
-	article: {
-		aggregator: aggregator.article,
-		serializer: serializeArticle,
-	},
-	breadcrumb: {
-		aggregator: aggregator.breadCrumb,
-		serializer: serializeBreadCrumb,
-	},
-	crecipe: {
-		aggregator: aggregator.recipe,
-		serializer: serializeRecipeCarousel,
-	},
-	cmovie: {
-		aggregator: aggregator.movie,
-		serializer: serializeMovieCarousel,
-	},
-	crestaurant: {
-		aggregator: aggregator.restaurant,
-		serializer: serializeRestaurantCarousel,
-	},
-	ccourse: {
-		aggregator: aggregator.course,
-		serializer: serializeCourseCarousel,
-	},
-	recipe: {
-		aggregator: aggregator.recipe,
-		serializer: serializeRecipe,
-	},
-	movie: {
-		aggregator: aggregator.movie,
-		serializer: serializeMovie,
-	},
-	restaurant: {
-		aggregator: aggregator.restaurant,
-		serializer: serializeRestaurant,
-	},
-	course: {
-		aggregator: aggregator.course,
-		serializer: serializeCourse,
-	},
-	event: {
-		aggregator: aggregator.eventsPage,
-		serializer: serializeEventsPage,
-	},
-	faq: {
-		aggregator: aggregator.FAQ,
-		serializer: serializeFAQ,
-	},
-	video: {
-		aggregator: aggregator.video,
-		serializer: serializeVideo,
-	},
-	localbusiness: {
-		aggregator: aggregator.localBusiness,
-		serializer: serializeLocalBusiness,
-	},
-	organization: {
-		aggregator: aggregator.organisation,
-		serializer: serializeOrganisation,
-	},
-	product: {
-		aggregator: aggregator.productPage,
-		serializer: serializeProductPage,
-	},
-	productwv: {
-		aggregator: aggregator.productPage,
-		serializer: serializeproductWithVarientPage,
-	},
-	profile: {
-		aggregator: aggregator.profilePage,
-		serializer: serializeProfilePage,
-	},
-	searchbox: {
-		aggregator: (htmlPath: string): string => htmlPath,
-		serializer: serializeSiteSearchBox,
-	},
-	software: {
-		aggregator: aggregator.softwareApp,
-		serializer: serializeSoftwareApp,
-	},
-};
+} from "./lib/types";
 
 export async function richie(
 	richieNames: richies[],
 	filepath: string,
 	destinationPath: string = "",
 ): Promise<void> {
+	const functionMap = functionMapper(configurations());
+
 	const destinationFile: string =
 		!!destinationPath ? destinationPath : filepath;
 
 	const source: string = await readFile(filepath, { encoding: "utf8" });
 
-	let richResultSnippets: string = "";
-	let cleanSource: string | null = null;
-
 	return new Promise(async (resolve, reject) => {
+		let richResultSnippets: string = "";
+		let cleanSource: string = source;
+
 		for (const richieName of richieNames) {
 			//standardize parameters
 			const aggregatorParams: string[] | boolean =
@@ -154,12 +52,14 @@ export async function richie(
 					:	[aggregatedData];
 
 				const serializedData = serializer(...serializerParams);
+
 				richResultSnippets += createJsonLD(serializedData);
-				cleanSource = sweep(richieName, cleanSource ?? source);
+
+				cleanSource = sweep(richieName, cleanSource);
 			}
 		}
 
-		writeOutput(cleanSource as string, destinationFile, richResultSnippets)
+		writeOutput(cleanSource, destinationFile, richResultSnippets)
 			.then(() => {
 				resolve();
 			})
@@ -168,3 +68,5 @@ export async function richie(
 			});
 	});
 }
+
+export type rjsOptions = configurationOptions;
