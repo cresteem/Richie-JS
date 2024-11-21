@@ -1,5 +1,6 @@
 import { format } from "@prettier/sync";
 import { load } from "cheerio";
+import { createHash, randomBytes } from "node:crypto";
 import { writeFile } from "node:fs/promises";
 
 /*  //it is only good if you have google business page 
@@ -95,4 +96,44 @@ export function writeOutput(
 				);
 			});
 	});
+}
+
+export function nodeGenerateProductGroupID(
+	productID1: string,
+	productID2: string,
+	hashVarient: "128" | "256" | "512",
+): string {
+	const concatenatedID: string = productID1.concat(productID2);
+
+	const salt: string = randomBytes(8).toString("hex");
+
+	const randomPosition: number = Math.floor(
+		Math.random() * concatenatedID.length,
+	);
+
+	//interjoin salt in randomindex position
+	const dataWithSalt: string = concatenatedID
+		.slice(0, randomPosition)
+		.concat(salt)
+		.concat(concatenatedID.slice(randomPosition));
+
+	let hashFunction;
+	if (hashVarient == "512") {
+		hashFunction = createHash("sha512");
+	} else if (hashVarient == "128" || hashVarient == "256") {
+		hashFunction = createHash("shake" + hashVarient);
+	} else {
+		throw new Error(
+			"Configuration Error: Hash variant should be 128 or 256 or 512",
+		);
+	}
+
+	// Update hash with data
+	hashFunction.update(dataWithSalt, "utf8");
+
+	// Get hash digest as a buffer
+	// Convert buffer to hexadecimal string
+	const hashHex: string = hashFunction.digest().toString("hex");
+
+	return hashHex;
 }

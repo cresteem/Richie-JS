@@ -1,4 +1,5 @@
 import { Plugins } from "../types";
+import { webGenerateProductGroupID } from "../utils";
 import {
 	basename,
 	cwd,
@@ -24,12 +25,12 @@ const browPlugins: Plugins = {
 		sep: "/",
 		cwd: cwd,
 	},
-	cryptoLib: { createHash: () => {}, randomBytes: () => {} },
 	fsLib: {
 		readFileSync: (_, __) => "",
 		stat: () => "" as any,
 		existsSync: () => false,
 	},
+	generateProductGroupID: webGenerateProductGroupID,
 };
 
 export const config: Partial<configurationOptions> = {

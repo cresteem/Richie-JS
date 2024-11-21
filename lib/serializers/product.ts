@@ -43,9 +43,11 @@ export function serializeproductWithVarientPage(
 			"@type": "Brand",
 			name: productPageData[0].brandName,
 		},
+
 		productGroupID: this.generateProductGroupID(
 			productPageData[0].skuid ?? productPageData[0].mpncode ?? "no id",
 			productPageData[1]?.skuid ?? productPageData[1]?.mpncode ?? "no id",
+			this.reservedNames.product.productGroupIDHashVar,
 		),
 		variesBy: variesBy,
 		hasVariant: this.productPage(productPageData),

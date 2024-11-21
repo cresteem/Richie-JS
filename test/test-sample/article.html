@@ -6,6 +6,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Article Test Page</title>
 	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+
+	<script src="./bundle.min.js">
+	</script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			RichieJS.default({richieNames:['article']})
+		});
+	</script>
+	
 </head>
 
 
@@ -42,5 +51,4 @@
 		<a class="rjs-article-purl-2" href="https://google.com/blogs/"></a>
 	</main>
 </body>
-
 </html>

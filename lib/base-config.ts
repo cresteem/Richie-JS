@@ -131,7 +131,7 @@ const baseConfig: Partial<configurationOptions> = {
 		product: {
 			baseID: "rjs-prod",
 			productPriceValidUntilNext: 30,
-			productGroupIDHashLength: "128",
+			productGroupIDHashVar: "128",
 			producrVariableDelimiter: "|",
 			skuID: "sku",
 			mpnCode: "mpn",

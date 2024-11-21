@@ -1,8 +1,8 @@
 {
 	"compilerOptions": {
-		"target": "ES2022",
-		"module": "CommonJS",
-		"moduleResolution": "Node10",
+		"target": "ESNext",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
 		"baseUrl": ".",
 		"rootDir": ".",
 		"outDir": "dist",
@@ -32,6 +32,10 @@
 		"skipLibCheck": true
 	},
 	"exclude": [
-		"node_modules"
+		"node_modules",
+		"test",
+		"jest.config.ts",
+		"lib/browser",
+		"dist"
 	]
 }

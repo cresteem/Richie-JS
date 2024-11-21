@@ -35,8 +35,8 @@ export default async function makeProductPage(
 		).toISOString();
 	} else {
 		validTill = new Date(
-			(await this.stat(this.resolve(htmlPath))).mtimeMs + validityMs,
-		).toISOString();
+			(await this.stat(this.resolve(htmlPath)))?.mtimeMs ?? 0 + validityMs,
+		)?.toISOString();
 	}
 
 	$(`[class^="${productBaseID}-"]`).each((_index: number, elem: any) => {

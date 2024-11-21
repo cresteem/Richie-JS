@@ -46,6 +46,7 @@ export default class Serializer {
 	generateProductGroupID: (
 		productID1: string,
 		productID2: string,
+		productGroupIDHashVar: "128" | "256" | "512",
 	) => string;
 
 	httpsDomainBase: string;
@@ -56,15 +57,11 @@ export default class Serializer {
 	basename: (filepath: string, ext?: string) => string;
 	dirname: (filePath: string) => string;
 
-	randomBytes: (length: number) => any;
-	createHash: (algorithm: string) => any;
-
 	constructor(configurations: configurationOptions) {
 		const {
 			reservedNames,
 			preference,
 			pathLib: { cwd, relative, join, basename, dirname },
-			cryptoLib: { createHash, randomBytes },
 		} = configurations;
 
 		const { generateProductGroupID, httpsDomainBase } = new BaseUtils(
@@ -79,9 +76,6 @@ export default class Serializer {
 		this.join = join;
 		this.basename = basename;
 		this.dirname = dirname;
-
-		this.createHash = createHash;
-		this.randomBytes = randomBytes;
 
 		this.reservedNames = reservedNames;
 		this.preference = preference;

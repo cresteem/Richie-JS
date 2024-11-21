@@ -719,7 +719,7 @@ export interface configurationOptions extends Plugins {
 		product: {
 			baseID: string;
 			productPriceValidUntilNext: number;
-			productGroupIDHashLength: string;
+			productGroupIDHashVar: "128" | "256" | "512";
 			producrVariableDelimiter: string;
 			skuID: string;
 			mpnCode: string;
@@ -827,10 +827,6 @@ export interface Plugins {
 		sep: "\\" | "/";
 		cwd: () => string;
 	};
-	cryptoLib: {
-		createHash: (algorithm: string) => any;
-		randomBytes: (length: number) => any;
-	};
 	fsLib: {
 		stat: (
 			path: PathLike,
@@ -849,6 +845,11 @@ export interface Plugins {
 		) => string;
 		existsSync: (path: PathLike) => boolean;
 	};
+	generateProductGroupID: (
+		productID1: string,
+		productID2: string,
+		productGroupIDHashLength: "128" | "256" | "512",
+	) => string;
 }
 
 export interface richieOptions {

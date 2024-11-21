@@ -1,3 +1,4 @@
+import { sha3_512, shake128, shake256 } from "js-sha3";
 import { DateTime } from "luxon";
 
 import {
@@ -264,14 +265,19 @@ export default class BaseUtils {
 	httpsDomainBase: string;
 	htmlParser: (htmlString: string) => any;
 	dirname: (filepath: string) => string;
-	createHash: (algorithm: string) => any;
-	randomBytes: (length: number) => any;
+
 	readFileSync: (
 		path: string,
 		options: {
 			encoding: BufferEncoding;
 			flag?: string | undefined;
 		},
+	) => string;
+
+	generateProductGroupID: (
+		productID1: string,
+		productID2: string,
+		productGroupIDHashLength: "128" | "256" | "512",
 	) => string;
 
 	constructor(configurations: configurationOptions) {
@@ -281,8 +287,9 @@ export default class BaseUtils {
 			timeFormat,
 			htmlParser,
 			pathLib: { dirname },
-			cryptoLib: { createHash, randomBytes },
+
 			fsLib: { readFileSync },
+			generateProductGroupID,
 		} = configurations;
 
 		this.domainAddress = domainAddress;
@@ -292,9 +299,9 @@ export default class BaseUtils {
 
 		this.htmlParser = htmlParser;
 		this.dirname = dirname;
-		this.createHash = createHash;
-		this.randomBytes = randomBytes;
+
 		this.readFileSync = readFileSync;
+		this.generateProductGroupID = generateProductGroupID;
 	}
 
 	parseDateString(date: string): string {
@@ -376,36 +383,6 @@ export default class BaseUtils {
 			embedUrl: embedUrl,
 			expires: expires,
 		};
-	}
-
-	generateProductGroupID(productID1: string, productID2: string): string {
-		const concatenatedID: string = productID1.concat(productID2);
-
-		const salt: string = this.randomBytes(8).toString("hex");
-
-		const randomPosition: number = Math.floor(
-			Math.random() * concatenatedID.length,
-		);
-
-		//interjoin salt in randomindex position
-		const dataWithSalt: string = concatenatedID
-			.slice(0, randomPosition)
-			.concat(salt)
-			.concat(concatenatedID.slice(randomPosition));
-
-		// Create SHAKE256 hash
-		const shake256 = this.createHash(
-			"shake" + this.reservedNames.product.productGroupIDHashLength,
-		);
-
-		// Update hash with data
-		shake256.update(dataWithSalt, "utf8");
-
-		// Get hash digest as a buffer
-		// Convert buffer to hexadecimal string
-		const hashHex: string = shake256.digest().toString("hex");
-
-		return hashHex;
 	}
 
 	generateMeta(
@@ -504,4 +481,46 @@ export default class BaseUtils {
 
 		return totalTime;
 	}
+}
+
+export function webGenerateProductGroupID(
+	productID1: string,
+	productID2: string,
+	hashVarient: "128" | "256" | "512",
+) {
+	const concatenatedID: string = productID1 + productID2;
+
+	// Generate a random salt (16 characters = 8 bytes in hex)
+	const saltArray = new Uint8Array(8);
+	window.crypto.getRandomValues(saltArray);
+
+	const salt = Array.from(saltArray, (byte) =>
+		byte.toString(16).padStart(2, "0"),
+	).join("");
+
+	// Generate a random position within the concatenated ID
+	const randomPosition: number = Math.floor(
+		Math.random() * concatenatedID.length,
+	);
+
+	// Interjoin the salt at the random position
+	const dataWithSalt =
+		concatenatedID.slice(0, randomPosition) +
+		salt +
+		concatenatedID.slice(randomPosition);
+
+	let hashHex;
+	if (hashVarient == "128") {
+		hashHex = shake128(dataWithSalt, 128); // 128-bit output for SHAKE128
+	} else if (hashVarient == "256") {
+		hashHex = shake256(dataWithSalt, 256); // 256-bit output for SHAKE256
+	} else if (hashVarient == "512") {
+		hashHex = sha3_512(dataWithSalt); // 512-bit output for SHAKE512
+	} else {
+		throw new Error(
+			"Configuration Error: Hash variant should be 128 or 256 or 512",
+		);
+	}
+
+	return hashHex;
 }

@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, rmSync } from "node:fs";
 
 import { basename, join } from "path";
-import { richies, testProps } from "../lib/options";
+import { richies, testProps } from "../lib/types";
 import { richie } from "../richie";
 
 const opfolder = "./test/outputs";

@@ -3,7 +3,12 @@ import { config } from "./config";
 
 import branding from "./branding";
 
-import { richieGroupA, richieGroupB, richieReactOptions } from "../types";
+import {
+	richieGroupA,
+	richieGroupB,
+	richieGroupC,
+	richieReactOptions,
+} from "../types";
 
 /* not supported
 1-breadcrumb
@@ -38,6 +43,7 @@ export default async function richieReact({
 		const aggregatorParams: string[] | boolean =
 			richieGroupA.includes(richieName) ? [source]
 			: richieGroupB.includes(richieName) ? [source, docPath]
+			: richieGroupC.includes(richieName) ? [docPath]
 			: false;
 
 		if (!aggregatorParams) {

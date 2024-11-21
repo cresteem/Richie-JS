@@ -1,5 +1,4 @@
 import { load as cheerio } from "cheerio";
-import { createHash, randomBytes } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { stat } from "node:fs/promises";
 import {
@@ -12,6 +11,7 @@ import {
 } from "node:path";
 import { cwd } from "node:process";
 import baseConfig from "./lib/base-config";
+import { nodeGenerateProductGroupID } from "./lib/node-utils";
 import { configurationOptions, Plugins } from "./lib/types";
 
 const nodePlugins: Plugins = {
@@ -26,12 +26,12 @@ const nodePlugins: Plugins = {
 		sep: sep,
 		cwd: cwd,
 	},
-	cryptoLib: { createHash: createHash, randomBytes: randomBytes },
 	fsLib: {
 		readFileSync: readFileSync,
 		stat: stat,
 		existsSync: existsSync,
 	},
+	generateProductGroupID: nodeGenerateProductGroupID,
 };
 
 const config: Partial<configurationOptions> = {
