@@ -814,10 +814,6 @@ export interface configurationOptions extends Plugins {
 export interface Plugins {
 	htmlParser: (htmlString: any) => any /* | CheerioAPI */;
 
-	fetchGeoLocation: (
-		meta: LocalBusinessOptions | RestaurantOptions | any,
-	) => any;
-
 	pathLib: {
 		dirname: (filePath: string) => string;
 		basename: (filepath: string, ext?: string) => string;

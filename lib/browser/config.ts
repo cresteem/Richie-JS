@@ -15,7 +15,6 @@ import { configurationOptions } from "../types";
 
 const browPlugins: Plugins = {
 	htmlParser: load,
-	fetchGeoLocation: (_meta: any) => "",
 	pathLib: {
 		dirname: dirname,
 		basename: basename,

@@ -72,10 +72,6 @@ export default class Aggregator {
 	resolve: (...paths: string[]) => string;
 	dirname: (filePath: string) => string;
 
-	fetchGeoLocation: (
-		meta: LocalBusinessOptions | RestaurantOptions | any,
-	) => any;
-
 	readFileSync: (
 		path: string,
 		options:
@@ -93,7 +89,6 @@ export default class Aggregator {
 			htmlParser,
 			fsLib: { stat, existsSync, readFileSync },
 			pathLib: { dirname, cwd, relative, join, sep, basename, resolve },
-			fetchGeoLocation,
 		} = configurations;
 
 		const utils = new BaseUtils(configurations);
@@ -128,7 +123,6 @@ export default class Aggregator {
 		this.sep = sep;
 		this.basename = basename;
 		this.dirname = dirname;
-		this.fetchGeoLocation = fetchGeoLocation;
 
 		this.readFileSync = readFileSync;
 	}

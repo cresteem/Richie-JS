@@ -16,7 +16,6 @@ import { configurationOptions, Plugins } from "./lib/types";
 
 const nodePlugins: Plugins = {
 	htmlParser: cheerio,
-	fetchGeoLocation: () => {},
 	pathLib: {
 		dirname: dirname,
 		basename: basename,
