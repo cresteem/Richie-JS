@@ -1,82 +1,80 @@
-#! node
-import { hideBin } from "yargs/helpers";
-import yargs from "yargs/yargs";
+#! /usr/bin/env node
+
+import { Command } from "commander";
 import { richieOptions } from "../lib/types";
 import iconAssociator from "./iconAssociator";
+import initConfig from "./initConfig";
 import { makeRichie } from "./richieMaker";
 
-type availableCommandsOP = "init" | "make";
+const program = new Command();
 
-function main(): Promise<void> {
-	const availableCommands: availableCommandsOP[] = ["init", "make"];
-	const givenCommand: availableCommandsOP = process
-		.argv[2] as availableCommandsOP;
+async function main() {
+	program
+		.name("richie")
+		.description(
+			"Richie.js an open source SEO tool, rich result generator.",
+		)
+		.version("2.0.0");
 
-	const unsupportedAlert = (): void => {
-		console.log(
-			`Unsupported command\nAvailable commands are\n${availableCommands}`,
-		);
-	};
-
-	if (!availableCommands.includes(givenCommand)) {
-		unsupportedAlert();
-		process.exit(1);
-	}
-
-	//handle flag options
-	const argv: richieOptions = yargs(hideBin(process.argv))
-		.option("destDir", {
-			alias: "d",
-			type: "string",
-			description: "Destination directory",
-			default: "dist",
-		})
-		.option("omitPatterns", {
-			alias: "no",
-			type: "array",
-			description: "Omit directory / glob pattern",
-			default: [],
-		})
-		.option("norm", {
-			alias: "p",
-			type: "boolean",
-			description: "Preserve current destination dir as it is",
-			default: false,
-		}).argv as richieOptions;
-
-	return new Promise((resolve, reject) => {
-		switch (givenCommand) {
-			case "make":
-				makeRichie({
-					destDir: argv.destDir,
-					omitPatterns: argv.omitPatterns,
-					norm: argv.norm,
-				})
-					.then(() => {
-						resolve();
-					})
-					.catch((err) => {
-						reject(err);
-					});
-				break;
-
-			case "init":
-				iconAssociator()
-					.then(() => {
-						resolve();
-					})
-					.catch((err) => {
-						reject(err);
-					});
-				break;
-			default:
-				unsupportedAlert();
+	// 'make' command
+	program
+		.command("make")
+		.description("Generate rich result snippet for all HTML and inject it")
+		.option("-d, --destDir <string>", "Destination directory", "dist")
+		.option(
+			"-o, --omitPatterns <patterns...>",
+			"Omit directory / glob patterns",
+			[],
+		)
+		.option(
+			"-p, --norm",
+			"Preserve current destination directory as it is",
+			false,
+		)
+		.action(async (options: richieOptions) => {
+			try {
+				await makeRichie({
+					destDir: options.destDir,
+					omitPatterns: options.omitPatterns,
+					norm: options.norm,
+				});
+				console.log(
+					"✅ Rich result snippets are generated for all HTML & saved.",
+				);
+			} catch (err) {
+				console.error("⚠️ Error generating rich result snippets:", err);
 				process.exit(1);
-		}
+			}
+		});
+
+	// 'init' command
+	program
+		.command("init")
+		.description("Initialize Richie.js configurations")
+		.action(async () => {
+			try {
+				await iconAssociator();
+				initConfig();
+				console.log("🚀 Richie.js configuration initialised.");
+			} catch (err) {
+				console.error("⚠️ Error initializing icon associations:", err);
+				process.exit(1);
+			}
+		});
+
+	// Handle unsupported commands
+	program.on("command:*", (commands) => {
+		console.error(
+			`⚠️ Unsupported command: ${commands[0]}\nAvailable commands are: make, init`,
+		);
+		process.exit(1);
 	});
+
+	// Parse the arguments
+	await program.parseAsync(process.argv);
 }
 
 main().catch((err) => {
-	console.log(err);
+	console.error("⚠️ Unexpected error:", err);
 	process.exit(1);
 });

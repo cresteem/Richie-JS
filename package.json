@@ -24,8 +24,8 @@
 	},
 	"scripts": {
 		"bundle": "node ./dev/bundler.js",
-		"dev": "rimraf dist && tsc -p tscdev.json && yarn bundle -dev",
-		"build": "cls && rimraf dist && tsc -p tsconfig.json && yarn bundle -prod",
+		"dev": "rimraf dist && tsc -p tscdev.json && yarn bundle -dev && yarn ncp ./bin/userconfig-template.js ./dist/bin/userconfig-template.js",
+		"build": "cls && rimraf dist && tsc -p tsconfig.json && yarn bundle -prod && yarn ncp ./bin/userconfig-template.js ./dist/bin/userconfig-template.js",
 		"test": "jest",
 		"clean": "cls && rimraf dist",
 		"deploy": "yarn build && yarn publish --access public && git push"
@@ -68,14 +68,15 @@
 	"dependencies": {
 		"@prettier/sync": "0.5.2",
 		"cheerio": "1.0.0",
+		"commander": "^12.1.0",
 		"country-list": "2.3.0",
 		"glob": "11.0.0",
 		"js-sha3": "^0.9.3",
 		"luxon": "3.5.0",
-		"prettier": "^3.3.3",
-		"yargs": "17.7.2"
+		"prettier": "^3.3.3"
 	},
 	"devDependencies": {
+		"ncp": "^2.0.0",
 		"@babel/core": "7.26.0",
 		"@babel/preset-env": "7.26.0",
 		"@babel/preset-typescript": "7.26.0",
