@@ -1,94 +1,94 @@
 {
-  "name": "@cresteem/richie-js",
-  "displayName": "Richie JS",
-  "exports": {
-    ".": {
-      "types": "./dist/types/richie.d.ts",
-      "import": "./dist/richie.js",
-      "require": "./dist/richie.js"
-    }
-  },
-  "description": " Richie JS is an advanced SEO toolkit that simplifies the creation of structured data for rich results, enhancing your website's visibility and performance on search engines. By automating the generation of JSON-LD schema, it accelerates SEO optimization, improves search engine rankings, and boosts user engagement with minimal effort. ",
-  "version": "1.1.6",
-  "main": "./dist/richie.js",
-  "files": [
-    "dist",
-    "logo/rjs-icon.svg"
-  ],
-  "directories": {
-    "lib": "./dist/lib"
-  },
-  "preferGlobal": true,
-  "bin": {
-    "rjs": "./dist/bin/rjs.js"
-  },
-  "scripts": {
-    "bundle": "node ./dev/bundler.js",
-    "dev": "rimraf dist && tsc -p tscdev.json && yarn bundle -dev && yarn ncp ./bin/userconfig-template.js ./dist/bin/userconfig-template.js",
-    "build": "cls && rimraf dist && tsc -p tsconfig.json && yarn bundle -prod && yarn ncp ./bin/userconfig-template.js ./dist/bin/userconfig-template.js",
-    "test": "jest",
-    "clean": "cls && rimraf dist",
-    "deploy": "yarn build && yarn publish --access public && git push"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cresteem/Richie-JS.git"
-  },
-  "keywords": [
-    "seo automation",
-    "google snippets",
-    "web development",
-    "search optimization",
-    "website visibility",
-    "developer tools",
-    "cli tools",
-    "digital marketing",
-    "seo tool",
-    "rich results",
-    "structured data",
-    "schema markup",
-    "content optimization",
-    "richie js"
-  ],
-  "author": "DARSAN <darsan@cresteem.com>",
-  "license": "Apache-2.0",
-  "maintainers": [
-    "CRESTEEM <connect@cresteem.com>",
-    "DARSAN <darsan@cresteem.com>"
-  ],
-  "bugs": {
-    "url": "https://github.com/cresteem/Richie-JS/issues"
-  },
-  "homepage": "https://richiejs.cresteem.com",
-  "dependencies": {
-    "@prettier/sync": "0.5.2",
-    "cheerio": "1.0.0",
-    "commander": "^12.1.0",
-    "country-list": "2.3.0",
-    "glob": "11.0.0",
-    "js-sha3": "^0.9.3",
-    "luxon": "3.5.0",
-    "prettier": "^3.3.3"
-  },
-  "devDependencies": {
-    "ncp": "^2.0.0",
-    "@babel/core": "7.26.0",
-    "@babel/preset-env": "7.26.0",
-    "@babel/preset-typescript": "7.26.0",
-    "@eslint-community/eslint-utils": "^4.4.1",
-    "@types/country-list": "2.1.4",
-    "@types/jest": "29.5.14",
-    "@types/luxon": "3.4.2",
-    "@types/node": "^22.9.0",
-    "@typescript-eslint/eslint-plugin": "8.14.0",
-    "@typescript-eslint/parser": "^8.14.0",
-    "babel-jest": "29.7.0",
-    "esbuild": "^0.24.0",
-    "eslint": "^9.15.0",
-    "jest": "29.7.0",
-    "puppeteer": "^23.8.0",
-    "rimraf": "6.0.1",
-    "ts-node": "10.9.2",
-    "typescript": "^5.6.3"
-  }
+	"name": "@cresteem/richie-js",
+	"displayName": "Richie JS",
+	"exports": {
+		".": {
+			"types": "./dist/types/richie.d.ts",
+			"import": "./dist/richie.js",
+			"require": "./dist/richie.js"
+		}
+	},
+	"description": " Richie JS is an advanced SEO toolkit that simplifies the creation of structured data for rich results, enhancing your website's visibility and performance on search engines. By automating the generation of JSON-LD schema, it accelerates SEO optimization, improves search engine rankings, and boosts user engagement with minimal effort. ",
+	"version": "2.0.0",
+	"main": "./dist/richie.js",
+	"files": [
+		"dist",
+		"logo/rjs-icon.svg"
+	],
+	"directories": {
+		"lib": "./dist/lib"
+	},
+	"preferGlobal": true,
+	"bin": {
+		"rjs": "./dist/bin/rjs.js"
+	},
+	"scripts": {
+		"bundle": "node ./dev/bundler.js",
+		"dev": "rimraf dist && tsc -p tscdev.json && yarn bundle -dev && yarn ncp ./bin/userconfig-template.js ./dist/bin/userconfig-template.js",
+		"build": "cls && rimraf dist && tsc -p tsconfig.json && yarn bundle -prod && yarn ncp ./bin/userconfig-template.js ./dist/bin/userconfig-template.js",
+		"test": "jest",
+		"clean": "cls && rimraf dist",
+		"deploy": "yarn build && yarn publish --access public && git push"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/cresteem/Richie-JS.git"
+	},
+	"keywords": [
+		"seo automation",
+		"google snippets",
+		"web development",
+		"search optimization",
+		"website visibility",
+		"developer tools",
+		"cli tools",
+		"digital marketing",
+		"seo tool",
+		"rich results",
+		"structured data",
+		"schema markup",
+		"content optimization",
+		"richie js"
+	],
+	"author": "DARSAN <darsan@cresteem.com>",
+	"license": "Apache-2.0",
+	"maintainers": [
+		"CRESTEEM <connect@cresteem.com>",
+		"DARSAN <darsan@cresteem.com>"
+	],
+	"bugs": {
+		"url": "https://github.com/cresteem/Richie-JS/issues"
+	},
+	"homepage": "https://richiejs.cresteem.com",
+	"dependencies": {
+		"@prettier/sync": "0.5.2",
+		"cheerio": "1.0.0",
+		"commander": "^12.1.0",
+		"country-list": "2.3.0",
+		"glob": "11.0.0",
+		"js-sha3": "^0.9.3",
+		"luxon": "3.5.0",
+		"prettier": "^3.3.3"
+	},
+	"devDependencies": {
+		"ncp": "^2.0.0",
+		"@babel/core": "7.26.0",
+		"@babel/preset-env": "7.26.0",
+		"@babel/preset-typescript": "7.26.0",
+		"@eslint-community/eslint-utils": "^4.4.1",
+		"@types/country-list": "2.1.4",
+		"@types/jest": "29.5.14",
+		"@types/luxon": "3.4.2",
+		"@types/node": "^22.9.0",
+		"@typescript-eslint/eslint-plugin": "8.14.0",
+		"@typescript-eslint/parser": "^8.14.0",
+		"babel-jest": "29.7.0",
+		"esbuild": "^0.24.0",
+		"eslint": "^9.15.0",
+		"jest": "29.7.0",
+		"puppeteer": "^23.8.0",
+		"rimraf": "6.0.1",
+		"ts-node": "10.9.2",
+		"typescript": "^5.6.3"
+	}
 }
