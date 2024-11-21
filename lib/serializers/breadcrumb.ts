@@ -22,7 +22,10 @@ export default function serializeBreadCrumb(
 
 		return serializedJsonLD;
 	} else {
-		console.log("BreadCrumb not possible");
+		console.log(
+			"BreadCrumb not possible for ",
+			breadCrumbData.breadCrumbMetas[0].item,
+		);
 		return null;
 	}
 }
