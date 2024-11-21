@@ -1,25 +1,30 @@
 <div align="center">
 
-![Richi JS logo](./logo/logo.png)
+![Richie JS logo](./logo/logo.png)
 
-# Richie JS - Powerful SEO Tool for Generating Rich Results
+# Richie JS - Powerful SEO Tool for Generating Rich Results AKA Schema markups
 
-<p id="intro">Richie JS is a powerful SEO tool designed to streamline the creation of structured data for rich results, boosting your website's visibility on search engines. It automates the generation of JSON-LD output, enabling quick and efficient optimization for search engine performance and enhancing user engagement.</p>
+<p id="intro">
+Richie JS is an advanced SEO toolkit that simplifies the creation of structured data for rich results, enhancing your website's visibility and performance on search engines. By automating the generation of JSON-LD schema, it accelerates SEO optimization, improves search engine rankings, and boosts user engagement with minimal effort.
+</p>
 
 
 ### Supported Platforms
 
-
-[![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)]()
-[![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)]()
+[![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)]()  
+[![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)]()  
 [![Node JS](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)]()
 
+### Supported browsers
+![Brave](https://img.shields.io/badge/Brave-FB542B?style=for-the-badge&logo=Brave&logoColor=white)
+![Edge](https://img.shields.io/badge/Edge-0078D7?style=for-the-badge&logo=Microsoft-edge&logoColor=white)
+![Firefox](https://img.shields.io/badge/Firefox-FF7139?style=for-the-badge&logo=Firefox-Browser&logoColor=white)
+![Google Chrome](https://img.shields.io/badge/Google%20Chrome-4285F4?style=for-the-badge&logo=GoogleChrome&logoColor=white)
+![Opera](https://img.shields.io/badge/Opera-FF1B2D?style=for-the-badge&logo=Opera&logoColor=white)
 
 ---
 
-
 <p>
-
 <span>
   <a href="https://github.com/cresteem/Richie-JS/commits/main">
     <img src="https://img.shields.io/github/last-commit/cresteem/Richie-JS?display_timestamp=committer&style=for-the-badge&label=Updated%20On" alt="GitHub last commit"/>
@@ -31,23 +36,19 @@
     <img src="https://img.shields.io/github/commit-activity/m/cresteem/Richie-JS?style=for-the-badge&label=Commit%20Activity" alt="GitHub commit activity"/>
   </a>
 </span>
-
 </p>
 
 <p>
-
 <span>
   <a href="https://github.com/cresteem/Richie-JS/actions/workflows/test.yaml">
     <img src="https://img.shields.io/github/actions/workflow/status/cresteem/Richie-JS/test.yaml?style=for-the-badge&label=Test%20Status" alt="GitHub Actions Test Status"/>
   </a>
 </span>
-
 </p>
 
 ---
 
 <p>
-
 <span>
   <a href="LICENSE">
     <img src="https://img.shields.io/github/license/cresteem/Richie-JS?style=for-the-badge&label=License" alt="GitHub License"/>
@@ -59,23 +60,19 @@
     <img src="https://img.shields.io/github/v/release/cresteem/Richie-JS?sort=date&display_name=tag&style=for-the-badge&label=Latest%20Version" alt="GitHub Release"/>
   </a>
 </span>
-
 </p>
 
 <p>
-
 <span>
   <a href="https://www.codefactor.io/repository/github/cresteem/Richie-JS/issues/main">
     <img src="https://img.shields.io/codefactor/grade/github/cresteem/Richie-JS?style=for-the-badge&label=Code%20Quality%20Grade" alt="CodeFactor Grade"/>
   </a>
 </span>
-
 </p>
 
 ---
 
 <p>
-
 <span>
   <a href="">
     <img src="https://img.shields.io/npm/d18m/%40cresteem%2Frichie-js?style=for-the-badge&label=Downloads%20On%20NPM" alt="NPM Downloads"/>
@@ -87,19 +84,16 @@
     <img src="https://img.shields.io/github/stars/cresteem/Richie-JS?style=for-the-badge&label=Stars" alt="GitHub Repo stars"/>
   </a>
 </span>
-
 </p>
 
 ---
 
 <p>
-
 <span>
   <a href="https://github.com/sponsors/darsan-in">
     <img src="https://img.shields.io/github/sponsors/darsan-in?style=for-the-badge&label=Generous%20Sponsors" alt="GitHub Sponsors"/>
   </a>
 </span>
-
 </p>
 
 ---
@@ -124,14 +118,32 @@
 
 ## Features and Benefits ✨
 
-* **Automated Rich Results Generation:** Automate the creation of rich snippets with minimal manual effort.
-* **Google-Recognized Structured Data:** Generates JSON-LD outputs that comply with Google’s rich results standards.
-* **Customizable Configuration:** Easily tailor output and settings through the `.richiejs` file.
-* **Improved SEO Performance:** Boost your website’s visibility and user engagement by integrating rich snippets.
-* **Command-Line Interface (CLI) Support:** Offers powerful CLI commands for streamlined operations.
-* **Open-Source Flexibility:** Licensed under Apache 2.0, allowing free use and modification in projects.
+Richie JS empowers developers with an efficient toolset for generating SEO-friendly structured data. Here's what makes Richie JS stand out:
+
+### Core Features:
+- **Automated Rich Results Generation:** Automatically generate structured data (JSON-LD) compliant with Google’s rich results standards.
+- **Wide Schema Support:** Supports multiple schema types like breadcrumbs, FAQs, and site search boxes to cater to diverse SEO needs.
+- **Cross-Environment Compatibility:** Works seamlessly in both **Node.js** and **client-side** environments, providing flexibility for all project types.
+- **Lightweight and Optimized:** Richie JS is designed to minimize dependencies and overhead, ensuring fast performance.
+- **Configurable and Customizable:** Define configurations with ease using `richiejs.config.js`, and leverage TypeScript types for intelligent support.
+- **Intuitive CLI Application:** Generate and deploy structured data through an easy-to-use Command Line Interface.
+
+### Latest Enhancements - Version 2.0.0:
+- **Config File Enhancement:** Migrated to `richiejs.config.js` for improved customization and better developer experience, including TypeScript IntelliSense support.
+- **Expanded API Functionality:** Richie JS API now supports handling an array of schemas, enabling advanced structured data strategies.
+- **Performance Optimization:** Removed dependencies (`axios` and `mkdirp`) and replaced them with built-in `fetch` and `mkdirSync` to save bytes and improve efficiency.
+- **Enhanced CLI Features:** 
+  - New `init` command to create templates and auto-infer breadcrumb and site search box schema markup.
+  - Improved usability and optimizations for faster and seamless operation.
+- **Linux Path Fixes:** Resolved breadcrumb issues specific to Linux environments.
+- **Richie.js Branding:** Added an official Richie JS logo and a dedicated icon in VS Code for an enhanced developer experience.
+- **Cross-Environment Compatibility Notice:** Richie JS now fully supports **both client-side and Node.js environments**, making it versatile for a variety of use cases.
+- **Browser-Side Note:** While breadcrumb support is currently server-side only, other schema types work seamlessly in browser environments.
+
+With its robust features, Richie JS simplifies the implementation of structured data, ensuring optimal SEO performance while providing a smooth development experience.
 
 ## Use Cases ✅
+
 * **SEO Specialists:** Effortlessly generate rich snippets for client websites, improving search rankings.
 * **Web Developers:** Integrate structured data into websites without complex coding.
 * **Digital Marketers:** Enhance website visibility and drive engagement through optimized SEO practices.
@@ -141,96 +153,78 @@
 
 ---
 
-### 🙏🏻 Friendly Request to Users
+### 🙏🏻 Support Richie.js and Help It Grow  
 
-Every star on this repository is a sign of encouragement, a vote of confidence, and a reminder that our work is making a difference. If this project has brought value to you, even in the smallest way, **please consider showing your support by giving it a star.** ⭐
+Every **star** on this repository is a symbol of encouragement and a testament to the value Richie.js brings to its users. If this tool has simplified your SEO efforts or improved your workflow, **please consider showing your support by giving it a star** ⭐ — it only takes a second!  
 
-_"Star" button located at the top-right of the page, near the repository name._
+But why stop there? If Richie.js has been especially useful in your projects, consider **sponsoring the development** to help us keep improving, innovating, and supporting the community.  
 
-Your star isn’t just a digital icon—it’s a beacon that tells us we're on the right path, that our efforts are appreciated, and that this work matters. It fuels our passion and drives us to keep improving, building, and sharing.
+💡 *The "Star" button is at the top-right of the page, near the repository name.*  
 
-If you believe in what we’re doing, **please share this project with others who might find it helpful.** Together, we can create something truly meaningful.
-
-Thank you for being part of this journey. Your support means the world to us. 🌍💖
+Your support, whether through a star or sponsorship, fuels our passion and drives us to build even better tools for everyone. Thank you for being part of the journey! 🌟✨
 
 ---
 
 ## Installation - Step-by-Step Guide 🪜
-Refer below link:
 
+Refer below link:  
 [Getting Started](https://richiejs.cresteem.com/getting-started-with-richie-js)
 
 ## Usage
 
-Everything from top to bottom of Richie JS available here - https://richiejs.cresteem.com/
+Complete usage documentation is available here: [Richie.js Documentation](https://richiejs.cresteem.com/)
 
 ### Generate a rich result
 ```bash
-npx rjs make
+rjs make
 ```
 
 ### Store output in a specific directory
 ```bash
-npx rjs make -d <destinationFolder>
+rjs make -d <destinationFolder>
 ```
 
 ### Exclude specific files and folders
 ```bash
-npx rjs make --no <relativePath/subpath>
-```
-
-**⚠️ By default, Richie JS removes previous outputs or clears the destination directory.**
-
-### To preserve existing files, use the `--norm` or `-p` flag:
-```bash
-npx rjs make -p
-# or
-npx rjs make --norm
+rjs make -o <relativePath/subpath>
 ```
 
 ### ⚙️🛠️ Custom Configuration
-Override default settings by creating an `.richiejs` file in the project's root directory.
-
-### 🤖 Setting Up IntelliSense for Richie JS
-**⚠️ Only for VS Code**
-
-#### Option 1: System-wide IntelliSense support
 ```bash
-npx rjs isense user
+rjs init
 ```
-
-#### Option 2: Project-specific IntelliSense support
-```bash
-npx rjs isense ws
-```
+Now you can configure your settings inside `richiejs.config.js` file.
+---
 
 ## License ©️
 
 This project is licensed under the [Apache License 2.0](LICENSE).
 
+---
+
 ## Contributing to Our Project 🤝
 
-We’re always open to contributions and fixing issues—your help makes this project better for everyone.
+We’re always open to contributions and fixing issues—your help makes this project better for everyone.  
 
-If you encounter any errors or issues, please don’t hesitate to [raise an issue](../../issues/new). This ensures we can address problems quickly and improve the project.
+If you encounter any errors or issues, please don’t hesitate to [raise an issue](../../issues/new).  
 
-For those who want to contribute, we kindly ask you to review our [Contribution Guidelines](CONTRIBUTING) before getting started. This helps ensure that all contributions align with the project's direction and comply with our existing [license](LICENSE).
-
-We deeply appreciate everyone who contributes or raises issues—your efforts are crucial to building a stronger community. Together, we can create something truly impactful.
-
-Thank you for being part of this journey!
+---
 
 ## Website 🌐
 
 <a id="url" href="https://richiejs.cresteem.com">richiejs.cresteem.com</a>
 
+---
+
 ## Contact Information
 
 For any questions, please reach out via connect@cresteem.com
 
+---
+
 ## Credits 🙏🏻
 
-Richie JS is an open-source project developed and maintained by [DARSAN](https://darsan.in/) at [CRESTEEM](https://www.cresteem.com/). Special thanks to the creators and maintainers of the foundational libraries used, including [Cheerio](https://cheerio.js.org/), [Puppeteer](https://pptr.dev/), and [Yargs](https://yargs.js.org/).
+Richie JS is an open-source project developed and maintained by [DARSAN](https://darsan.in/) at [CRESTEEM](https://www.cresteem.com/). Special thanks to the creators and maintainers of the foundational libraries.
 
 ---
 
@@ -298,14 +292,15 @@ Richie JS is an open-source project developed and maintained by [DARSAN](https:/
 <li>seo automation</li>
 <li>google snippets</li>
 <li>web development</li>
-<li>seo</li>
+<li>search optimization</li>
 <li>website visibility</li>
 <li>developer tools</li>
 <li>cli tools</li>
 <li>digital marketing</li>
 <li>seo tool</li>
 <li>rich results</li>
-<li>json-ld</li>
 <li>structured data</li>
 <li>schema markup</li>
+<li>content optimization</li>
+<li>richie js</li>
 </ul>
