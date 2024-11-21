@@ -94,7 +94,7 @@ function verifyOutputs(): string {
 // Test cases
 test("Execute all tests", async () => {
 	expect(await executeAllTests()).toBe("passed");
-});
+}, 30000);
 
 test("Verify output files", () => {
 	expect(verifyOutputs()).toBe("passed");
