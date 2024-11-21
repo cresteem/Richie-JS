@@ -12,7 +12,7 @@ function main(): Promise<void> {
 	const givenCommand: availableCommandsOP = process
 		.argv[2] as availableCommandsOP;
 
-	const unsupportedAlert = () => {
+	const unsupportedAlert = (): void => {
 		console.log(
 			`Unsupported command\nAvailable commands are\n${availableCommands}`,
 		);

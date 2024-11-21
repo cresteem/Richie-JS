@@ -1,8 +1,8 @@
-export function dirname(filePath: string) {
+export function dirname(filePath: string): string {
 	return filePath.substring(0, filePath.lastIndexOf("/"));
 }
 
-export function basename(path: string, ext: string = "") {
+export function basename(path: string, ext: string = ""): string {
 	// Extract the base name of the path
 	const base: string = path.split("/").pop() ?? "";
 
@@ -14,7 +14,7 @@ export function basename(path: string, ext: string = "") {
 	return base;
 }
 
-export function join(...args: string[]) {
+export function join(...args: string[]): string {
 	// Normalize paths and remove leading/trailing slashes, if any
 	return args
 		.map((segment) =>
@@ -24,7 +24,7 @@ export function join(...args: string[]) {
 		.join("/");
 }
 
-export function relative(from: string, to: string) {
+export function relative(from: string, to: string): string {
 	// Normalize paths by splitting into segments
 	const fromParts = from.replace(/[/\\]+$/, "").split("/");
 	const toParts = to.replace(/[/\\]+$/, "").split("/");
@@ -48,7 +48,7 @@ export function relative(from: string, to: string) {
 	return relativePath || ".";
 }
 
-export function resolve(...paths: string[]) {
+export function resolve(...paths: string[]): string {
 	// Initialize an array to hold the resolved path segments
 	let resolvedPath: string[] = [];
 
@@ -67,6 +67,6 @@ export function resolve(...paths: string[]) {
 	return resolvedPath.join("/").replace(/\/+/g, "/");
 }
 
-export function cwd() {
+export function cwd(): string {
 	return document.baseURI;
 }

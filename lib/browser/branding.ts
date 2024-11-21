@@ -1,4 +1,4 @@
-export default function branding() {
+export default function branding(): void {
 	const asciiArt = `
   _______            _____         ______  
  |       \\          |     \\       /      \\ 

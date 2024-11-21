@@ -73,7 +73,7 @@ export default function writeSettings(): Promise<void> {
 	});
 }
 
-function copyRichieJSIcon() {
+function copyRichieJSIcon(): void {
 	const userHome: string = (
 		process.platform === "win32" ?
 			join(process.env.HOMEDRIVE ?? "", process.env.HOMEPATH ?? "")
