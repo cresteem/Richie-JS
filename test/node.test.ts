@@ -1,124 +1,101 @@
 import { existsSync, mkdirSync, rmSync } from "node:fs";
-
 import { basename, join } from "path";
 import { richies, testProps } from "../lib/types";
 import { richie } from "../richie";
 
-const opfolder = "./test/outputs";
-let iterN = 0;
+const opFolder = "./test/outputs/node-env";
+let iteration = 0;
 
-function mkDestPath(testfile: string): string {
-	iterN += 1;
-
+// Generate a unique destination path for test output
+function createDestinationPath(testFile: string): string {
+	iteration += 1;
 	return join(
 		process.cwd(),
-		opfolder,
-		`OP_Of_(${iterN}) ${basename(testfile)}`,
+		opFolder,
+		`Output_${iteration}_${basename(testFile)}`,
 	);
 }
 
-function createTestProps(testfile: string): testProps {
+// Create test properties object
+function createTestProps(testFile: string): testProps {
 	return {
-		testfile: testfile,
-		destFile: mkDestPath(testfile),
+		testfile: testFile,
+		destFile: createDestinationPath(testFile),
 	};
 }
 
+// Define test cases
 const testRecords: Record<richies, testProps> = {
 	article: createTestProps("test/test-sample/article.html"),
-
 	breadcrumb: createTestProps(
 		"test/test-sample/breadcrumb/sub-breadcrumb/notindex.html",
 	),
-
 	crecipe: createTestProps("test/test-sample/carousels/recipies.html"),
 	recipe: createTestProps("test/test-sample/carousels/recipies.html"),
-
 	movie: createTestProps("test/test-sample/carousels/movies.html"),
 	cmovie: createTestProps("test/test-sample/carousels/movies.html"),
-
 	restaurant: createTestProps(
 		"test/test-sample/carousels/restaurants.html",
 	),
 	crestaurant: createTestProps(
 		"test/test-sample/carousels/restaurants.html",
 	),
-
 	course: createTestProps("test/test-sample/carousels/courses.html"),
 	ccourse: createTestProps("test/test-sample/carousels/courses.html"),
-
 	event: createTestProps("test/test-sample/events.html"),
-
 	faq: createTestProps("test/test-sample/faq.html"),
-
 	video: createTestProps("test/test-sample/videos.html"),
-
 	localbusiness: createTestProps("test/test-sample/localbusiness.html"),
-
 	organization: createTestProps("test/test-sample/org.html"),
-
 	product: createTestProps("test/test-sample/product.html"),
 	productwv: createTestProps(
 		"test/test-sample/productVarient/productCombined.html",
 	),
-
 	profile: createTestProps("test/test-sample/profilepage.html"),
-
 	searchbox: createTestProps(
 		"test/test-sample/Sitesearch/searchpage.html",
 	),
-
 	software: createTestProps("test/test-sample/softwareapp.html"),
 };
 
-function run(richieName: richies): Promise<void> {
-	const testfile = testRecords[richieName].testfile;
-	const destinationFile = testRecords[richieName].destFile;
-
-	return richie([richieName], testfile, destinationFile);
+// Execute a single test case
+async function executeTest(richieName: richies): Promise<void> {
+	const { testfile, destFile } = testRecords[richieName];
+	await richie([richieName], testfile, destFile);
 }
 
-function runAll(): Promise<string> {
-	//delete old artifacts
-	try {
-		rmSync(opfolder, { recursive: true });
-	} catch {
-		//nothing to do
-	} finally {
-		//make op dir
-		mkdirSync(opfolder, { recursive: true });
-	}
+// Execute all test cases
+async function executeAllTests(): Promise<string> {
+	// Clean up and prepare output directory
+	rmSync(opFolder, { recursive: true, force: true });
+	mkdirSync(opFolder, { recursive: true });
 
-	const testOps: Promise<void>[] = [];
+	// Run all tests in parallel
+	await Promise.all(
+		Object.keys(testRecords).map((richieName) =>
+			executeTest(richieName as richies),
+		),
+	);
 
-	for (const richieName of Object.keys(testRecords)) {
-		testOps.push(run(richieName as richies));
-	}
-
-	return new Promise((resolve, reject) => {
-		Promise.all(testOps)
-			.then(() => {
-				resolve("passed");
-			})
-			.catch((err) => {
-				reject(err);
-			});
-	});
-}
-
-function outputCheck(): string {
-	for (const richieName of Object.keys(testRecords)) {
-		if (!existsSync(testRecords[richieName as richies].destFile)) {
-			return "failed";
-		}
-	}
 	return "passed";
 }
 
-test("InAction test", async () => {
-	expect(await runAll()).toBe("passed");
+// Verify output files
+function verifyOutputs(): string {
+	return (
+			Object.values(testRecords).every(({ destFile }) =>
+				existsSync(destFile),
+			)
+		) ?
+			"passed"
+		:	"failed";
+}
+
+// Test cases
+test("Execute all tests", async () => {
+	expect(await executeAllTests()).toBe("passed");
 });
 
-test("Output files Check", () => {
-	expect(outputCheck()).toBe("passed");
+test("Verify output files", () => {
+	expect(verifyOutputs()).toBe("passed");
 });

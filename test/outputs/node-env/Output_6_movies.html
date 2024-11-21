@@ -4,89 +4,117 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Movies</title>
+    <script src="../bundle.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        RichieJS.default({ richieNames: ["cmovie", "movie"] });
+      });
+    </script>
     <script type="application/ld+json">
-      [
-        {
-          "@context": "https://schema.org",
-          "@type": "Movie",
-          "name": "Dawn of Justice",
-          "url": "https://www.cresteem.com/test/test-sample/carousels/movies#rjs-movie-1",
-          "image": [
-            "https://i.imgur.com/GdoMshp.jpeg",
-            "https://i.imgur.com/yXDOO5w.png"
-          ],
-          "dateCreated": "2016-02-05",
-          "director": ["Zack Synder", "Another director"],
-          "review": [
-            {
-              "@type": "Review",
-              "reviewRating": {
-                "@type": "Rating",
-                "ratingValue": 98,
-                "bestRating": 100
-              },
-              "author": { "@type": "Person", "name": "Darsan" },
-              "publisher": { "@type": "Organization", "name": "IMDB" }
-            },
-            {
-              "@type": "Review",
-              "reviewRating": {
-                "@type": "Rating",
-                "ratingValue": 4.5,
-                "bestRating": 5
-              },
-              "author": { "@type": "Organization", "name": "NotIndiaGlitz" },
-              "publisher": { "@type": "Organization", "name": "RottenTomato" }
+      {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": "1",
+            "item": {
+              "@type": "Movie",
+              "name": "Dawn of Justice",
+              "url": "https://www.cresteem.com/test/test-sample/carousels/movies#rjs-movie-1",
+              "image": [
+                "https://i.imgur.com/GdoMshp.jpeg",
+                "https://i.imgur.com/yXDOO5w.png"
+              ],
+              "dateCreated": "2016-02-05",
+              "director": ["Zack Synder", "Another director"],
+              "review": [
+                {
+                  "@type": "Review",
+                  "reviewRating": {
+                    "@type": "Rating",
+                    "ratingValue": 98,
+                    "bestRating": 100
+                  },
+                  "author": { "@type": "Person", "name": "Darsan" },
+                  "publisher": { "@type": "Organization", "name": "IMDB" }
+                },
+                {
+                  "@type": "Review",
+                  "reviewRating": {
+                    "@type": "Rating",
+                    "ratingValue": 4.5,
+                    "bestRating": 5
+                  },
+                  "author": {
+                    "@type": "Organization",
+                    "name": "NotIndiaGlitz"
+                  },
+                  "publisher": {
+                    "@type": "Organization",
+                    "name": "RottenTomato"
+                  }
+                }
+              ],
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": 100,
+                "bestRating": 100,
+                "ratingCount": 1000
+              }
             }
-          ],
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": 100,
-            "bestRating": 100,
-            "ratingCount": 1000
-          }
-        },
-        {
-          "@context": "https://schema.org",
-          "@type": "Movie",
-          "name": "Justice League",
-          "url": "https://www.cresteem.com/test/test-sample/carousels/movies#rjs-movie-2",
-          "image": [
-            "https://i.imgur.com/FReAq9b.jpeg",
-            "https://i.imgur.com/tdl6BTi.jpeg"
-          ],
-          "dateCreated": "2017-04-10",
-          "director": ["Zack Synder", "Joss Whedon"],
-          "review": [
-            {
-              "@type": "Review",
-              "reviewRating": {
-                "@type": "Rating",
-                "ratingValue": 90,
-                "bestRating": 100
-              },
-              "author": { "@type": "Person", "name": "Darsan" },
-              "publisher": { "@type": "Organization", "name": "IMDB" }
-            },
-            {
-              "@type": "Review",
-              "reviewRating": {
-                "@type": "Rating",
-                "ratingValue": 3.5,
-                "bestRating": 5
-              },
-              "author": { "@type": "Organization", "name": "NotIndiaGlitz" },
-              "publisher": { "@type": "Organization", "name": "Rotten Tomato" }
+          },
+          {
+            "@type": "ListItem",
+            "position": "2",
+            "item": {
+              "@type": "Movie",
+              "name": "Justice League",
+              "url": "https://www.cresteem.com/test/test-sample/carousels/movies#rjs-movie-2",
+              "image": [
+                "https://i.imgur.com/FReAq9b.jpeg",
+                "https://i.imgur.com/tdl6BTi.jpeg"
+              ],
+              "dateCreated": "2017-04-10",
+              "director": ["Zack Synder", "Joss Whedon"],
+              "review": [
+                {
+                  "@type": "Review",
+                  "reviewRating": {
+                    "@type": "Rating",
+                    "ratingValue": 90,
+                    "bestRating": 100
+                  },
+                  "author": { "@type": "Person", "name": "Darsan" },
+                  "publisher": { "@type": "Organization", "name": "IMDB" }
+                },
+                {
+                  "@type": "Review",
+                  "reviewRating": {
+                    "@type": "Rating",
+                    "ratingValue": 3.5,
+                    "bestRating": 5
+                  },
+                  "author": {
+                    "@type": "Organization",
+                    "name": "NotIndiaGlitz"
+                  },
+                  "publisher": {
+                    "@type": "Organization",
+                    "name": "Rotten Tomato"
+                  }
+                }
+              ],
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": 95,
+                "bestRating": 100,
+                "ratingCount": 800
+              }
             }
-          ],
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": 95,
-            "bestRating": 100,
-            "ratingCount": 800
           }
-        }
-      ]
+        ]
+      }
     </script>
   </head>
 

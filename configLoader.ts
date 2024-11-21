@@ -3,9 +3,9 @@ import { join } from "node:path";
 import { configurationOptions } from "./lib/types";
 
 export default function loadConfig(): configurationOptions {
-	const CONFIG_FILE_NAME = "richie.config.js";
+	const CONFIG_FILE_NAME = "richie.config";
 
-	const projectConfigFile = join(process.cwd(), CONFIG_FILE_NAME);
+	const projectConfigFile = join(process.cwd(), `${CONFIG_FILE_NAME}.js`);
 	const projectHasConfig = existsSync(projectConfigFile);
 
 	let projectConfig: configurationOptions = {} as configurationOptions;

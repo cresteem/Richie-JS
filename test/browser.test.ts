@@ -1,7 +1,9 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import puppeteer, { type Browser } from "puppeteer";
 import { richies } from "../lib/types";
+
+const outputBase = "test/outputs/browser-env";
 
 async function _RenderResult(
 	browser: Browser,
@@ -28,7 +30,7 @@ async function _RenderResult(
 
 		// Define the output destination
 		const outputDest = join(
-			"test/test-sample-outputs", // Base output folder
+			outputBase, // Base output folder
 			relative("test/test-sample", htmlPath), // Relative path from the base source folder
 		);
 
@@ -36,7 +38,7 @@ async function _RenderResult(
 		mkdirSync(dirname(outputDest), { recursive: true });
 		writeFileSync(outputDest, content);
 
-		console.log(`HTML saved to ${outputDest}`);
+		/* console.log(`HTML saved to ${outputDest}`); */
 	} catch (err) {
 		console.error("Error during rendering:", err);
 	}
@@ -105,6 +107,9 @@ const testParamMap: Partial<
 };
 
 async function runAll() {
+	// Clean up and prepare output directory
+	rmSync(outputBase, { recursive: true, force: true });
+
 	// Launch the browser once at the start
 	const browser = await puppeteer.launch({ headless: true });
 
