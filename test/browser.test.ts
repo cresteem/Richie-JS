@@ -1,5 +1,5 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, join, relative } from "node:path";
 import puppeteer, { type Browser } from "puppeteer";
 import { richies } from "../lib/types";
 
@@ -13,10 +13,11 @@ async function _RenderResult(
 	try {
 		const page = await browser.newPage();
 
-		// Load the HTML file or page
-		await page.goto(resolve(htmlPath), { waitUntil: "networkidle0" });
+		// Use the http-server to access the file
+		const url = `http://localhost:8080/${relative("test/test-sample", htmlPath)}`;
+		await page.goto(url, { waitUntil: "networkidle0" });
 
-		// Wait until the expected number of "application/ld+json" script tags are present
+		// Wait for the expected number of "application/ld+json" script tags
 		await page.waitForFunction(
 			(numberOfRichResults: number) =>
 				document.querySelectorAll('script[type="application/ld+json"]')
