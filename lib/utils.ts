@@ -235,15 +235,23 @@ export function extractTime(timeRange: string, is24: boolean): string[] {
 
 async function _fetchWebPage(pageUrl: string): Promise<string> {
 	try {
+		const fetchParams =
+			typeof window !== "undefined" ?
+				[
+					`https://asia-south1-bonse-430603.cloudfunctions.net/rjs-proxy`,
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({ url: pageUrl }),
+					},
+				]
+			:	[pageUrl, {}];
+
 		const response = await fetch(
-			`https://asia-south1-bonse-430603.cloudfunctions.net/rjs-proxy`,
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ url: pageUrl }),
-			},
+			fetchParams[0] as string,
+			fetchParams[1] as Record<string, any>,
 		);
 
 		if (!response.ok) {

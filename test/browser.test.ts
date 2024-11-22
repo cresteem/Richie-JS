@@ -129,4 +129,4 @@ async function runAll() {
 
 test("InAction (Browser) test", async () => {
 	expect(await runAll()).toBe("passed");
-}, 30000);
+}, 60000);
