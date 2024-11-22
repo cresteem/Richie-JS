@@ -1,4 +1,6 @@
 import * as functions from "@google-cloud/functions-framework";
+import { makeRequest } from "./lib/core";
+import { decrementQuota, firewall } from "./lib/firewall";
 
 functions.http("invoke", (req: any, res: any) => {
 	/* CORS */
@@ -26,27 +28,44 @@ functions.http("invoke", (req: any, res: any) => {
 	}
 	/* input valudate ended */
 
-	makeRequest(url)
-		.then((htmlContent: string) => {
-			res.set("Content-Type", "text/html").status(200).send(htmlContent);
+	/* firewall */
+
+	const orginatedFrom = new URL(req.headers.origin).hostname.replaceAll(
+		".",
+		"_",
+	);
+
+	firewall(orginatedFrom)
+		.then((currentQuota: number | boolean) => {
+			if (currentQuota) {
+				makeRequest(url)
+					.then((htmlContent: string) => {
+						if (currentQuota !== true) {
+							/* currentQuota is true only if it is localhost,
+							Otherwise, it is number of quota left */
+
+							decrementQuota(orginatedFrom, currentQuota);
+						}
+
+						res
+							.set("Content-Type", "text/html")
+							.status(200)
+							.send(htmlContent);
+					})
+					.catch((err) => {
+						console.error(err);
+						res.status(500).send("Internal Server Error");
+					});
+			} else {
+				//denied
+				res
+					.status(429)
+					.send("You quota is over, Contact rjs@cresteem.com");
+			}
 		})
-		.catch((err) => {
+		.catch((err: Error) => {
 			console.error(err);
 			res.status(500).send("Internal Server Error");
 		});
+	/* firewall ended */
 });
-
-async function makeRequest(url: string): Promise<string> {
-	try {
-		const response = await fetch(url);
-		if (!response.ok) {
-			throw new Error(
-				`Failed to get '${url}' (status code: ${response.status})`,
-			);
-		}
-		return await response.text();
-	} catch (error) {
-		console.error(`Error fetching page: ${error}`);
-		throw error;
-	}
-}

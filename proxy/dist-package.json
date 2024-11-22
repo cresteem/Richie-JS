@@ -8,6 +8,7 @@
 	"license": "Apache-2.0",
 	"private": true,
 	"dependencies": {
-		"@google-cloud/functions-framework": "^3.4.2"
+		"@google-cloud/functions-framework": "^3.4.2",
+		"firebase-admin": "^13.0.1"
 	}
 }

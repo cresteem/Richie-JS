@@ -36,6 +36,7 @@
 		"test",
 		"jest.config.ts",
 		"lib/browser",
-		"dist"
+		"dist",
+		"proxy"
 	]
 }

@@ -194,6 +194,7 @@ rjs make -o <relativePath/subpath>
 rjs init
 ```
 Now you can configure your settings inside `richiejs.config.js` file.
+
 ---
 
 ## License ©️
