@@ -1,5 +1,5 @@
 import functionMapper from "../function-map";
-import { config } from "./config";
+import { config as browserDefaultConfig } from "./config";
 
 import branding from "./branding";
 
@@ -30,10 +30,14 @@ function createJsonLDElem(
 
 export default async function richieReact({
 	richieNames,
+	configuration,
 }: richieReactOptions): Promise<void> {
 	branding();
 
-	const functionMap = functionMapper(config);
+	const functionMap = functionMapper({
+		...browserDefaultConfig,
+		...configuration,
+	});
 
 	const source: string = document.documentElement.outerHTML;
 	const docPath: string = location.pathname;

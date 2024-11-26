@@ -857,4 +857,5 @@ export interface richieOptions {
 
 export interface richieReactOptions {
 	richieNames: richies[];
+	configuration: configurationOptions;
 }
